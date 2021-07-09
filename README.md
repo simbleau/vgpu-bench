@@ -28,7 +28,7 @@ Individual tests should be accentuated with GPU annotations and events (via [nvt
 vgpu-bench is in active research and development. Currently this is in research phase as all code is still in flux. 
 
 The code here does not intend to be released as an abstract framework, but should be extensible enough to add a new unit for comparison. \
-No releases will be published, but findings and metrics from this project should be publicly available when it's ready.
+No code releases will be published, but findings and metrics from this project should be publicly available when it's ready - explicitly through [Spencer Imbleau's blog](https://simbleau.github.io) or academic journals.
 
 ## FAQ
 
