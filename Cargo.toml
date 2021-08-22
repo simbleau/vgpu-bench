@@ -14,6 +14,10 @@ exclude = [
     "tests/",
 ]
 
+[[bin]]
+name = "lyon"
+path = "src/lyon/main.rs"
+
 [dependencies]
 lyon = {version ="0.17.5", features = ["extra"]}
 clap = "2.32.0"

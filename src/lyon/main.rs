@@ -80,9 +80,11 @@ fn main() {
         1
     };
 
+    let filename = app.value_of("INPUT").unwrap();
+
     // Parse and tessellate the geometry
 
-    let filename = app.value_of("INPUT").unwrap();
+    // TODO : Insert stopwatch start here
 
     let mut fill_tess = FillTessellator::new();
     let mut stroke_tess = StrokeTessellator::new();
@@ -166,14 +168,20 @@ fn main() {
     }
 
     if app.is_present("TESS_ONLY") {
-        return;
+        // TODO insert stopwatch stop here
     }
 
+    // Print metrics for output here
     println!(
         "Finished tesselation: {} vertices, {} indices",
         mesh.vertices.len(),
         mesh.indices.len()
     );
+
+    if app.is_present("TESS_ONLY") {
+        // Program can end here
+        return;
+    }
 
     println!("Use arrow keys to pan, pageup and pagedown to zoom.");
 
