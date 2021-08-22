@@ -1,5 +1,6 @@
 # vgpu-bench
 [![dependency status](https://deps.rs/repo/github/simbleau/vgpu-bench/status.svg)](https://deps.rs/repo/github/simbleau/vgpu-bench)
+[![Build Status](https://api.travis-ci.com/simbleau/vgpu-bench.svg?branch=main)](https://travis-ci.com/simbleau/vgu-bench)
 
 A benching framework for third party vector graphics libraries, techniques, and renderers.
 
