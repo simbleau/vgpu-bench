@@ -1,4 +1,5 @@
 extern crate xmlwriter;
+use std::{fs::File, io::Write, path::Path};
 use xmlwriter::*;
 
 pub struct Writer {
@@ -35,7 +36,14 @@ impl Writer {
     }
 
     pub fn get_document(self) -> String {
-        let x = self.xml_writer;
-        x.end_document()
+        self.xml_writer.end_document()
+    }
+
+    #[allow(dead_code)]
+    pub fn write_document(self, path: &Path) -> Result<(), std::io::Error> {
+        let mut file = File::create(path)?;
+        let contents = self.xml_writer.end_document();
+        file.write_all(contents.as_bytes())?;
+        Ok(())
     }
 }
