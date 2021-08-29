@@ -48,27 +48,44 @@ impl Writer {
         };
     }
 
-    fn write_lines(&mut self, _count: i32) {
-        self.xml_writer.start_element("path");
+    fn write_lines(&mut self, count: i32) {
+        let size = (count as f32).sqrt() as i32;
+        let square_size: f32 = (VIEW_MAX - VIEW_MIN) as f32 / size as f32;
+        let padding: f32 = 0.1;
+        let offset: f32 = square_size * padding;
+        let center: f32 = square_size / 2.0;
+        let line_height: f32 = square_size - (square_size * padding * 2.0);
 
-        // Get data for path
-        let mut data = String::new();
+        for row in 0..size {
+            let x = row as f32 * square_size;
+            for col in 0..size {
+                let y = col as f32 * square_size;
 
-        // Start line
-        data.push_str(commands::MOVE_TO);
+                self.xml_writer.start_element("path");
+                // Get data for path
+                let mut data = String::new();
+                // Start line
+                data.push_str(commands::MOVE_TO);
+                // Translate line
+                if (row + col) % 2 == 0 {
+                    // Vertical line
+                    data.push_str(format!("{} {} ", x + center, y + offset).as_str());
+                    data.push_str(commands::LINE_TO);
+                    data.push_str(format!("{} {} ", x + center, y + line_height + offset).as_str());
+                } else {
+                    data.push_str(format!("{} {} ", x + offset, y + center).as_str());
+                    data.push_str(commands::LINE_TO);
+                    data.push_str(format!("{} {} ", x + line_height + offset, y + center).as_str());
+                }
+                // End line
+                data.push_str(commands::CLOSE_PATH);
 
-        // Translate line
-        // TODO - Avoid occlusion by spacing the lines out using `count`
-        data.push_str("50 10 ");
-        data.push_str(commands::VERTICAL_LINE_TO);
-        data.push_str("50 90 ");
-
-        // End line
-        data.push_str(commands::CLOSE_PATH);
-
-        self.xml_writer.write_attribute("d", &data);
-        self.xml_writer.write_attribute("stroke", "black");
-        self.xml_writer.write_attribute("stroke-width", "1");
+                self.xml_writer.write_attribute("d", &data);
+                self.xml_writer.write_attribute("stroke", "black");
+                self.xml_writer.write_attribute("stroke-width", "0.5");
+                self.xml_writer.end_element();
+            }
+        }
     }
 
     pub fn get_document(self) -> String {

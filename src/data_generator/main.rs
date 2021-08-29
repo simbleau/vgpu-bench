@@ -13,6 +13,7 @@ struct Options {
     svg: bool,
     primitive: Primitive,
     output: PathBuf,
+    count: i32,
 }
 
 impl Default for Options {
@@ -21,6 +22,7 @@ impl Default for Options {
             svg: false,
             primitive: Primitive::Circle,
             output: PathBuf::new(),
+            count: 1,
         }
     }
 }
@@ -89,6 +91,15 @@ fn main() {
         _ => panic!("Unknown primitive: '{}'", requested_prim),
     };
 
+    // Check if count is requested
+    if matches.is_present("count") {
+        let count = matches.value_of("count").unwrap();
+        options.count = match count.parse::<i32>() {
+            Ok(n) => n,
+            Err(e) => panic!("{}", e),
+        };
+    }
+
     // Get output path
     if matches.is_present("output") {
         options.output = PathBuf::from(matches.value_of("output").unwrap());
@@ -100,7 +111,7 @@ fn main() {
 
     // Write data
     let mut writer = Writer::default();
-    writer.write_primitives(&options.primitive, 100);
+    writer.write_primitives(&options.primitive, options.count);
 
     // Output data
     if options.output.to_str().unwrap().is_empty() {
