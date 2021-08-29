@@ -1,7 +1,29 @@
 extern crate clap;
+mod commands;
+mod primitives;
 mod writer;
+
 use clap::{App, Arg};
+use primitives::Primitive;
+use std::path::PathBuf;
 use writer::Writer;
+
+#[derive(Debug)]
+struct Options {
+    svg: bool,
+    primitive: Primitive,
+    output: PathBuf,
+}
+
+impl Default for Options {
+    fn default() -> Self {
+        Options {
+            svg: false,
+            primitive: Primitive::Circle,
+            output: PathBuf::new(),
+        }
+    }
+}
 
 fn main() {
     let matches = App::new("Test data generator")
@@ -23,28 +45,64 @@ fn main() {
                 .takes_value(false),
         )
         .arg(
+            Arg::with_name("count")
+                .help("Select the amount of primitives to output")
+                .short("c")
+                .takes_value(true)
+                .required(false),
+        )
+        .arg(
             Arg::with_name("primitive")
-                .possible_values(&["all", "triangle"])
+                .short("p")
                 .help("Determines the primitive to use")
+                .takes_value(true)
                 .required(true)
                 .index(1),
         )
+        .arg(
+            Arg::with_name("output")
+                .short("o")
+                .help("Select a file name to output")
+                .takes_value(true)
+                .required(false)
+                .index(2),
+        )
         .get_matches();
 
-    // Gets a value for config if supplied by user, or defaults to "default.conf"
+    let mut options = Options::default();
+
+    // Check if SVG is requested
     if matches.is_present("SVG") {
-        println!("SVG");
-    } else {
-        println!("RAW");
+        options.svg = true;
     }
 
-    // Calling .unwrap() is safe here because "INPUT" is required (if "INPUT" wasn't
-    // required we could have used an 'if let' to conditionally get the value)
-    println!(
-        "Using primitive: {}",
-        matches.value_of("primitive").unwrap()
-    );
+    // Get the requested primitive for output
+    let requested_prim = matches.value_of("primitive").unwrap().to_lowercase();
+    options.primitive = match requested_prim.as_str() {
+        "l" | "line" => Primitive::Line,
+        "t" | "triangle" => Primitive::Triangle,
+        "p" | "polygon" => Primitive::Polygon,
+        "c" | "circle" => Primitive::Circle,
+        "e" | "ellipsoid" => Primitive::Ellipsoid,
+        "b" | "bezigon" => Primitive::QuadraticBezigon,
+        "cb" | "cbezigon" => Primitive::CubicBezigon,
+        _ => panic!("Unknown primitive: '{}'", requested_prim),
+    };
 
+    // Get output path
+    if matches.is_present("output") {
+        options.output = PathBuf::from(matches.value_of("output").unwrap());
+    }
+
+    // Print options
+    // TODO - Remove (Used for debug)
+    println!("{:?}", options);
+
+    // Output data
     let writer = Writer::default();
-    println!("Test XML:\n{}", writer.get_document());
+    if options.output.to_str().unwrap().is_empty() {
+        println!("{}", writer.get_document());
+    } else {
+        writer.write_document(options.output.as_path()).unwrap();
+    }
 }
