@@ -54,7 +54,8 @@ impl Writer {
         let padding: f32 = 0.1;
         let offset: f32 = square_size * padding;
         let center: f32 = square_size / 2.0;
-        let line_height: f32 = square_size - (square_size * padding * 2.0);
+        let line_length: f32 = square_size - (square_size * padding * 2.0);
+        let line_thickness: f32 = (VIEW_MAX - VIEW_MIN) as f32 / size as f32 / 5.0f32;
 
         for row in 0..size {
             let x = row as f32 * square_size;
@@ -71,18 +72,19 @@ impl Writer {
                     // Vertical line
                     data.push_str(format!("{} {} ", x + center, y + offset).as_str());
                     data.push_str(commands::LINE_TO);
-                    data.push_str(format!("{} {} ", x + center, y + line_height + offset).as_str());
+                    data.push_str(format!("{} {} ", x + center, y + line_length + offset).as_str());
                 } else {
                     data.push_str(format!("{} {} ", x + offset, y + center).as_str());
                     data.push_str(commands::LINE_TO);
-                    data.push_str(format!("{} {} ", x + line_height + offset, y + center).as_str());
+                    data.push_str(format!("{} {} ", x + line_length + offset, y + center).as_str());
                 }
                 // End line
                 data.push_str(commands::CLOSE_PATH);
 
                 self.xml_writer.write_attribute("d", &data);
                 self.xml_writer.write_attribute("stroke", "black");
-                self.xml_writer.write_attribute("stroke-width", "0.5");
+                self.xml_writer
+                    .write_attribute("stroke-width", &line_thickness);
                 self.xml_writer.end_element();
             }
         }
