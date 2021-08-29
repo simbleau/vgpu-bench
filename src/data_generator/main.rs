@@ -3,10 +3,10 @@ mod commands;
 mod primitives;
 mod writer;
 
+use crate::primitives::Primitive;
+use crate::writer::Writer;
 use clap::{App, Arg};
-use primitives::Primitive;
 use std::path::PathBuf;
-use writer::Writer;
 
 #[derive(Debug)]
 struct Options {
@@ -98,8 +98,11 @@ fn main() {
     // TODO - Remove (Used for debug)
     println!("{:?}", options);
 
+    // Write data
+    let mut writer = Writer::default();
+    writer.write_primitives(&options.primitive, 100);
+
     // Output data
-    let writer = Writer::default();
     if options.output.to_str().unwrap().is_empty() {
         println!("{}", writer.get_document());
     } else {
