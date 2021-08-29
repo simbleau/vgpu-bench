@@ -39,7 +39,7 @@ impl Writer {
     pub fn write_primitives(&mut self, p: &Primitive, count: i32) {
         match p {
             Primitive::Line => self.write_lines(count),
-            Primitive::Triangle => todo!(),
+            Primitive::Triangle => self.write_triangles(count),
             Primitive::Polygon => todo!(),
             Primitive::Circle => todo!(),
             Primitive::Ellipsoid => todo!(),
@@ -85,6 +85,52 @@ impl Writer {
                 self.xml_writer.write_attribute("stroke", "black");
                 self.xml_writer
                     .write_attribute("stroke-width", &line_thickness);
+                self.xml_writer.end_element();
+            }
+        }
+    }
+
+    fn write_triangles(&mut self, count: i32) {
+        let size = (count as f32).sqrt() as i32;
+        let square_size: f32 = (VIEW_MAX - VIEW_MIN) as f32 / size as f32;
+        let padding: f32 = 0.1;
+        let offset: f32 = square_size * padding;
+        let center: f32 = square_size / 2.0;
+        let line_length: f32 = square_size - (square_size * padding * 2.0);
+
+        for row in 0..size {
+            let x = row as f32 * square_size;
+            for col in 0..size {
+                let y = col as f32 * square_size;
+
+                self.xml_writer.start_element("path");
+                // Get data for path
+                let mut data = String::new();
+                // Start line
+                data.push_str(commands::MOVE_TO);
+                // Translate line
+                if (row + col) % 2 == 0 {
+                    // Triange type 1
+                    data.push_str(format!("{} {} ", x + center, y + offset).as_str());
+                    data.push_str(commands::LINE_TO);
+                    data.push_str(format!("{} {} ", x + offset, y + line_length + offset).as_str());
+                    data.push_str(commands::LINE_TO);
+                    data.push_str(
+                        format!("{} {} ", x + offset + line_length, y + line_length + offset)
+                            .as_str(),
+                    );
+                } else {
+                    // Triange type 2
+                    data.push_str(format!("{} {} ", x + center, y + line_length + offset).as_str());
+                    data.push_str(commands::LINE_TO);
+                    data.push_str(format!("{} {} ", x + offset, y + offset).as_str());
+                    data.push_str(commands::LINE_TO);
+                    data.push_str(format!("{} {} ", x + offset + line_length, y + offset).as_str());
+                }
+                // End line
+                data.push_str(commands::CLOSE_PATH);
+
+                self.xml_writer.write_attribute("d", &data);
                 self.xml_writer.end_element();
             }
         }
