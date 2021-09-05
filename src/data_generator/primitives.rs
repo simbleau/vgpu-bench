@@ -173,8 +173,8 @@ impl Primitive {
             Primitive::CubicBezigon => {
                 // Curve for BR quadrant
                 let xy_1 = (0.5f32, 0f32);
-                let xy_2 = (0.5f32, 0.33f32);
-                let xy_3 = (0.0f32, 0.33f32);
+                let xy_2 = (0.5f32, 0.5f32);
+                let xy_3 = (0.0f32, 0.5f32);
                 // Origin
                 r.push(xy_1);
                 // Bottom right quadrant
