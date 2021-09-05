@@ -37,12 +37,11 @@ impl Writer {
         Writer { xml_writer: w }
     }
 
-    pub fn write_primitives(&mut self, primitive: Primitive, count: i32) {
+    pub fn write_primitives(&mut self, primitive: Primitive, count: i32, rotate: bool) {
         let size: i32 = (count as f32).sqrt() as i32;
         let square_size: f32 = (VIEW_MAX - VIEW_MIN) as f32 / size as f32;
         let padding: f32 = 0.1;
         let offset: f32 = square_size / 2f32;
-        let rotate: bool = false;
 
         // Collect the primitive vertices
         let mut verts = Vec::<f32>::new();
