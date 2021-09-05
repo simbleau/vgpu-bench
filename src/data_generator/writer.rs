@@ -50,7 +50,7 @@ impl Writer {
             for col in 0..size {
                 let y = col as f32 * square_size;
 
-                for (vert_x, vert_y) in &primitive.unit_primitive() {
+                for (vert_x, vert_y) in &primitive.unit() {
                     let mut vx = vert_x.to_owned();
                     let mut vy = vert_y.to_owned();
                     // Rotate the primitive vertices
