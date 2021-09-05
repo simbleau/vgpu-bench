@@ -133,8 +133,8 @@ impl Primitive {
                 r.push(xy_4);
             }
             Primitive::BezierCurve => {
-                let xy_1 = (-0.5f32, 0.5f32);
-                let xy_2 = (0f32, -0.5f32);
+                let xy_1 = (-0.5f32, -0.5f32);
+                let xy_2 = (0.5f32, -0.5f32);
                 let xy_3 = (0.5f32, 0.5f32);
                 r.push(xy_1);
                 r.push(xy_2);
