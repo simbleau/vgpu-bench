@@ -42,7 +42,7 @@ impl Writer {
         let square_size: f32 = (VIEW_MAX - VIEW_MIN) as f32 / size as f32;
         let padding: f32 = 0.1;
         let offset: f32 = square_size / 2f32;
-        let rotate: bool = true;
+        let rotate: bool = false;
 
         // Collect the primitive vertices
         let mut verts = Vec::<f32>::new();

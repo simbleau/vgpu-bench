@@ -22,7 +22,7 @@ impl Default for Options {
     fn default() -> Self {
         Options {
             svg: false,
-            primitive: Primitive::Circle,
+            primitive: Primitive::Line,
             output: PathBuf::new(),
             count: 1,
         }
@@ -86,9 +86,9 @@ fn main() {
         "l" | "line" => Primitive::Line,
         "t" | "triangle" => Primitive::Triangle,
         "p" | "polygon" => Primitive::Polygon,
-        "c" | "circle" => Primitive::Circle,
-        "e" | "ellipsoid" => Primitive::Ellipsoid,
-        "b" | "bezigon" => Primitive::QuadraticBezigon,
+        "c" | "curve" => Primitive::BezierCurve,
+        "cc" | "cubiccurve" => Primitive::CubicBezierCurve,
+        "b" | "bezigon" => Primitive::Bezigon,
         "cb" | "cbezigon" => Primitive::CubicBezigon,
         _ => panic!("Unknown primitive: '{}'", requested_prim),
     };
