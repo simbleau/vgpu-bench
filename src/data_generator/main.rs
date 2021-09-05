@@ -16,6 +16,7 @@ struct Options {
     primitive: Primitive,
     output: PathBuf,
     count: i32,
+    rotate: bool,
 }
 
 impl Default for Options {
@@ -25,6 +26,7 @@ impl Default for Options {
             primitive: Primitive::Line,
             output: PathBuf::new(),
             count: 1,
+            rotate: false,
         }
     }
 }
@@ -39,14 +41,16 @@ fn main() {
                 .short("s")
                 .long("svg")
                 .help("Returns output in SVG format")
-                .takes_value(false),
+                .takes_value(false)
+                .required(false),
         )
         .arg(
-            Arg::with_name("RAW")
+            Arg::with_name("rotate")
                 .short("r")
-                .long("raw")
-                .help("Returns output as raw path data")
-                .takes_value(false),
+                .long("rotate")
+                .help("Rotates all primitives outputted")
+                .takes_value(false)
+                .required(false),
         )
         .arg(
             Arg::with_name("count")
@@ -78,6 +82,11 @@ fn main() {
     // Check if SVG is requested
     if matches.is_present("SVG") {
         options.svg = true;
+    }
+
+    // Check if rotation is requested
+    if matches.is_present("rotate") {
+        options.rotate = true;
     }
 
     // Get the requested primitive for output
@@ -113,7 +122,7 @@ fn main() {
 
     // Write data
     let mut writer = Writer::default();
-    writer.write_primitives(options.primitive, options.count, true);
+    writer.write_primitives(options.primitive, options.count, options.rotate);
 
     // Output data
     if options.output.to_str().unwrap().is_empty() {
