@@ -58,7 +58,7 @@ impl Writer {
                     if rotate {
                         // Pre-processing rotation values here
                         let index = row * size + col + 1;
-                        let theta = index as f32 / (size * size) as f32 * 3.14f32 * 2f32;
+                        let theta = index as f32 / (size * size) as f32 * 3.14f32;
                         let cos_theta = (theta as f32).cos();
                         let sin_theta = (theta as f32).sin();
                         // Rotate points
