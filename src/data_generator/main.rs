@@ -1,4 +1,6 @@
 extern crate clap;
+extern crate dynfmt;
+
 mod commands;
 mod primitives;
 mod writer;
@@ -111,7 +113,7 @@ fn main() {
 
     // Write data
     let mut writer = Writer::default();
-    writer.write_primitives(&options.primitive, options.count);
+    writer.write_primitives(options.primitive, options.count);
 
     // Output data
     if options.output.to_str().unwrap().is_empty() {

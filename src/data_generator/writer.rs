@@ -1,8 +1,9 @@
 extern crate xmlwriter;
+use dynfmt::{Format, SimpleCurlyFormat};
 use std::{fs::File, io::Write, path::Path};
 use xmlwriter::*;
 
-use crate::{commands, primitives::Primitive};
+use crate::primitives::Primitive;
 
 const VIEW_MIN: i32 = 0;
 const VIEW_MAX: i32 = 100;
@@ -36,101 +37,82 @@ impl Writer {
         Writer { xml_writer: w }
     }
 
-    pub fn write_primitives(&mut self, p: &Primitive, count: i32) {
-        match p {
-            Primitive::Line => self.write_lines(count),
-            Primitive::Triangle => self.write_triangles(count),
-            Primitive::Polygon => todo!(),
-            Primitive::Circle => todo!(),
-            Primitive::Ellipsoid => todo!(),
-            Primitive::QuadraticBezigon => todo!(),
-            Primitive::CubicBezigon => todo!(),
-        };
-    }
-
-    fn write_lines(&mut self, count: i32) {
-        let size = (count as f32).sqrt() as i32;
+    pub fn write_primitives(&mut self, primitive: Primitive, count: i32) {
+        let size: i32 = (count as f32).sqrt() as i32;
         let square_size: f32 = (VIEW_MAX - VIEW_MIN) as f32 / size as f32;
         let padding: f32 = 0.1;
-        let offset: f32 = square_size * padding;
-        let center: f32 = square_size / 2.0;
-        let line_length: f32 = square_size - (square_size * padding * 2.0);
-        let line_thickness: f32 = (VIEW_MAX - VIEW_MIN) as f32 / size as f32 / 5.0f32;
+        let offset: f32 = square_size / 2f32;
+        let rotate: bool = true;
 
+        // Collect the primitive vertices
+        let mut verts = Vec::<f32>::new();
         for row in 0..size {
             let x = row as f32 * square_size;
             for col in 0..size {
                 let y = col as f32 * square_size;
 
-                self.xml_writer.start_element("path");
-                // Get data for path
-                let mut data = String::new();
-                // Start line
-                data.push_str(commands::MOVE_TO);
-                // Translate line
-                if (row + col) % 2 == 0 {
-                    // Vertical line
-                    data.push_str(format!("{} {} ", x + center, y + offset).as_str());
-                    data.push_str(commands::LINE_TO);
-                    data.push_str(format!("{} {} ", x + center, y + line_length + offset).as_str());
-                } else {
-                    data.push_str(format!("{} {} ", x + offset, y + center).as_str());
-                    data.push_str(commands::LINE_TO);
-                    data.push_str(format!("{} {} ", x + line_length + offset, y + center).as_str());
-                }
-                // End line
-                data.push_str(commands::CLOSE_PATH);
+                for (vert_x, vert_y) in &primitive.unit_primitive() {
+                    let mut vx = vert_x.to_owned();
+                    let mut vy = vert_y.to_owned();
+                    // Rotate the primitive vertices
+                    if rotate {
+                        // Pre-processing rotation values here
+                        let index = row * size + col + 1;
+                        let theta = index as f32 / (size * size) as f32 * 3.14f32 * 2f32;
+                        let cos_theta = (theta as f32).cos();
+                        let sin_theta = (theta as f32).sin();
+                        // Rotate points
+                        vx = vert_x * cos_theta - vert_y * sin_theta;
+                        vy = vert_y * cos_theta + vert_x * sin_theta;
+                    }
 
-                self.xml_writer.write_attribute("d", &data);
-                self.xml_writer.write_attribute("stroke", "black");
-                self.xml_writer
-                    .write_attribute("stroke-width", &line_thickness);
-                self.xml_writer.end_element();
+                    // Scale vertices
+                    vx *= square_size * (1f32 - padding * 3f32);
+                    vy *= square_size * (1f32 - padding * 3f32);
+
+                    // Offset the vertices to their position in the grid
+                    vx += x + offset;
+                    vy += y + offset;
+
+                    verts.push(vx);
+                    verts.push(vy);
+                }
             }
         }
-    }
 
-    fn write_triangles(&mut self, count: i32) {
-        let size = (count as f32).sqrt() as i32;
-        let square_size: f32 = (VIEW_MAX - VIEW_MIN) as f32 / size as f32;
-        let padding: f32 = 0.1;
-        let offset: f32 = square_size * padding;
-        let center: f32 = square_size / 2.0;
-        let line_length: f32 = square_size - (square_size * padding * 2.0);
-
+        // Write the data
         for row in 0..size {
-            let x = row as f32 * square_size;
             for col in 0..size {
-                let y = col as f32 * square_size;
-
                 self.xml_writer.start_element("path");
-                // Get data for path
-                let mut data = String::new();
-                // Start line
-                data.push_str(commands::MOVE_TO);
-                // Translate line
-                if (row + col) % 2 == 0 {
-                    // Triange type 1
-                    data.push_str(format!("{} {} ", x + center, y + offset).as_str());
-                    data.push_str(commands::LINE_TO);
-                    data.push_str(format!("{} {} ", x + offset, y + line_length + offset).as_str());
-                    data.push_str(commands::LINE_TO);
-                    data.push_str(
-                        format!("{} {} ", x + offset + line_length, y + line_length + offset)
-                            .as_str(),
-                    );
-                } else {
-                    // Triange type 2
-                    data.push_str(format!("{} {} ", x + center, y + line_length + offset).as_str());
-                    data.push_str(commands::LINE_TO);
-                    data.push_str(format!("{} {} ", x + offset, y + offset).as_str());
-                    data.push_str(commands::LINE_TO);
-                    data.push_str(format!("{} {} ", x + offset + line_length, y + offset).as_str());
-                }
-                // End line
-                data.push_str(commands::CLOSE_PATH);
 
+                // Build the path data
+
+                // The index where vertices for this primitive begin
+                let group_start: usize = (row * size + col) as usize;
+
+                // Get the vertices as formatting arguments
+                let artifacts = primitive.vertices() * 2; // 2D points have 2 parts
+                let mut arg_buffer: Vec<f32> = vec![0f32; artifacts];
+                for i in 0..artifacts {
+                    *arg_buffer.get_mut(i).unwrap() = verts[group_start * artifacts + i];
+                }
+                let args = arg_buffer.as_slice();
+
+                // Format the path data
+                let template = &primitive.path_data_template();
+                let data = SimpleCurlyFormat.format(template, args).unwrap();
+
+                // Attach the path data
                 self.xml_writer.write_attribute("d", &data);
+
+                // Specific rules for primitives
+                if let Primitive::Line = primitive {
+                    self.xml_writer.write_attribute("stroke", "black");
+                    let line_thickness: f32 = (VIEW_MAX - VIEW_MIN) as f32 / size as f32 / 5.0f32;
+                    self.xml_writer
+                        .write_attribute("stroke-width", &line_thickness);
+                }
+
                 self.xml_writer.end_element();
             }
         }
