@@ -67,8 +67,8 @@ impl Writer {
                     }
 
                     // Scale vertices
-                    vx *= square_size * (1f32 - padding * 3f32);
-                    vy *= square_size * (1f32 - padding * 3f32);
+                    vx *= square_size * (1f32 - padding * 4f32);
+                    vy *= square_size * (1f32 - padding * 4f32);
 
                     // Offset the vertices to their position in the grid
                     vx += x + offset;
