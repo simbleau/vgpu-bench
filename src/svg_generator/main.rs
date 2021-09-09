@@ -12,7 +12,6 @@ use std::path::PathBuf;
 
 #[derive(Debug)]
 struct Options {
-    svg: bool,
     primitive: Primitive,
     output: PathBuf,
     count: i32,
@@ -22,7 +21,6 @@ struct Options {
 impl Default for Options {
     fn default() -> Self {
         Options {
-            svg: false,
             primitive: Primitive::Line,
             output: PathBuf::new(),
             count: 1,
@@ -36,14 +34,6 @@ fn main() {
         .version("1.0")
         .author("Spencer C. Imbleau <spencer@imbleau.com>")
         .about("Generates test data files based on given parameters.")
-        .arg(
-            Arg::with_name("SVG")
-                .short("s")
-                .long("svg")
-                .help("Returns output in SVG format")
-                .takes_value(false)
-                .required(false),
-        )
         .arg(
             Arg::with_name("rotate")
                 .short("r")
@@ -78,11 +68,6 @@ fn main() {
         .get_matches();
 
     let mut options = Options::default();
-
-    // Check if SVG is requested
-    if matches.is_present("SVG") {
-        options.svg = true;
-    }
 
     // Check if rotation is requested
     if matches.is_present("rotate") {
