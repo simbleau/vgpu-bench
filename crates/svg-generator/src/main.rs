@@ -88,9 +88,9 @@ fn main() {
         "t" | "triangle" => Primitive::Triangle,
         "p" | "polygon" => Primitive::Polygon,
         "c" | "curve" => Primitive::BezierCurve,
-        "cc" | "cubiccurve" => Primitive::CubicBezierCurve,
+        "cc" | "cubic-curve" => Primitive::CubicBezierCurve,
         "b" | "bezigon" => Primitive::Bezigon,
-        "cb" | "cbezigon" => Primitive::CubicBezigon,
+        "cb" | "cubic-bezigon" => Primitive::CubicBezigon,
         _ => panic!("Unknown primitive: '{}'", requested_prim),
     };
 
