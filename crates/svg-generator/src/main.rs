@@ -30,14 +30,14 @@ impl Default for Options {
 }
 
 fn main() {
-    let matches = App::new("Test data generator")
+    let matches = App::new("SVG file generator")
         .version("1.0")
         .author("Spencer C. Imbleau <spencer@imbleau.com>")
         .about("Generates SVG files for given shapes and parameters.")
         .arg(
             Arg::with_name("verbose")
                 .short("v")
-                .help("Sets the level of verbosity")
+                .help("Print verbose information")
                 .takes_value(false)
                 .required(false),
         )
