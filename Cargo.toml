@@ -19,8 +19,8 @@ name = "lyon"
 path = "src/lyon/main.rs"
 
 [[bin]]
-name = "data-generator"
-path = "src/data_generator/main.rs"
+name = "svg-generator"
+path = "src/svg_generator/main.rs"
 
 [dependencies]
 lyon = {version ="0.17.5", features = ["extra"]}
