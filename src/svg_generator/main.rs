@@ -33,7 +33,14 @@ fn main() {
     let matches = App::new("Test data generator")
         .version("1.0")
         .author("Spencer C. Imbleau <spencer@imbleau.com>")
-        .about("Generates test data files based on given parameters.")
+        .about("Generates SVG files for given shapes and parameters.")
+        .arg(
+            Arg::with_name("verbose")
+                .short("v")
+                .help("Sets the level of verbosity")
+                .takes_value(false)
+                .required(false),
+        )
         .arg(
             Arg::with_name("rotate")
                 .short("r")
@@ -101,9 +108,10 @@ fn main() {
         options.output = PathBuf::from(matches.value_of("output").unwrap());
     }
 
-    // Print options
-    // TODO - Remove (Used for debug)
-    println!("{:?}", options);
+    // Print debug options
+    if matches.is_present("verbose") {
+        println!("{:?}", options);
+    }
 
     // Write data
     let mut writer = Writer::default();
