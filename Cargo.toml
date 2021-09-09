@@ -1,6 +1,6 @@
 [package]
 name = "vgpu-bench"
-description = "A testing suite for GPU-based vector graphics"
+description = "A testing framework for vector graphic rendering libraries"
 version = "0.1.0"
 authors = ["Spencer Imbleau <spencer@imbleau.com>"]
 edition = "2018"
@@ -14,24 +14,9 @@ exclude = [
     "tests/",
 ]
 
-[[bin]]
-name = "lyon"
-path = "src/lyon/main.rs"
-
-[[bin]]
-name = "svg-generator"
-path = "src/svg_generator/main.rs"
+[workspace]
+members = ["crates/tessellator", "crates/svg-generator"]
 
 [dependencies]
-lyon = {version ="0.17.5", features = ["extra"]}
-clap = "2.33.3"
-wgpu = "0.9.0"
-winit = "0.25"
-usvg = "0.15.0"
-futures = "0.3.5"
-bytemuck = "1.2.0"
-env_logger = "0.9.0"
-xmlwriter = "0.1.0"
-dynfmt = {version = "0.1.5", features = ["curly"]}
 
 [dev-dependencies]

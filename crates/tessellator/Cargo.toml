@@ -1,0 +1,22 @@
+[package]
+name = "tessellator"
+description = "Tessellate SVG data into triangles using Lyon"
+version = "0.1.0"
+authors = ["Spencer Imbleau <spencer@imbleau.com>"]
+keywords = ["svg", "tessellation", "triangulation"]
+edition = "2018"
+license = "MIT OR Apache-2.0"
+repository = "https://github.com/simbleau/vgpu-bench"
+workspace = "../.."
+
+[dependencies]
+lyon = {version ="0.17.5", features = ["extra"]}
+clap = "2.33.3"
+wgpu = "0.9.0"
+winit = "0.25"
+usvg = "0.15.0"
+futures = "0.3.5"
+bytemuck = "1.2.0"
+env_logger = "0.9.0"
+
+[dev-dependencies]
