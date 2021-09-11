@@ -1,3 +1,5 @@
+#!/bin/bash
+
 # Check if the executable has been built.
 binary_path="../../../target/debug/svg-generator"
 if [ ! -f $binary_path ]; then
@@ -22,4 +24,3 @@ do
     echo "Done"
 done
 echo "All files saved to '$output_dir'."
-

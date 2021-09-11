@@ -1,3 +1,5 @@
+#!/bin/bash
+
 # Check if the executable has been built.
 binary_path="../../../target/debug/svg-generator"
 if [ ! -f $binary_path ]; then
@@ -5,7 +7,7 @@ if [ ! -f $binary_path ]; then
     exit 1
 fi
 
-# Get the source for an SVG file with 1 line.
+# Generate an SVG source for 1 line.
 #
 # Verbose: On
 # Rotation: Off (default)
