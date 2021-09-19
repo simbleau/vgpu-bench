@@ -1,7 +1,8 @@
-use std::{cell::RefCell, rc::Rc};
+use std::{cell::RefCell, fs, io, path::PathBuf, rc::Rc};
 
 use lyon_tessellator::LyonTessellator;
 use tess_lib::TessellationTarget;
+use walkdir::WalkDir;
 
 mod lyon_tessellator;
 mod tess_lib;
@@ -16,11 +17,10 @@ pub fn analyze() {
     //
     // TODO: Tessellation time vs. primitives
 
-    let tessellator = LyonTessellator::new();
-    let tess_rc = Rc::new(RefCell::new(tessellator));
+    let tessellator = Rc::new(RefCell::new(LyonTessellator::new()));
     let mut target = TessellationTarget {
-        tessellator: tess_rc.clone(),
-        path: "/home/spencer/School/Thesis/vgpu-bench/assets/ASU.svg".to_string(),
+        tessellator: tessellator.clone(),
+        path: "/home/spencer/School/Thesis/vgpu-bench/assets/Ghostscript_Tiger.svg".to_string(),
     };
     let (t1, t2) = target.time_tessellation();
     println!(
@@ -46,4 +46,33 @@ pub fn analyze() {
     //
     // TODO: Compliance of SVG
     // TODO: Compliance of Path Data
+}
+
+fn get_files<P>(path: P, recursive: bool) -> Result<Vec<PathBuf>, io::Error>
+where
+    P: Into<PathBuf>,
+{
+    let mut walkdir = WalkDir::new(path.into());
+    if !recursive {
+        walkdir = walkdir.max_depth(1);
+    }
+    let files = walkdir
+        .into_iter()
+        .filter_map(|e| e.ok())
+        .filter(|f| f.path().is_file())
+        .map(|p| p.path().to_path_buf())
+        .collect::<Vec<PathBuf>>();
+
+    Ok(files)
+}
+
+#[cfg(test)]
+mod tests {
+    #[test]
+    fn list_files() {
+        use crate::get_files;
+        for file in get_files("assets/", false).unwrap() {
+            println!("{:?}", file);
+        }
+    }
 }
