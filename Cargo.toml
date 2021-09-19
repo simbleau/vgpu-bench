@@ -14,9 +14,20 @@ exclude = [
     "tests/",
 ]
 
+[lib]
+name = "mylib"
+path = "src/lib.rs"
+
+[[bin]]
+name = "mybin"
+path = "src/bin.rs"
+
 [workspace]
 members = ["crates/tessellator", "crates/svg-generator"]
 
 [dependencies]
+lyon = {version ="0.17.5", features = ["extra"]}
+usvg = "0.15.0"
+futures = "0.3.5"
 
 [dev-dependencies]
