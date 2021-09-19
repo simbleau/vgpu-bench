@@ -1,26 +1,23 @@
 use std::{
-    cell::RefCell,
     error::Error,
-    rc::Rc,
     time::{Duration, Instant},
 };
 
 pub struct TessellationTarget {
-    pub tessellator: Rc<RefCell<dyn Tessellator>>,
     pub path: String,
 }
 
 impl TessellationTarget {
-    pub fn time_tessellation(&mut self) -> (Duration, Duration) {
+    pub fn time_tessellation(&mut self, mut t: Box<dyn Tessellator>) -> (Duration, Duration) {
         // Time pre-processing
         let t1 = Instant::now();
-        self.tessellator.borrow_mut().preprocess(&self);
+        t.preprocess(&self);
         let t2 = Instant::now();
         let dur1 = t2.duration_since(t1);
 
         // Time tessellation
         let t1 = Instant::now();
-        self.tessellator.borrow_mut().tessellate().unwrap();
+        t.tessellate().unwrap();
         let t2 = Instant::now();
         let dur2 = t2.duration_since(t1);
 

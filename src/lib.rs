@@ -1,4 +1,4 @@
-use std::{cell::RefCell, fs, io, path::PathBuf, rc::Rc};
+use std::{io, path::PathBuf};
 
 use lyon_tessellator::LyonTessellator;
 use tess_lib::TessellationTarget;
@@ -17,12 +17,11 @@ pub fn analyze() {
     //
     // TODO: Tessellation time vs. primitives
 
-    let tessellator = Rc::new(RefCell::new(LyonTessellator::new()));
+    let tessellator = Box::new(LyonTessellator::new());
     let mut target = TessellationTarget {
-        tessellator: tessellator.clone(),
         path: "/home/spencer/School/Thesis/vgpu-bench/assets/Ghostscript_Tiger.svg".to_string(),
     };
-    let (t1, t2) = target.time_tessellation();
+    let (t1, t2) = target.time_tessellation(tessellator);
     println!(
         "Pre-processing: {}ms\nTessellation: {}ms",
         t1.as_millis(),
