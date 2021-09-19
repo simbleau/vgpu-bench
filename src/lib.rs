@@ -1,11 +1,9 @@
 use std::{io, path::PathBuf};
 
-use lyon_tessellator::LyonTessellator;
-use tess_lib::TessellationTarget;
-use walkdir::WalkDir;
+extern crate tess;
 
-mod lyon_tessellator;
-mod tess_lib;
+use tess::{LyonTessellator, TessellationTarget, Tessellator};
+use walkdir::WalkDir;
 
 pub fn analyze() {
     let debug = true;
@@ -15,18 +13,40 @@ pub fn analyze() {
 
     // Goal A: Tessellation Analysis
     //
-    // TODO: Tessellation time vs. primitives
+    // Tessellation time vs. primitives
+    // impl Iterator<Item = Box<dyn &Tessellator>>
+    let mut csv_wtr = csv::Writer::from_writer(io::stdout());
+    csv_wtr
+        .write_record(&["tessellator", "file", "prep time", "tessellation time"])
+        .unwrap();
 
-    let tessellator = Box::new(LyonTessellator::new());
-    let mut target = TessellationTarget {
-        path: "/home/spencer/School/Thesis/vgpu-bench/assets/Ghostscript_Tiger.svg".to_string(),
-    };
-    let (t1, t2) = target.time_tessellation(tessellator);
-    println!(
-        "Pre-processing: {}ms\nTessellation: {}ms",
-        t1.as_millis(),
-        t2.as_millis()
-    );
+    let mut lyon = LyonTessellator::new();
+    let tessellators: Vec<Box<&mut dyn Tessellator>> = vec![Box::new(&mut lyon)];
+
+    let files = get_files("assets/", false).unwrap();
+
+    for tessellator in tessellators {
+        let col1_name = tessellator.name();
+        let tesser: &mut dyn Tessellator = *tessellator;
+        for file in &files {
+            let mut target = TessellationTarget {
+                path: file.to_path_buf(),
+            };
+            let (t1, t2) = target.time_tessellation(Box::new(tesser));
+            let col2_filename = file.file_name().unwrap().to_str().unwrap().to_owned();
+            let col3_prep_time = t1.as_millis().to_string();
+            let col4_tess_time = t2.as_millis().to_string();
+            csv_wtr
+                .write_record(&[
+                    col1_name.to_owned(),
+                    col2_filename,
+                    col3_prep_time,
+                    col4_tess_time,
+                ])
+                .unwrap();
+        }
+    }
+    csv_wtr.flush().unwrap();
 
     // TODO: Render time of flattened primitives
     // TODO: Render time of hundreds of flattened real world examples

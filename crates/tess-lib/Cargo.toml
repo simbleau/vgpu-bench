@@ -1,0 +1,14 @@
+[package]
+name = "tess_lib"
+description = "Library for tessellation benching"
+version = "0.1.0"
+authors = ["Spencer Imbleau <spencer@imbleau.com>"]
+edition = "2018"
+license = "MIT OR Apache-2.0"
+repository = "https://github.com/simbleau/vgpu-bench"
+workspace = "../.."
+
+[dependencies]
+lyon = {version ="0.17.5", features = ["extra"]}
+usvg = "0.15.0"
+futures = "0.3.5"

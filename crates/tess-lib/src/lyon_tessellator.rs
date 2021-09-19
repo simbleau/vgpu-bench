@@ -7,7 +7,7 @@ use usvg::{prelude::*, Tree, ViewBox};
 use std::error::Error;
 use std::f64::NAN;
 
-use crate::tess_lib::{TessellationTarget, Tessellator};
+use crate::{TessellationTarget, Tessellator};
 
 pub const FALLBACK_COLOR: usvg::Color = usvg::Color {
     red: 0,
@@ -34,6 +34,10 @@ impl LyonTessellator {
 }
 
 impl Tessellator for LyonTessellator {
+    fn name(&self) -> &'static str {
+        "Lyon"
+    }
+
     fn preprocess(&mut self, t: &TessellationTarget) {
         let opt = usvg::Options::default();
         let file_data = std::fs::read(t.path.clone()).unwrap();

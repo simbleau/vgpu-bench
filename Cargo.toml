@@ -23,12 +23,15 @@ name = "mybin"
 path = "src/bin.rs"
 
 [workspace]
-members = ["crates/tessellator", "crates/svg-generator"]
+members = ["crates/tessellator", "crates/svg-generator", "crates/tess-lib"]
 
 [dependencies]
-lyon = {version ="0.17.5", features = ["extra"]}
+tess = { package = "tess_lib", path = "crates/tess-lib" }
+lyon = { version ="0.17.5", features = ["extra"] }
 usvg = "0.15.0"
 futures = "0.3.5"
 walkdir = "2"
+csv = "1.1"
+
 
 [dev-dependencies]

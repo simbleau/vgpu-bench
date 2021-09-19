@@ -1,14 +1,18 @@
+mod lyon_tessellator;
+pub use lyon_tessellator::LyonTessellator;
+
 use std::{
     error::Error,
+    path::PathBuf,
     time::{Duration, Instant},
 };
 
 pub struct TessellationTarget {
-    pub path: String,
+    pub path: PathBuf,
 }
 
 impl TessellationTarget {
-    pub fn time_tessellation(&mut self, mut t: Box<dyn Tessellator>) -> (Duration, Duration) {
+    pub fn time_tessellation(&mut self, t: Box<&mut dyn Tessellator>) -> (Duration, Duration) {
         // Time pre-processing
         let t1 = Instant::now();
         t.preprocess(&self);
@@ -27,6 +31,7 @@ impl TessellationTarget {
 }
 
 pub trait Tessellator {
+    fn name(&self) -> &'static str;
     fn preprocess(&mut self, t: &TessellationTarget);
     fn tessellate(&mut self) -> Result<(i32, i32), Box<dyn Error>>;
 }
