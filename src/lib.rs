@@ -1,7 +1,7 @@
 use const_format::concatcp;
 
 extern crate tess;
-const OUTPUT_FOLDER_NAME: &'static str = "output/";
+const OUTPUT_FOLDER_NAME: &'static str = "output/data/";
 const ASSETS_FOLDER_NAME: &'static str = "assets/";
 const SVG_PRIMITIVES_FOLDER_NAME: &'static str = concatcp![ASSETS_FOLDER_NAME, "svg-primitives/"];
 
@@ -16,8 +16,10 @@ pub fn analyze() {
     // Tessellation time vs. primitives
     let svg_dir = SVG_PRIMITIVES_FOLDER_NAME;
     let output_file = concatcp![OUTPUT_FOLDER_NAME, "tess_primitives.csv"];
-    println!("Input:{}\nOutput:{}", svg_dir, output_file);
+    print!("Benching primitive tessellation...");
     tess::benching::write_time_tessellation(svg_dir, output_file).unwrap();
+    println!("Complete.");
+    println!("\tOutput to {}", output_file);
     // TODO: Render time of flattened primitives
     // TODO: Render time of hundreds of flattened real world examples
     // TODO: Tessellation tolerance vs. error
@@ -35,4 +37,6 @@ pub fn analyze() {
     //
     // TODO: Compliance of SVG
     // TODO: Compliance of Path Data
+
+    println!("Analysis Complete.")
 }
