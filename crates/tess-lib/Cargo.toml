@@ -12,3 +12,6 @@ workspace = "../.."
 lyon = {version ="0.17.5", features = ["extra"]}
 usvg = "0.15.0"
 futures = "0.3.5"
+serde = { version = "1.0.55", features = ["derive"] }
+walkdir = "2"
+csv = "1.1"

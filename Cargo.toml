@@ -26,6 +26,7 @@ path = "src/bin.rs"
 members = ["crates/tessellator", "crates/svg-generator", "crates/tess-lib"]
 
 [dependencies]
+const_format = "0.2.21"
 tess = { package = "tess_lib", path = "crates/tess-lib" }
 lyon = { version ="0.17.5", features = ["extra"] }
 usvg = "0.15.0"
