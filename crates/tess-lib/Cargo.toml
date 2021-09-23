@@ -10,6 +10,7 @@ workspace = "../.."
 
 [dependencies]
 lyon = {version ="0.17.5", features = ["extra"]}
+svg-gen = { package = "svg-generator", path = "../svg-generator" }
 usvg = "0.15.0"
 futures = "0.3.5"
 serde = { version = "1.0.55", features = ["derive"] }
