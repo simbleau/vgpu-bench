@@ -13,6 +13,13 @@ pub fn analyze() {
 
     // Goal A: Tessellation Analysis
     //
+    // Profile of artifacts
+    let svg_dir = SVG_PRIMITIVES_FOLDER_NAME;
+    let output_file = concatcp![OUTPUT_FOLDER_NAME, "tess_data.csv"];
+    print!("Profiling primitive tessellation...");
+    tess::benching::profile_svgs(svg_dir, output_file).unwrap();
+    println!("Complete.");
+    println!("\tOutput to {}", output_file);
     // Tessellation time vs. primitives
     let svg_dir = SVG_PRIMITIVES_FOLDER_NAME;
     let output_file = concatcp![OUTPUT_FOLDER_NAME, "tess_primitives.csv"];
