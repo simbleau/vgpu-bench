@@ -101,16 +101,15 @@ fn main() {
         println!("{:?}", options);
     }
 
-    // Get output path
     if matches.is_present("output") {
-        // Write file
+        // Get output path
         let output = PathBuf::from(matches.value_of("output").unwrap());
+        // Write file
         svg_generator::output_svg(options.primitive, options.count, options.rotate, &output)
             .unwrap();
     } else {
-        println!(
-            "{}",
-            svg_generator::generate_svg(options.primitive, options.count, options.rotate)
-        );
+        // Write to stdout
+        let source = svg_generator::generate_svg(options.primitive, options.count, options.rotate);
+        println!("{}", source);
     }
 }
