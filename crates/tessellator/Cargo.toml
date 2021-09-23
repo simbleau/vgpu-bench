@@ -14,7 +14,7 @@ lyon = {version ="0.17.5", features = ["extra"]}
 clap = "2.33.3"
 wgpu = "0.9.0"
 winit = "0.25"
-usvg = "0.15.0"
+usvg = "0.18.0"
 futures = "0.3.5"
 bytemuck = "1.2.0"
 env_logger = "0.9.0"

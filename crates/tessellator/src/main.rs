@@ -3,7 +3,7 @@ use lyon::math::Point;
 use lyon::path::PathEvent;
 use lyon::tessellation::geometry_builder::*;
 use lyon::tessellation::{self, FillOptions, FillTessellator, StrokeOptions, StrokeTessellator};
-use usvg::prelude::*;
+use usvg::NodeExt;
 use winit::dpi::PhysicalSize;
 use winit::event::{ElementState, Event, KeyboardInput, VirtualKeyCode, WindowEvent};
 use winit::event_loop::{ControlFlow, EventLoop};
@@ -21,6 +21,7 @@ pub const FALLBACK_COLOR: usvg::Color = usvg::Color {
     red: 0,
     green: 0,
     blue: 0,
+    alpha: 0,
 };
 
 // This example renders a very tiny subset of SVG (only filled and stroke paths with solid color
@@ -92,7 +93,7 @@ fn main() {
 
     let opt = usvg::Options::default();
     let file_data = std::fs::read(filename).unwrap();
-    let rtree = usvg::Tree::from_data(&file_data, &opt).unwrap();
+    let rtree = usvg::Tree::from_data(&file_data, &opt.to_ref()).unwrap();
     let mut transforms = Vec::new();
     let mut primitives = Vec::new();
 

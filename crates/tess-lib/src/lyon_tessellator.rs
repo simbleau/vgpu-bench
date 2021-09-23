@@ -2,7 +2,7 @@ use lyon::math::Point;
 use lyon::path::PathEvent;
 use lyon::tessellation::geometry_builder::*;
 use lyon::tessellation::{self, FillOptions, FillTessellator, StrokeOptions, StrokeTessellator};
-use usvg::{prelude::*, Tree, ViewBox};
+use usvg::{NodeExt, Tree, ViewBox};
 
 use std::error::Error;
 use std::f64::NAN;
@@ -14,6 +14,7 @@ pub const FALLBACK_COLOR: usvg::Color = usvg::Color {
     red: 0,
     green: 0,
     blue: 0,
+    alpha: 0,
 };
 
 pub struct LyonState {
@@ -43,7 +44,7 @@ impl Tessellator for LyonTessellator {
         let opt = usvg::Options::default();
         let file_data = t.content.as_bytes();
 
-        let rtree = usvg::Tree::from_data(&file_data, &opt).unwrap();
+        let rtree = usvg::Tree::from_data(&file_data, &opt.to_ref()).unwrap();
         let view_box = rtree.svg_node().view_box;
 
         let transforms = Vec::new();
