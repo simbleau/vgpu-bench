@@ -120,12 +120,4 @@ impl Writer {
     pub fn get_document(self) -> String {
         self.xml_writer.end_document()
     }
-
-    #[allow(dead_code)]
-    pub fn write_document(self, path: &Path) -> Result<(), std::io::Error> {
-        let mut file = File::create(path)?;
-        let contents = self.xml_writer.end_document();
-        file.write_all(contents.as_bytes())?;
-        Ok(())
-    }
 }
