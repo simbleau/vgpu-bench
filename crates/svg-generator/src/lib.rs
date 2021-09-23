@@ -25,5 +25,5 @@ pub fn output_svg(primitive: Primitive, count: i32, rotate: bool, path: PathBuf)
         writer.write_primitives(primitive, count, rotate);
     
         // Return document    
-        Ok(writer.write_document(path)?)
+        Ok(writer.write_document(&path)?)
 }
