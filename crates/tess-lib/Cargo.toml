@@ -1,5 +1,5 @@
 [package]
-name = "tess_lib"
+name = "tess-lib"
 description = "Library for tessellation benching"
 version = "0.1.0"
 authors = ["Spencer Imbleau <spencer@imbleau.com>"]

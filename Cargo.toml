@@ -27,7 +27,8 @@ members = ["crates/tessellator", "crates/svg-generator", "crates/tess-lib"]
 
 [dependencies]
 const_format = "0.2.21"
-tess = { package = "tess_lib", path = "crates/tess-lib" }
+tess = { package = "tess-lib", path = "crates/tess-lib" }
+svg-gen = { package = "svg-generator", path = "crates/svg-generator" }
 lyon = { version ="0.17.5", features = ["extra"] }
 usvg = "0.15.0"
 futures = "0.3.5"
