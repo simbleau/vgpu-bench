@@ -21,13 +21,16 @@ where
             let mut target = TessellationTarget {
                 path: file.to_path_buf(),
             };
-            let (t1, t2) = target.time_tessellation(Box::new(tesselator));
+            let (init_time, tess_time, vertices, indices) =
+                target.time_tessellation(Box::new(tesselator));
 
             let result = TessellationResult {
                 tessellator: tesselator.name().to_owned(),
                 filename: file.file_name().unwrap().to_str().unwrap().to_owned(),
-                init_time: t1.as_millis().to_string(),
-                tess_time: t2.as_millis().to_string(),
+                vertices,
+                indices,
+                init_time: init_time.as_millis() as i32,
+                tess_time: tess_time.as_millis() as i32,
             };
             csv_wtr.serialize(result)?;
         }

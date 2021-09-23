@@ -9,7 +9,10 @@ pub struct TessellationTarget {
 }
 
 impl TessellationTarget {
-    pub fn time_tessellation(&mut self, t: Box<&mut dyn Tessellator>) -> (Duration, Duration) {
+    pub fn time_tessellation(
+        &mut self,
+        t: Box<&mut dyn Tessellator>,
+    ) -> (Duration, Duration, i32, i32) {
         // Time pre-processing
         let t1 = Instant::now();
         t.init(&self);
@@ -18,11 +21,11 @@ impl TessellationTarget {
 
         // Time tessellation
         let t1 = Instant::now();
-        t.tessellate().unwrap();
+        let (vertices, indices) = t.tessellate().unwrap();
         let t2 = Instant::now();
         let dur2 = t2.duration_since(t1);
 
         // Return duration passed
-        (dur1, dur2)
+        (dur1, dur2, vertices, indices)
     }
 }
