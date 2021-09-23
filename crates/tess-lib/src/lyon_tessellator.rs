@@ -38,7 +38,7 @@ impl Tessellator for LyonTessellator {
         "Lyon"
     }
 
-    fn preprocess(&mut self, t: &TessellationTarget) {
+    fn init(&mut self, t: &TessellationTarget) {
         let opt = usvg::Options::default();
         let file_data = std::fs::read(t.path.clone()).unwrap();
 

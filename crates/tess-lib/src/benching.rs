@@ -26,7 +26,7 @@ where
             let result = TessellationResult {
                 tessellator: tesselator.name().to_owned(),
                 filename: file.file_name().unwrap().to_str().unwrap().to_owned(),
-                prep_time: t1.as_millis().to_string(),
+                init_time: t1.as_millis().to_string(),
                 tess_time: t2.as_millis().to_string(),
             };
             csv_wtr.serialize(result)?;

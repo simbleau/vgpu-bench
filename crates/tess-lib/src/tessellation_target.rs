@@ -12,7 +12,7 @@ impl TessellationTarget {
     pub fn time_tessellation(&mut self, t: Box<&mut dyn Tessellator>) -> (Duration, Duration) {
         // Time pre-processing
         let t1 = Instant::now();
-        t.preprocess(&self);
+        t.init(&self);
         let t2 = Instant::now();
         let dur1 = t2.duration_since(t1);
 
