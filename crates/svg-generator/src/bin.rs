@@ -1,15 +1,9 @@
 extern crate clap;
 extern crate dynfmt;
 
-mod commands;
-mod primitives;
-mod writer;
-mod lib;
-
-use crate::primitives::Primitive;
-use crate::writer::Writer;
 use clap::{App, Arg};
 use std::path::PathBuf;
+use svg_generator::Primitive;
 
 #[derive(Debug)]
 struct Options {
@@ -106,13 +100,14 @@ fn main() {
     if matches.is_present("verbose") {
         println!("{:?}", options);
     }
-    
+
     // Get output path
     if matches.is_present("output") {
         // Write file
         let output = PathBuf::from(matches.value_of("output").unwrap());
-        lib::output_svg(options.primitive, options.count, options.rotate, output).unwrap();
+        svg_generator::output_svg(options.primitive, options.count, options.rotate, &output)
+            .unwrap();
     } else {
-        lib::generate_svg(options.primitive, options.count, options.rotate);
+        svg_generator::generate_svg(options.primitive, options.count, options.rotate);
     }
 }

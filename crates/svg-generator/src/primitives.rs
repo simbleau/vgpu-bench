@@ -1,6 +1,14 @@
 #![allow(dead_code)]
 
-use crate::commands;
+// Commands
+pub const MOVE_TO: &str = "M";
+pub const LINE_TO: &str = "L";
+pub const HORIZONTAL_LINE_TO: &str = "H";
+pub const VERTICAL_LINE_TO: &str = "V";
+pub const CUBIC_CURVE_TO: &str = "C";
+pub const QUADRATIC_CURVE_TO: &str = "Q";
+pub const ELLIPTICAL_ARC_TO: &str = "A";
+pub const CLOSE_PATH: &str = "Z";
 
 #[derive(Debug)]
 pub enum Primitive {
@@ -35,63 +43,63 @@ impl Primitive {
         let mut data = String::new();
         match self {
             Primitive::Line => {
-                data.push_str(commands::MOVE_TO);
+                data.push_str(MOVE_TO);
                 data.push_str("{} {} ");
-                data.push_str(commands::LINE_TO);
+                data.push_str(LINE_TO);
                 data.push_str("{} {} ");
-                data.push_str(commands::CLOSE_PATH);
+                data.push_str(CLOSE_PATH);
             }
             Primitive::Triangle => {
-                data.push_str(commands::MOVE_TO);
+                data.push_str(MOVE_TO);
                 data.push_str("{} {} ");
-                data.push_str(commands::LINE_TO);
+                data.push_str(LINE_TO);
                 data.push_str("{} {} ");
-                data.push_str(commands::LINE_TO);
+                data.push_str(LINE_TO);
                 data.push_str("{} {} ");
-                data.push_str(commands::CLOSE_PATH);
+                data.push_str(CLOSE_PATH);
             }
             Primitive::Polygon => {
-                data.push_str(commands::MOVE_TO);
+                data.push_str(MOVE_TO);
                 data.push_str("{} {} ");
-                data.push_str(commands::LINE_TO);
+                data.push_str(LINE_TO);
                 data.push_str("{} {} ");
-                data.push_str(commands::LINE_TO);
+                data.push_str(LINE_TO);
                 data.push_str("{} {} ");
-                data.push_str(commands::LINE_TO);
+                data.push_str(LINE_TO);
                 data.push_str("{} {} ");
-                data.push_str(commands::CLOSE_PATH);
+                data.push_str(CLOSE_PATH);
             }
             Primitive::BezierCurve => {
-                data.push_str(commands::MOVE_TO);
+                data.push_str(MOVE_TO);
                 data.push_str("{} {} ");
-                data.push_str(commands::QUADRATIC_CURVE_TO);
+                data.push_str(QUADRATIC_CURVE_TO);
                 data.push_str("{} {} {} {} ");
-                data.push_str(commands::CLOSE_PATH);
+                data.push_str(CLOSE_PATH);
             }
             Primitive::Bezigon => {
-                data.push_str(commands::MOVE_TO);
+                data.push_str(MOVE_TO);
                 data.push_str("{} {} ");
-                data.push_str(commands::QUADRATIC_CURVE_TO);
+                data.push_str(QUADRATIC_CURVE_TO);
                 data.push_str("{} {} {} {} ");
-                data.push_str(commands::QUADRATIC_CURVE_TO);
+                data.push_str(QUADRATIC_CURVE_TO);
                 data.push_str("{} {} {} {} ");
-                data.push_str(commands::CLOSE_PATH);
+                data.push_str(CLOSE_PATH);
             }
             Primitive::CubicBezierCurve => {
-                data.push_str(commands::MOVE_TO);
+                data.push_str(MOVE_TO);
                 data.push_str("{} {} ");
-                data.push_str(commands::CUBIC_CURVE_TO);
+                data.push_str(CUBIC_CURVE_TO);
                 data.push_str("{} {} {} {} {} {} ");
-                data.push_str(commands::CLOSE_PATH);
+                data.push_str(CLOSE_PATH);
             }
             Primitive::CubicBezigon => {
-                data.push_str(commands::MOVE_TO);
+                data.push_str(MOVE_TO);
                 data.push_str("{} {} ");
-                data.push_str(commands::CUBIC_CURVE_TO);
+                data.push_str(CUBIC_CURVE_TO);
                 data.push_str("{} {} {} {} {} {} ");
-                data.push_str(commands::CUBIC_CURVE_TO);
+                data.push_str(CUBIC_CURVE_TO);
                 data.push_str("{} {} {} {} {} {} ");
-                data.push_str(commands::CLOSE_PATH);
+                data.push_str(CLOSE_PATH);
             }
         }
         data
