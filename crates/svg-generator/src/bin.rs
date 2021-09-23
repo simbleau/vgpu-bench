@@ -108,6 +108,9 @@ fn main() {
         svg_generator::output_svg(options.primitive, options.count, options.rotate, &output)
             .unwrap();
     } else {
-        svg_generator::generate_svg(options.primitive, options.count, options.rotate);
+        println!(
+            "{}",
+            svg_generator::generate_svg(options.primitive, options.count, options.rotate)
+        );
     }
 }
