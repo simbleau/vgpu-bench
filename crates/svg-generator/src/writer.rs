@@ -1,6 +1,5 @@
 extern crate xmlwriter;
 use dynfmt::{Format, SimpleCurlyFormat};
-use std::{fs::File, io::Write, path::Path};
 use xmlwriter::*;
 
 use crate::primitives::Primitive;

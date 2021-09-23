@@ -7,8 +7,7 @@ mod writer;
 
 use crate::primitives::Primitive;
 use crate::writer::Writer;
-use clap::{App, Arg};
-use std::path::PathBuf;
+use std::{fs::File, io::Write, path::Path};
 
 pub fn generate_svg(primitive: Primitive, count: i32, rotate: bool) -> String {
     let mut writer = Writer::default();
