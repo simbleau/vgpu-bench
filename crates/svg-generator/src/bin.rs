@@ -4,6 +4,7 @@ extern crate dynfmt;
 mod commands;
 mod primitives;
 mod writer;
+mod lib;
 
 use crate::primitives::Primitive;
 use crate::writer::Writer;
@@ -13,7 +14,6 @@ use std::path::PathBuf;
 #[derive(Debug)]
 struct Options {
     primitive: Primitive,
-    output: PathBuf,
     count: i32,
     rotate: bool,
 }
@@ -22,7 +22,6 @@ impl Default for Options {
     fn default() -> Self {
         Options {
             primitive: Primitive::Line,
-            output: PathBuf::new(),
             count: 1,
             rotate: false,
         }
@@ -103,24 +102,17 @@ fn main() {
         };
     }
 
-    // Get output path
-    if matches.is_present("output") {
-        options.output = PathBuf::from(matches.value_of("output").unwrap());
-    }
-
     // Print debug options
     if matches.is_present("verbose") {
         println!("{:?}", options);
     }
-
-    // Write data
-    let mut writer = Writer::default();
-    writer.write_primitives(options.primitive, options.count, options.rotate);
-
-    // Output data
-    if options.output.to_str().unwrap().is_empty() {
-        println!("{}", writer.get_document());
+    
+    // Get output path
+    if matches.is_present("output") {
+        // Write file
+        let output = PathBuf::from(matches.value_of("output").unwrap());
+        lib::output_svg(options.primitive, options.count, options.rotate, output).unwrap();
     } else {
-        writer.write_document(options.output.as_path()).unwrap();
+        lib::generate_svg(options.primitive, options.count, options.rotate);
     }
 }

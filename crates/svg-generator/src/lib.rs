@@ -10,7 +10,7 @@ use crate::writer::Writer;
 use clap::{App, Arg};
 use std::path::PathBuf;
 
-fn generate_svg(primitive: Primitive, count: i32, rotate: bool) -> String {
+pub fn generate_svg(primitive: Primitive, count: i32, rotate: bool) -> String {
     // Get data
     let mut writer = Writer::default();
     writer.write_primitives(primitive, count, rotate);
@@ -19,7 +19,7 @@ fn generate_svg(primitive: Primitive, count: i32, rotate: bool) -> String {
     writer.get_document()
 }
 
-fn output_svg(primitive: Primitive, count: i32, rotate: bool, path: PathBuf) -> Result<(), std::io::Error> {
+pub fn output_svg(primitive: Primitive, count: i32, rotate: bool, path: PathBuf) -> Result<(), std::io::Error> {
         // Get data
         let mut writer = Writer::default();
         writer.write_primitives(primitive, count, rotate);
