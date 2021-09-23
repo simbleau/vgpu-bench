@@ -1,36 +1,70 @@
-use crate::{LyonTessellator, TessellationResult, TessellationTarget, Tessellator};
+use crate::artifacts::{SVGProfileResult, TimeResult};
+use crate::targets::{SVGFile, TessellationTarget};
+use crate::{LyonTessellator, Tessellator};
 
 use std::{fs::File, io, path::PathBuf};
 
 use walkdir::WalkDir;
 
+fn backends() -> Vec<Box<dyn Tessellator>> {
+    let mut tessellators: Vec<Box<dyn Tessellator>> = vec![];
+    tessellators.push(Box::new(LyonTessellator::new()));
+    tessellators
+}
+
 pub fn write_time_tessellation<P>(svg_dir: P, output: P) -> Result<(), io::Error>
 where
     P: Into<PathBuf>,
 {
-    let file = File::create(output.into())?;
-    let mut csv_wtr = csv::Writer::from_writer(file);
-    let mut lyon = LyonTessellator::new();
-    let tessellators: Vec<Box<&mut dyn Tessellator>> = vec![Box::new(&mut lyon)];
-
     let files = get_files(svg_dir, false).unwrap();
+    let output_file = File::create(output.into())?;
+    let mut csv_wtr = csv::Writer::from_writer(output_file);
 
-    for tessellator in tessellators {
-        let tesselator: &mut dyn Tessellator = *tessellator; // Unwrap & Shadow
+    // For each backend, tessellate the files
+    for mut backend in backends() {
+        let backend: &mut dyn Tessellator = &mut *backend; // Unwrap & Shadow
+
+        // Tessellate the files and record the results
         for file in &files {
-            let mut target = TessellationTarget {
-                path: file.to_path_buf(),
-            };
-            let (init_time, tess_time, vertices, indices) =
-                target.time_tessellation(Box::new(tesselator));
+            let mut target: SVGFile = file.into();
+            let (init_time, tess_time) = target.time(Box::new(backend));
 
-            let result = TessellationResult {
-                tessellator: tesselator.name().to_owned(),
+            let result = TimeResult {
+                tessellator: backend.name().to_owned(),
+                filename: file.file_name().unwrap().to_str().unwrap().to_owned(),
+                init_time: init_time.as_millis() as i32,
+                tess_time: tess_time.as_millis() as i32,
+            };
+            csv_wtr.serialize(result)?;
+        }
+    }
+    csv_wtr.flush()?;
+
+    Ok(())
+}
+
+pub fn profile_svgs<P>(svg_dir: P, output: P) -> Result<(), io::Error>
+where
+    P: Into<PathBuf>,
+{
+    let files = get_files(svg_dir, false).unwrap();
+    let output_file = File::create(output.into())?;
+    let mut csv_wtr = csv::Writer::from_writer(output_file);
+
+    // For each backend, retrieve the file profiles
+    for mut backend in backends() {
+        let backend: &mut dyn Tessellator = &mut *backend; // Unwrap & Shadow
+
+        // Retrieve the profile from files and record the results
+        for file in &files {
+            let target: SVGFile = file.into();
+            let (vertices, indices) = target.get_data(Box::new(backend));
+
+            let result = SVGProfileResult {
+                tessellator: backend.name().to_owned(),
                 filename: file.file_name().unwrap().to_str().unwrap().to_owned(),
                 vertices,
                 indices,
-                init_time: init_time.as_millis() as i32,
-                tess_time: tess_time.as_millis() as i32,
             };
             csv_wtr.serialize(result)?;
         }

@@ -1,11 +1,8 @@
 mod lyon_tessellator;
 pub use lyon_tessellator::LyonTessellator;
 
-mod tessellation_result;
-pub use tessellation_result::TessellationResult;
-
-mod tessellation_target;
-pub use tessellation_target::TessellationTarget;
+pub mod artifacts;
+pub mod targets;
 
 mod tessellator;
 pub use tessellator::Tessellator;
