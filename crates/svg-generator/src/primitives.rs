@@ -10,7 +10,7 @@ pub const QUADRATIC_CURVE_TO: &str = "Q";
 pub const ELLIPTICAL_ARC_TO: &str = "A";
 pub const CLOSE_PATH: &str = "Z";
 
-#[derive(Debug)]
+#[derive(Debug, Clone, Copy)]
 pub enum Primitive {
     Line,
     Triangle,

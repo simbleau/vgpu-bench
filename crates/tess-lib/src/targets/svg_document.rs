@@ -16,6 +16,17 @@ impl From<&SVGFile> for SVGDocument {
     }
 }
 
+impl<T> From<T> for SVGDocument
+where
+    T: Into<String>,
+{
+    fn from(item: T) -> Self {
+        SVGDocument {
+            content: item.into(),
+        }
+    }
+}
+
 impl TessellationTarget for SVGDocument {
     fn get_data(&self, t: Box<&mut dyn Tessellator>) -> (i32, i32) {
         t.init(&self);

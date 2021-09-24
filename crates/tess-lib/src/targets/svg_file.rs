@@ -21,7 +21,8 @@ impl TessellationTarget for SVGFile {
     }
 
     fn time(&mut self, t: Box<&mut dyn Tessellator>) -> (Duration, Duration) {
-        let mut svg_document: SVGDocument = SVGDocument::from(self.borrow());
+        let file_ref: &SVGFile = self.borrow();
+        let mut svg_document: SVGDocument = SVGDocument::from(file_ref);
         svg_document.time(t)
     }
 }
