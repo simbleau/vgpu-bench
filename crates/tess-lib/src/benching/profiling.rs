@@ -6,6 +6,8 @@ use crate::{
     Tessellator,
 };
 
+use crate::benching::error::BenchingError::Logic;
+
 use super::Result;
 
 pub fn profile_svgs<P>(svg_dir: P, output: P) -> Result<()>
@@ -25,9 +27,14 @@ where
             let target: SVGFile = file.into();
             let (vertices, indices) = target.get_data(Box::new(backend));
 
+            let filename = file
+                .file_name()
+                .ok_or(Logic("File name unkown"))?
+                .to_string_lossy()
+                .to_string();
             let result = SVGProfileResult {
                 tessellator: backend.name().to_owned(),
-                filename: file.file_name().unwrap().to_str().unwrap().to_owned(),
+                filename,
                 vertices,
                 indices,
             };
