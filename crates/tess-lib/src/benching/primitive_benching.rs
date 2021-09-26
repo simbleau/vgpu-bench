@@ -24,11 +24,13 @@ where
     // For each backend, tessellate the files
     for mut backend in crate::backends::backends() {
         let backend: &mut dyn Tessellator = &mut *backend; // Unwrap & Shadow
-        let counts = std::iter::once(1 as u32).chain((10..=50).step_by(10));
+        let max: u32 = 10_000;
+        let step: u32 = 1000;
+        let counts = std::iter::once(1 as u32).chain((step..=max).step_by(step as usize));
         for count in counts.clone() {
+            let mut target: SVGDocument =
+                SVGDocument::from(svg_gen::generate_svg(primitive, count, true));
             for _ in 0..trials {
-                let mut target: SVGDocument =
-                    SVGDocument::from(svg_gen::generate_svg(primitive, count, true));
                 let (init_time, tess_time) = target.time(Box::new(backend));
 
                 let result = PrimitiveTimeResult {

@@ -1,3 +1,5 @@
+use std::io::Write;
+
 use const_format::concatcp;
 
 extern crate tess;
@@ -47,6 +49,7 @@ pub fn analyze() {
 
 fn profile_svg_examples() {
     print!("Profiling svg examples...");
+    std::io::stdout().flush().expect("Couldn't flush stdout");
     let output_path = concatcp![EXAMPLES_OUTPUT_DIR, "profiles.csv"];
     tess::benching::profile_svgs(EXAMPLES_ASSETS_DIR, output_path).unwrap();
     println!("Complete. Output to {}", output_path);
@@ -55,22 +58,24 @@ fn profile_svg_examples() {
 fn bench_primitive_tessellation() {
     println!("Benching primitive tessellation...");
     print!("Benching triangles...");
+    std::io::stdout().flush().expect("Couldn't flush stdout");
     let output = concatcp![PRIMITIVES_OUTPUT_DIR, "time_triangles.csv"];
     tess::benching::time_primitive(
         "triangle".to_owned(),
         svg_gen::Primitive::Triangle,
         output,
-        10,
+        5,
     )
     .unwrap();
     println!("Complete. Output to {}.", output);
     print!("Benching curves...");
+    std::io::stdout().flush().expect("Couldn't flush stdout");
     let output = concatcp![PRIMITIVES_OUTPUT_DIR, "time_curves.csv"];
     tess::benching::time_primitive(
         "quadratic bezier curve".to_owned(),
         svg_gen::Primitive::BezierCurve,
         output,
-        10,
+        5,
     )
     .unwrap();
     println!("Complete. Output to {}.", output);
