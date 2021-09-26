@@ -48,8 +48,7 @@ fn profile_svg_examples() {
     print!("Profiling svg examples...");
     let output_path = concatcp![EXAMPLES_OUTPUT_DIR, "profiles.csv"];
     tess::benching::profile_svgs(EXAMPLES_ASSETS_DIR, output_path).unwrap();
-    println!("Complete.");
-    println!("\tOutput to {}", output_path);
+    println!("Complete. Output to {}", output_path);
 }
 
 fn bench_primitive_tessellation() {
