@@ -32,14 +32,3 @@ where
 
     Ok(files)
 }
-
-#[cfg(test)]
-mod tests {
-
-    #[test]
-    fn list_files() {
-        for file in super::get_files("../../assets/", false).unwrap() {
-            println!("{:?}", file);
-        }
-    }
-}
