@@ -64,7 +64,7 @@ fn bench_primitive_tessellation() {
     .unwrap();
     println!("Complete. Output to {}.", output);
     print!("Benching curves...");
-    let output = concatcp![PRIMITIVES_OUTPUT_DIR, "time_triangles.csv"];
+    let output = concatcp![PRIMITIVES_OUTPUT_DIR, "time_curves.csv"];
     tess::benching::time_primitive(
         "quadratic bezier curve".to_owned(),
         svg_gen::Primitive::BezierCurve,
