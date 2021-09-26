@@ -1,7 +1,5 @@
-mod lyon_tessellator;
-pub use lyon_tessellator::LyonTessellator;
-
 pub mod artifacts;
+pub mod backends;
 pub mod targets;
 
 mod tessellator;

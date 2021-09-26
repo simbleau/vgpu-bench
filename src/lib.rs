@@ -1,9 +1,15 @@
 use const_format::concatcp;
 
 extern crate tess;
-const OUTPUT_FOLDER_NAME: &'static str = "output/data/";
-const ASSETS_FOLDER_NAME: &'static str = "assets/";
-const SVG_PRIMITIVES_FOLDER_NAME: &'static str = concatcp![ASSETS_FOLDER_NAME, "svg-primitives/"];
+
+const OUTPUT_DIR: &'static str = "output/data/";
+const SVG_OUTPUT_DIR: &'static str = concatcp![OUTPUT_DIR, "svg/"];
+const PRIMITIVES_OUTPUT_DIR: &'static str = concatcp![SVG_OUTPUT_DIR, "primitives/"];
+const EXAMPLES_OUTPUT_DIR: &'static str = concatcp![SVG_OUTPUT_DIR, "examples/"];
+
+const ASSETS_DIR: &'static str = "assets/";
+const PRIMITIVES_ASSETS_DIR: &'static str = concatcp![ASSETS_DIR, "svg-primitives/"];
+const EXAMPLES_ASSETS_DIR: &'static str = concatcp![ASSETS_DIR, "svg-examples/"];
 
 pub fn analyze() {
     let debug = true;
@@ -14,20 +20,9 @@ pub fn analyze() {
     // Goal A: Tessellation Analysis
     //
     // Profile of artifacts
-    /*
-    let svg_dir = SVG_PRIMITIVES_FOLDER_NAME;
-    let output_file = concatcp![OUTPUT_FOLDER_NAME, "tess_data.csv"];
-    print!("Profiling primitive tessellation...");
-    tess::benching::profile_svgs(svg_dir, output_file).unwrap();
-    println!("Complete.");
-    println!("\tOutput to {}", output_file);
-    */
+    profile_svg_examples();
     // Tessellation time vs. primitives
-    let output_file = concatcp![OUTPUT_FOLDER_NAME, "tess_triangles.csv"];
-    print!("Benching primitive tessellation...");
-    tess::benching::time_primitives(output_file, 5).unwrap();
-    println!("Complete.");
-    println!("\tOutput to {}", output_file);
+    bench_primitive_tessellation();
     // TODO: Render time of flattened primitives
     // TODO: Render time of hundreds of flattened real world examples
     // TODO: Tessellation tolerance vs. error
@@ -47,4 +42,36 @@ pub fn analyze() {
     // TODO: Compliance of Path Data
 
     println!("Analysis Complete.")
+}
+
+fn profile_svg_examples() {
+    print!("Profiling svg examples...");
+    let output_path = concatcp![EXAMPLES_OUTPUT_DIR, "profiles.csv"];
+    tess::benching::profile_svgs(EXAMPLES_ASSETS_DIR, output_path).unwrap();
+    println!("Complete.");
+    println!("\tOutput to {}", output_path);
+}
+
+fn bench_primitive_tessellation() {
+    println!("Benching primitive tessellation...");
+    print!("Benching triangles...");
+    let output_path = concatcp![OUTPUT_DIR, "time_triangles.csv"];
+    tess::benching::time_primitive(
+        "triangle".to_owned(),
+        svg_gen::Primitive::Triangle,
+        concatcp![OUTPUT_DIR, "time_triangles.csv"],
+        10,
+    )
+    .unwrap();
+    println!("Complete. Output to {}.", output_path);
+    print!("Benching curves...");
+    let output_path = concatcp![OUTPUT_DIR, "time_triangles.csv"];
+    tess::benching::time_primitive(
+        "quadratic bezier curve".to_owned(),
+        svg_gen::Primitive::BezierCurve,
+        concatcp![OUTPUT_DIR, "time_bezier_curves.csv"],
+        10,
+    )
+    .unwrap();
+    println!("Complete. Output to {}.", output_path);
 }
