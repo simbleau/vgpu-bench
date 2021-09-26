@@ -8,8 +8,9 @@ const PRIMITIVES_OUTPUT_DIR: &'static str = concatcp![SVG_OUTPUT_DIR, "primitive
 const EXAMPLES_OUTPUT_DIR: &'static str = concatcp![SVG_OUTPUT_DIR, "examples/"];
 
 const ASSETS_DIR: &'static str = "assets/";
-const PRIMITIVES_ASSETS_DIR: &'static str = concatcp![ASSETS_DIR, "svg-primitives/"];
-const EXAMPLES_ASSETS_DIR: &'static str = concatcp![ASSETS_DIR, "svg-examples/"];
+const SVG_ASSETS_DIR: &'static str = concatcp![ASSETS_DIR, "svg/"];
+const PRIMITIVES_ASSETS_DIR: &'static str = concatcp![SVG_ASSETS_DIR, "primitives/"];
+const EXAMPLES_ASSETS_DIR: &'static str = concatcp![SVG_ASSETS_DIR, "examples/"];
 
 pub fn analyze() {
     let debug = true;

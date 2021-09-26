@@ -6,11 +6,13 @@ use crate::{
     Tessellator,
 };
 
-pub fn profile_svgs<P>(svg_dir: P, output: P) -> Result<(), std::io::Error>
+use super::Result;
+
+pub fn profile_svgs<P>(svg_dir: P, output: P) -> Result<()>
 where
     P: Into<PathBuf>,
 {
-    let files = super::get_files(svg_dir, false).unwrap();
+    let files = super::get_files(svg_dir, false)?;
     let output_file = File::create(output.into())?;
     let mut csv_wtr = csv::Writer::from_writer(output_file);
 

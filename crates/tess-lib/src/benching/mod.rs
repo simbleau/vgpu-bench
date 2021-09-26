@@ -8,7 +8,10 @@ pub use primitive_benching::time_primitive;
 mod profiling;
 pub use profiling::profile_svgs;
 
-fn get_files<P>(path: P, recursive: bool) -> Result<Vec<PathBuf>, io::Error>
+mod error;
+use error::Result;
+
+fn get_files<P>(path: P, recursive: bool) -> Result<Vec<PathBuf>>
 where
     P: Into<PathBuf>,
 {
@@ -22,6 +25,10 @@ where
         .filter(|f| f.path().is_file())
         .map(|p| p.path().to_path_buf())
         .collect::<Vec<PathBuf>>();
+
+    if files.len() == 0 {
+        return Err(error::BenchingError::Logic("No files found"));
+    }
 
     Ok(files)
 }

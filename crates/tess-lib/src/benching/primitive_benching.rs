@@ -2,6 +2,7 @@ use std::{fs::File, path::PathBuf};
 
 use svg_gen::Primitive;
 
+use super::Result;
 use crate::{
     artifacts::PrimitiveTimeResult,
     targets::{SVGDocument, TessellationTarget},
@@ -13,7 +14,7 @@ pub fn time_primitive<P>(
     primitive: Primitive,
     output: P,
     trials: i32,
-) -> Result<(), std::io::Error>
+) -> Result<()>
 where
     P: Into<PathBuf>,
 {
