@@ -35,8 +35,8 @@ where
                     let result = TimeResult {
                         tessellator: backend.name().to_owned(),
                         filename: format!("triangle-{}", count),
-                        init_time: init_time.as_millis() as i32,
-                        tess_time: tess_time.as_millis() as i32,
+                        init_time: init_time.as_nanos() as i32,
+                        tess_time: tess_time.as_nanos() as i32,
                     };
                     csv_wtr.serialize(result)?;
                 }
