@@ -36,7 +36,7 @@ impl Writer {
         Writer { xml_writer: w }
     }
 
-    pub fn write_primitives(&mut self, primitive: Primitive, count: i32, rotate: bool) {
+    pub fn write_primitives(&mut self, primitive: Primitive, count: u32, rotate: bool) {
         let size: i32 = (count as f32).sqrt() as i32;
         let square_size: f32 = (VIEW_MAX - VIEW_MIN) as f32 / size as f32;
         let padding: f32 = 0.1;

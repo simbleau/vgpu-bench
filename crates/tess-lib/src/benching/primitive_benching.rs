@@ -13,7 +13,7 @@ pub fn time_primitive<P>(
     prim_name: String,
     primitive: Primitive,
     output: P,
-    trials: i32,
+    trials: u32,
 ) -> Result<()>
 where
     P: Into<PathBuf>,
@@ -24,7 +24,7 @@ where
     // For each backend, tessellate the files
     for mut backend in crate::backends::backends() {
         let backend: &mut dyn Tessellator = &mut *backend; // Unwrap & Shadow
-        let counts = std::iter::once(1).chain((10..=50).step_by(10));
+        let counts = std::iter::once(1 as u32).chain((10..=50).step_by(10));
         for count in counts.clone() {
             for _ in 0..trials {
                 let mut target: SVGDocument =
@@ -34,8 +34,9 @@ where
                 let result = PrimitiveTimeResult {
                     tessellator: backend.name().to_owned(),
                     primitive: prim_name.to_owned(),
-                    init_time: init_time.as_nanos() as i32,
-                    tess_time: tess_time.as_nanos() as i32,
+                    amount: count,
+                    init_time: init_time.as_nanos(),
+                    tess_time: tess_time.as_nanos(),
                 };
                 csv_wtr.serialize(result)?;
             }

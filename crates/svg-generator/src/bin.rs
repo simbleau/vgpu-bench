@@ -8,7 +8,7 @@ use svg_generator::Primitive;
 #[derive(Debug)]
 struct Options {
     primitive: Primitive,
-    count: i32,
+    count: u32,
     rotate: bool,
 }
 
@@ -90,7 +90,7 @@ fn main() {
     // Check if count is requested
     if matches.is_present("count") {
         let count = matches.value_of("count").unwrap();
-        options.count = match count.parse::<i32>() {
+        options.count = match count.parse::<u32>() {
             Ok(n) => n,
             Err(e) => panic!("{}", e),
         };
