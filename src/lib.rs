@@ -54,23 +54,23 @@ fn profile_svg_examples() {
 fn bench_primitive_tessellation() {
     println!("Benching primitive tessellation...");
     print!("Benching triangles...");
-    let output_path = concatcp![OUTPUT_DIR, "time_triangles.csv"];
+    let output = concatcp![PRIMITIVES_OUTPUT_DIR, "time_triangles.csv"];
     tess::benching::time_primitive(
         "triangle".to_owned(),
         svg_gen::Primitive::Triangle,
-        concatcp![OUTPUT_DIR, "time_triangles.csv"],
+        output,
         10,
     )
     .unwrap();
-    println!("Complete. Output to {}.", output_path);
+    println!("Complete. Output to {}.", output);
     print!("Benching curves...");
-    let output_path = concatcp![OUTPUT_DIR, "time_triangles.csv"];
+    let output = concatcp![PRIMITIVES_OUTPUT_DIR, "time_triangles.csv"];
     tess::benching::time_primitive(
         "quadratic bezier curve".to_owned(),
         svg_gen::Primitive::BezierCurve,
-        concatcp![OUTPUT_DIR, "time_bezier_curves.csv"],
+        output,
         10,
     )
     .unwrap();
-    println!("Complete. Output to {}.", output_path);
+    println!("Complete. Output to {}.", output);
 }
