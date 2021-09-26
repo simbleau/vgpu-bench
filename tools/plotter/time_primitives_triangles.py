@@ -32,21 +32,25 @@ for amount in data["amount"].unique():
 fig, ax = plt.subplots()
 
 # Plot data
-ax.bar(chart_labels, chart_init_means, yerr=chart_init_stds, align='center',
-       alpha=0.5, ecolor='black', capsize=5,  label='Initialization')
-ax.bar(chart_labels, chart_tess_means, yerr=chart_tess_stds, align='center',
-       alpha=0.5, ecolor='black', capsize=5, label='Tessellation', bottom=chart_init_means)
-plt.xticks(chart_labels, rotation='vertical')
+width = 700  # the width of the bars
+bar1 = ax.bar(chart_labels, chart_init_means, width, yerr=chart_init_stds,
+              alpha=0.5, ecolor='black', capsize=5, label='Initialization')
+bar2 = ax.bar(chart_labels, chart_tess_means, width, yerr=chart_tess_stds,
+              alpha=0.5, ecolor='black', capsize=5, label='Tessellation', bottom=chart_init_means)
+ax.bar_label(bar1, fmt='%0.0f', label_type='center')
+ax.bar_label(bar2, fmt='%0.0f', label_type='center')
 
+# Dress plot
+plt.xticks(chart_labels, rotation='vertical')
 ax.set_xlabel("Amount")
-ax.set_ylabel("Time (ms)")
+ax.set_ylabel("Total time (ms)")
 ax.set_title(
     "Tessellation time for triangle primitives (" + str(amt_trials) + " trials)")
-
-ax.grid()
+ax.yaxis.grid()
 ax.legend()
+fig.tight_layout()
 
 if not os.path.exists('../../output/figs/svg/primitives'):
     os.makedirs('../../output/figs/svg/primitives')
-fig.savefig("../../output/figs/svg/primitives/time_triangles.png", dpi=200)
+fig.savefig("../../output/figs/svg/primitives/time_triangles.png", dpi=500)
 plt.show()
