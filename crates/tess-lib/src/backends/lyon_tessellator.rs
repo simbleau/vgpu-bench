@@ -8,6 +8,7 @@ use std::error::Error;
 use std::f64::NAN;
 
 use crate::targets::SVGDocument;
+use crate::tessellator::TessellationProfileResult;
 use crate::Tessellator;
 
 pub const FALLBACK_COLOR: usvg::Color = usvg::Color {
@@ -68,7 +69,7 @@ impl Tessellator for LyonTessellator {
         self.state = Some(state);
     }
 
-    fn tessellate(&mut self) -> Result<(i32, i32), Box<dyn Error>> {
+    fn tessellate(&mut self) -> Result<TessellationProfileResult, Box<dyn Error>> {
         // Create vertex buffer
         let mut fill_tess = FillTessellator::new();
         let mut stroke_tess = StrokeTessellator::new();
@@ -146,7 +147,10 @@ impl Tessellator for LyonTessellator {
         }
 
         // Return result
-        Ok((mesh.vertices.len() as i32, mesh.indices.len() as i32))
+        Ok(TessellationProfileResult {
+            vertices: mesh.vertices.len() as i32,
+            indices: mesh.indices.len() as i32,
+        })
     }
 }
 

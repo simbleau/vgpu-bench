@@ -25,7 +25,7 @@ where
         // Retrieve the profile from files and record the results
         for file in &files {
             let target: SVGFile = file.into();
-            let (vertices, indices) = target.get_data(Box::new(backend));
+            let profile_result = target.get_data(Box::new(backend));
 
             let filename = file
                 .file_name()
@@ -35,8 +35,8 @@ where
             let result = SVGProfileResult {
                 tessellator: backend.name().to_owned(),
                 filename,
-                vertices,
-                indices,
+                vertices: profile_result.vertices,
+                indices: profile_result.indices,
             };
             csv_wtr.serialize(result)?;
         }

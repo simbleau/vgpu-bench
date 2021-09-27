@@ -1,6 +1,9 @@
-use std::time::{Duration, Instant};
+use std::time::Instant;
 
-use crate::Tessellator;
+use crate::{
+    tessellator::{TessellationProfileResult, TessellationTimeResult},
+    Tessellator,
+};
 
 use super::{SVGFile, TessellationTarget};
 pub struct SVGDocument {
@@ -28,12 +31,12 @@ where
 }
 
 impl TessellationTarget for SVGDocument {
-    fn get_data(&self, t: Box<&mut dyn Tessellator>) -> (i32, i32) {
+    fn get_data(&self, t: Box<&mut dyn Tessellator>) -> TessellationProfileResult {
         t.init(&self);
         t.tessellate().unwrap()
     }
 
-    fn time(&mut self, t: Box<&mut dyn Tessellator>) -> (Duration, Duration) {
+    fn time(&mut self, t: Box<&mut dyn Tessellator>) -> TessellationTimeResult {
         // Time pre-processing
         let t1 = Instant::now();
         t.init(&self);
@@ -47,6 +50,9 @@ impl TessellationTarget for SVGDocument {
         let dur2 = t2.duration_since(t1);
 
         // Return duration passed
-        (dur1, dur2)
+        TessellationTimeResult {
+            init_time: dur1,
+            tess_time: dur2,
+        }
     }
 }

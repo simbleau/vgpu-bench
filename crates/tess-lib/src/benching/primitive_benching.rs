@@ -31,14 +31,14 @@ where
             let mut target: SVGDocument =
                 SVGDocument::from(svg_gen::generate_svg(primitive, count, true));
             for _ in 0..trials {
-                let (init_time, tess_time) = target.time(Box::new(backend));
+                let time_result = target.time(Box::new(backend));
 
                 let result = PrimitiveTimeResult {
                     tessellator: backend.name().to_owned(),
                     primitive: prim_name.to_owned(),
                     amount: count,
-                    init_time: init_time.as_nanos(),
-                    tess_time: tess_time.as_nanos(),
+                    init_time: time_result.init_time.as_nanos(),
+                    tess_time: time_result.tess_time.as_nanos(),
                 };
                 csv_wtr.serialize(result)?;
             }

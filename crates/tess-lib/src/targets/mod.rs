@@ -1,14 +1,15 @@
 mod svg_document;
 mod svg_file;
 
-use std::time::Duration;
-
 pub use svg_document::SVGDocument;
 pub use svg_file::SVGFile;
 
-use crate::Tessellator;
+use crate::{
+    tessellator::{TessellationProfileResult, TessellationTimeResult},
+    Tessellator,
+};
 
 pub trait TessellationTarget {
-    fn get_data(&self, t: Box<&mut dyn Tessellator>) -> (i32, i32);
-    fn time(&mut self, t: Box<&mut dyn Tessellator>) -> (Duration, Duration);
+    fn get_data(&self, t: Box<&mut dyn Tessellator>) -> TessellationProfileResult;
+    fn time(&mut self, t: Box<&mut dyn Tessellator>) -> TessellationTimeResult;
 }
