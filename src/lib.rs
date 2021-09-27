@@ -1,3 +1,4 @@
+#![allow(dead_code)]
 use std::io::Write;
 
 use const_format::concatcp;
@@ -47,36 +48,62 @@ pub fn analyze() {
     println!("Analysis Complete.")
 }
 
-fn profile_svg_examples() {
-    print!("Profiling svg examples...");
+fn perform(action_message: &'static str, action: impl Fn() -> ()) {
+    print!("Performing {}...", action_message);
     std::io::stdout().flush().expect("Couldn't flush stdout");
-    let output_path = concatcp![EXAMPLES_OUTPUT_DIR, "profiles.csv"];
-    tess::benching::profile_svgs(EXAMPLES_ASSETS_DIR, output_path).unwrap();
-    println!("Complete. Output to {}", output_path);
+    action();
+    println!("Complete.");
+}
+
+fn perform_with_output(action_message: &'static str, path: &'static str, action: impl Fn() -> ()) {
+    print!("Performing {}...", action_message);
+    std::io::stdout().flush().expect("Couldn't flush stdout");
+    action();
+    println!("Complete. Output to {}", path);
+}
+
+fn profile_svg_examples() {
+    let path = concatcp![EXAMPLES_OUTPUT_DIR, "profiles.csv"];
+    perform_with_output("SVG profiling", path, || {
+        tess::benching::profile_svgs(EXAMPLES_ASSETS_DIR, path).unwrap();
+    });
 }
 
 fn bench_primitive_tessellation() {
     println!("Benching primitive tessellation...");
-    print!("Benching triangles...");
-    std::io::stdout().flush().expect("Couldn't flush stdout");
-    let output = concatcp![PRIMITIVES_OUTPUT_DIR, "time_triangles.csv"];
-    tess::benching::time_primitive(
-        "triangle".to_owned(),
-        svg_gen::Primitive::Triangle,
-        output,
-        5,
-    )
-    .unwrap();
-    println!("Complete. Output to {}.", output);
-    print!("Benching curves...");
-    std::io::stdout().flush().expect("Couldn't flush stdout");
-    let output = concatcp![PRIMITIVES_OUTPUT_DIR, "time_curves.csv"];
-    tess::benching::time_primitive(
-        "quadratic bezier curve".to_owned(),
-        svg_gen::Primitive::BezierCurve,
-        output,
-        5,
-    )
-    .unwrap();
-    println!("Complete. Output to {}.", output);
+    // Triangles
+    let path = concatcp![PRIMITIVES_OUTPUT_DIR, "time_triangles.csv"];
+    perform_with_output("triangle tessellation benchmarking", path, || {
+        tess::benching::time_primitive(
+            "triangle".to_owned(),
+            svg_gen::Primitive::Triangle,
+            path,
+            5,
+        )
+        .unwrap();
+    });
+
+    // Quadratic Curves
+    let path = concatcp![PRIMITIVES_OUTPUT_DIR, "time_curves.csv"];
+    perform_with_output("quadratic curve tessellation benchmarking", path, || {
+        tess::benching::time_primitive(
+            "quadratic bezier curve".to_owned(),
+            svg_gen::Primitive::BezierCurve,
+            path,
+            5,
+        )
+        .unwrap();
+    });
+
+    // Cubic Curves
+    let path = concatcp![PRIMITIVES_OUTPUT_DIR, "time_cubic_curves.csv"];
+    perform_with_output("cubic curve tessellation benchmarking", path, || {
+        tess::benching::time_primitive(
+            "cubic bezier curve".to_owned(),
+            svg_gen::Primitive::CubicBezierCurve,
+            path,
+            5,
+        )
+        .unwrap();
+    });
 }
