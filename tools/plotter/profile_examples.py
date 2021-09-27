@@ -40,7 +40,7 @@ ax.set_ylabel("Vertices")
 ax.set_title(
     "Tessellation Vertex Output")
 ax.yaxis.grid()
-fig.tight_layout()
+plt.tight_layout()
 
 if not os.path.exists('../../output/figs/svg/examples'):
     os.makedirs('../../output/figs/svg/examples')

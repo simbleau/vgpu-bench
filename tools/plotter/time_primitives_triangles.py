@@ -48,7 +48,7 @@ ax.set_title(
     "Tessellation time for triangle primitives (" + str(amt_trials) + " trials)")
 ax.yaxis.grid()
 ax.legend()
-fig.tight_layout()
+plt.tight_layout()
 
 if not os.path.exists('../../output/figs/svg/primitives'):
     os.makedirs('../../output/figs/svg/primitives')
