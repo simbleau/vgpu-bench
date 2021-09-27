@@ -20,6 +20,7 @@ fig, ax = plt.subplots()
 # Plot data
 points = ax.scatter(labels, vertices)
 for path, (x, y) in zip(labels, points.get_offsets().data):
+    verts = data[data["filename"] == path]['vertices'].values[0]
     asset_path = os.path.join("../../assets/svg/examples/", path)
     cairosvg.svg2png(url=asset_path, output_width=200,
                      output_height=200, write_to="temp.png")
@@ -30,6 +31,8 @@ for path, (x, y) in zip(labels, points.get_offsets().data):
     for x0, y0 in zip(x, y):
         ab = AnnotationBbox(im, (x0, y0), xycoords='data', frameon=False)
         ax.add_artist(ab)
+        ax.annotate(verts, (x, y), xytext=(0, 10), textcoords='offset points', ha='center', va='bottom',
+                    bbox=dict(boxstyle='round,pad=0.2', fc='black', alpha=0.2))
     ax.update_datalim(np.column_stack([x, y]))
     ax.autoscale()
 
