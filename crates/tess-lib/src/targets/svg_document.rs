@@ -1,11 +1,8 @@
 use std::time::Instant;
 
-use crate::{
-    tessellator::{TessellationProfileResult, TessellationTimeResult},
-    Tessellator,
-};
+use crate::Tessellator;
 
-use super::{SVGFile, TessellationTarget};
+use super::{SVGFile, TessellationProfile, TessellationTarget, TessellationTimeResult};
 pub struct SVGDocument {
     pub content: String,
 }
@@ -31,7 +28,7 @@ where
 }
 
 impl TessellationTarget for SVGDocument {
-    fn get_data(&self, t: Box<&mut dyn Tessellator>) -> TessellationProfileResult {
+    fn get_data(&self, t: Box<&mut dyn Tessellator>) -> TessellationProfile {
         t.init(&self);
         t.tessellate().unwrap()
     }

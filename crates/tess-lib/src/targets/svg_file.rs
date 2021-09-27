@@ -1,10 +1,7 @@
 use std::{borrow::Borrow, path::PathBuf};
 
-use super::{SVGDocument, TessellationTarget};
-use crate::{
-    tessellator::{TessellationProfileResult, TessellationTimeResult},
-    Tessellator,
-};
+use super::{SVGDocument, TessellationProfile, TessellationTarget, TessellationTimeResult};
+use crate::Tessellator;
 pub struct SVGFile {
     pub path: PathBuf,
 }
@@ -18,7 +15,7 @@ impl From<&PathBuf> for SVGFile {
 }
 
 impl TessellationTarget for SVGFile {
-    fn get_data(&self, t: Box<&mut dyn Tessellator>) -> TessellationProfileResult {
+    fn get_data(&self, t: Box<&mut dyn Tessellator>) -> TessellationProfile {
         let svg_document: SVGDocument = SVGDocument::from(self);
         svg_document.get_data(t)
     }
