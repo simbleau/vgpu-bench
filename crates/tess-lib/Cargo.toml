@@ -8,6 +8,10 @@ license = "MIT OR Apache-2.0"
 repository = "https://github.com/simbleau/vgpu-bench"
 workspace = "../.."
 
+[[bin]]
+name = "renderer"
+path = "src/renderer/bin.rs"
+
 [dependencies]
 lyon = {version ="0.17.5", features = ["extra"]}
 svg-gen = { package = "svg-generator", path = "../svg-generator" }

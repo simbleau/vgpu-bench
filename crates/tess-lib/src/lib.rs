@@ -6,3 +6,5 @@ mod tessellator;
 pub use tessellator::Tessellator;
 
 pub mod benching;
+
+pub mod renderer;
