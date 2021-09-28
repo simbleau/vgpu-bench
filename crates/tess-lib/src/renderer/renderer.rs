@@ -2,7 +2,7 @@ use crate::renderer::state::State;
 use winit::{
     event::*,
     event_loop::{ControlFlow, EventLoop},
-    window::{Window, WindowBuilder},
+    window::WindowBuilder,
 };
 
 pub struct Renderer {}
@@ -38,7 +38,10 @@ impl Renderer {
                     // request it.
                     window.request_redraw();
                 }
-                Event::WindowEvent { window_id, event } => match event {
+                Event::WindowEvent {
+                    window_id: _,
+                    event,
+                } => match event {
                     WindowEvent::CloseRequested
                     | WindowEvent::KeyboardInput {
                         input:

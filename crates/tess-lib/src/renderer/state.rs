@@ -62,11 +62,12 @@ impl State {
         }
     }
 
-    pub fn resize(&mut self, new_size: winit::dpi::PhysicalSize<u32>) {
+    pub fn resize(&mut self, _new_size: winit::dpi::PhysicalSize<u32>) {
         // Resizing currently not supported.
     }
 
-    pub fn input(&mut self, event: &WindowEvent) -> bool {
+    pub fn input(&mut self, _event: &WindowEvent) -> bool {
+        // Input handling currently not supported.
         false
     }
 
