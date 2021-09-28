@@ -14,6 +14,7 @@ exclude = [
     "tests/",
 ]
 
+
 [lib]
 name = "mylib"
 path = "src/lib.rs"
@@ -23,7 +24,8 @@ name = "mybin"
 path = "src/bin.rs"
 
 [workspace]
-members = ["crates/tessellator", "crates/svg-generator", "crates/tess-lib"]
+members = ["crates/svg-generator", "crates/tess-lib"]
+resolver = "2"
 
 [dependencies]
 const_format = "0.2.21"
@@ -34,6 +36,5 @@ usvg = "0.18.0"
 futures = "0.3.5"
 walkdir = "2"
 csv = "1.1"
-
 
 [dev-dependencies]
