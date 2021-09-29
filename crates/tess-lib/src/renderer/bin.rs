@@ -1,3 +1,5 @@
+use std::{thread, time::Duration};
+
 use tess_lib::{
     backends::LyonTessellator,
     renderer::{get_globals, Renderer},
@@ -19,5 +21,10 @@ fn main() {
     let mut tess = LyonTessellator::new();
     tess.init(&svg_doc);
     let data = *tess.get_tessellate_data().unwrap();
-    r.run(scene, data);
+    let handle = thread::spawn(move || {
+        r.run(scene, data, 1);
+    });
+    handle.join().unwrap();
+
+    println!("Finished");
 }

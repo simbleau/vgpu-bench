@@ -1,7 +1,10 @@
+use std::thread;
+
 use crate::{renderer::state::State, targets::TessellationData};
 use winit::{
     event::*,
     event_loop::{ControlFlow, EventLoop},
+    platform::run_return::EventLoopExtRunReturn,
     window::WindowBuilder,
 };
 
@@ -15,18 +18,20 @@ impl Renderer {
         Renderer {}
     }
 
-    pub fn run(&self, scene: SceneGlobals, data: TessellationData) {
-        let event_loop = Box::new(EventLoop::new());
+    pub fn run(&self, scene: SceneGlobals, data: TessellationData, frames: u32) {
+        let event_loop_thread: EventLoop<()> =
+            winit::platform::unix::EventLoopExtUnix::new_any_thread();
+        let mut event_loop = Box::new(event_loop_thread);
         let window = WindowBuilder::new().build(&event_loop).unwrap();
         window.set_resizable(false);
         let mut state = pollster::block_on(State::new(&window, scene, data));
-
-        event_loop.run(move |event, _, control_flow| {
+        event_loop.run_return(move |event, _, control_flow| {
+            let mut frame_count = 0;
             match event {
                 Event::RedrawRequested(_) => {
                     state.update();
                     match state.render() {
-                        Ok(_) => {}
+                        Ok(_) => frame_count += 1,
                         // Reconfigure the surface if lost
                         Err(wgpu::SurfaceError::Lost) => state.resize(state.size),
                         // The system is out of memory, we should probably quit
@@ -57,6 +62,9 @@ impl Renderer {
                     _ => {}
                 },
                 _ => {} // Do nothing
+            }
+            if frame_count == frames {
+                *control_flow = ControlFlow::Exit;
             }
         });
     }
