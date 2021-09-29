@@ -1,5 +1,3 @@
-use std::{thread, time::Duration};
-
 use tess_lib::{
     backends::LyonTessellator,
     renderer::{get_globals, Renderer},
@@ -10,8 +8,7 @@ use tess_lib::{
 fn main() {
     // Get indices and verts
     let file = SVGFile {
-        path: "/home/spencer/School/Thesis/vgpu-bench/assets/svg/examples/Ghostscript_Tiger.svg"
-            .into(),
+        path: "/home/spencer/School/Thesis/vgpu-bench/assets/svg/examples/NASA.svg".into(),
     };
     let svg_doc = SVGDocument::from(&file);
 
@@ -22,7 +19,7 @@ fn main() {
 
     let mut r = Renderer::new();
     r.init(scene, data).unwrap();
-    r.run(5).unwrap();
+    r.run(50000).unwrap();
 
     println!("Finished");
 }

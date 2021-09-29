@@ -1,8 +1,5 @@
-use std::{borrow::Borrow, cell::RefCell};
-
 use crate::{renderer::state::State, targets::TessellationData};
 use winit::{
-    error::OsError,
     event::*,
     event_loop::{ControlFlow, EventLoop},
     platform::run_return::EventLoopExtRunReturn,
@@ -11,7 +8,6 @@ use winit::{
 
 use super::util::SceneGlobals;
 use super::Result;
-use crate::renderer::error::RendererError::RendererNotInitialized;
 
 pub struct Renderer {
     window: Option<Window>,
@@ -33,7 +29,7 @@ impl Renderer {
         let event_loop_thread: EventLoop<()> =
             winit::platform::unix::EventLoopExtUnix::new_any_thread();
         let window = WindowBuilder::new().build(&event_loop_thread)?;
-        window.set_resizable(false);
+        window.set_resizable(true);
         let state = pollster::block_on(State::new(&window, scene, data));
 
         self.window = Some(window);
@@ -83,6 +79,7 @@ impl Renderer {
                             },
                         ..
                     } => *control_flow = ControlFlow::Exit,
+                    WindowEvent::Resized(size) => state.resize(size),
                     _ => {}
                 },
                 _ => {} // Do nothing

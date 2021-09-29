@@ -22,8 +22,6 @@ pub struct State {
 
 impl State {
     pub async fn new(window: &Window, scene: SceneGlobals, data: TessellationData) -> Self {
-        let size = window.inner_size();
-
         // The instance is a handle to our GPU
         // Backends::all() => Vulkan + Metal + DX12 + Browser WebGPU
         let instance = wgpu::Instance::new(wgpu::Backends::all());
@@ -54,14 +52,15 @@ impl State {
             .unwrap();
 
         // Config
+        let size = window.inner_size();
         let config = wgpu::SurfaceConfiguration {
             usage: wgpu::TextureUsages::RENDER_ATTACHMENT,
             format: wgpu::TextureFormat::Bgra8Unorm,
             width: size.width,
             height: size.height,
-            // Immediate display mode as to not limit framerate. May fallback to FIFO.
             present_mode: wgpu::PresentMode::Mailbox,
         };
+
         surface.configure(&device, &config);
 
         // Make pipeline
@@ -195,8 +194,7 @@ impl State {
             &self.buffers.globals_ubo,
             0,
             bytemuck::cast_slice(&[GpuGlobals {
-                aspect_ratio: self.scene.window_size.width as f32
-                    / self.scene.window_size.height as f32,
+                aspect_ratio: self.size.width as f32 / self.size.height as f32,
                 zoom: [self.scene.zoom, self.scene.zoom],
                 pan: self.scene.pan,
                 _pad: 0.0,
