@@ -286,6 +286,11 @@ fn main() {
     });
     let frag_spv = include_spirv!("shaders/geometry.frag.spv").source;
     let vert_spv = include_spirv!("shaders/geometry.vert.spv").source;
+    let shader = wgpu::ShaderSource::Wgsl(include_str!("shaders/shader.wgsl").into());
+    let shader_module = device.create_shader_module(&wgpu::ShaderModuleDescriptor {
+        label: Some("Frag Shader"),
+        source: shader,
+    });
     let frag_module = device.create_shader_module(&wgpu::ShaderModuleDescriptor {
         label: Some("Frag Shader"),
         source: frag_spv,
@@ -360,7 +365,7 @@ fn main() {
         label: None,
         layout: Some(&pipeline_layout),
         vertex: wgpu::VertexState {
-            module: &vert_module,
+            module: &shader_module,
             entry_point: "main",
             buffers: &[wgpu::VertexBufferLayout {
                 array_stride: std::mem::size_of::<GpuVertex>() as u64,
@@ -380,7 +385,7 @@ fn main() {
             }],
         },
         fragment: Some(wgpu::FragmentState {
-            module: &frag_module,
+            module: &shader_module,
             entry_point: "main",
             targets: &[wgpu::ColorTargetState {
                 format: wgpu::TextureFormat::Bgra8Unorm,
