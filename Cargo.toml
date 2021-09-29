@@ -24,7 +24,7 @@ name = "mybin"
 path = "src/bin.rs"
 
 [workspace]
-members = ["crates/svg-generator", "crates/tess-lib"]
+members = ["crates/svg-generator", "crates/tessellator"]
 resolver = "2"
 
 [dependencies]
