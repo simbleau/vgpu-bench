@@ -8,8 +8,6 @@ use tess_lib::{
 };
 
 fn main() {
-    let r = Renderer::new();
-
     // Get indices and verts
     let file = SVGFile {
         path: "/home/spencer/School/Thesis/vgpu-bench/assets/svg/examples/Ghostscript_Tiger.svg"
@@ -21,10 +19,10 @@ fn main() {
     let mut tess = LyonTessellator::new();
     tess.init(&svg_doc);
     let data = *tess.get_tessellate_data().unwrap();
-    let handle = thread::spawn(move || {
-        r.run(scene, data, 1);
-    });
-    handle.join().unwrap();
+
+    let mut r = Renderer::new();
+    r.init(scene, data).unwrap();
+    r.run(5).unwrap();
 
     println!("Finished");
 }
