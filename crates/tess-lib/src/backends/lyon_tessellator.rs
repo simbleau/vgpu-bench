@@ -7,7 +7,7 @@ use usvg::{NodeExt, Tree, ViewBox};
 use std::error::Error;
 use std::f64::NAN;
 
-use crate::renderer::state::GpuVertex;
+use crate::renderer::state::{GpuPrimitive, GpuTransform, GpuVertex};
 use crate::targets::{SVGDocument, TessellationData, TessellationProfile};
 use crate::Tessellator;
 
@@ -18,13 +18,12 @@ pub const FALLBACK_COLOR: usvg::Color = usvg::Color {
     alpha: 0,
 };
 
+#[derive(Clone)]
 pub struct LyonState {
     rtree: Tree,
     #[allow(dead_code)]
     view_box: ViewBox,
     prev_transform: usvg::Transform,
-    transforms: Vec<GpuTransform>,
-    primitives: Vec<GpuPrimitive>,
 }
 pub struct LyonTessellator {
     state: Option<LyonState>,
@@ -48,8 +47,6 @@ impl Tessellator for LyonTessellator {
         let rtree = usvg::Tree::from_data(&file_data, &opt.to_ref()).unwrap();
         let view_box = rtree.svg_node().view_box;
 
-        let transforms = Vec::new();
-        let primitives = Vec::new();
         let prev_transform = usvg::Transform {
             a: NAN,
             b: NAN,
@@ -63,8 +60,6 @@ impl Tessellator for LyonTessellator {
             rtree,
             view_box,
             prev_transform,
-            transforms,
-            primitives,
         };
         self.state = Some(state);
     }
@@ -75,18 +70,21 @@ impl Tessellator for LyonTessellator {
         let mut stroke_tess = StrokeTessellator::new();
         let mut mesh: VertexBuffers<_, u32> = VertexBuffers::new();
 
+        let mut transforms = Vec::new();
+        let mut primitives = Vec::new();
+
         for node in self.state.as_ref().unwrap().rtree.root().descendants() {
             if let usvg::NodeKind::Path(ref p) = *node.borrow() {
                 let t = node.transform();
                 if t != self.state.as_ref().unwrap().prev_transform {
-                    self.state.as_mut().unwrap().transforms.push(GpuTransform {
+                    transforms.push(GpuTransform {
                         data0: [t.a as f32, t.b as f32, t.c as f32, t.d as f32],
                         data1: [t.e as f32, t.f as f32, 0.0, 0.0],
                     });
                 }
                 self.state.as_mut().unwrap().prev_transform = t;
 
-                let transform_idx = self.state.as_ref().unwrap().transforms.len() as u32 - 1;
+                let transform_idx = transforms.len() as u32 - 1;
 
                 if let Some(ref fill) = p.fill {
                     // fall back to always use color fill
@@ -96,15 +94,11 @@ impl Tessellator for LyonTessellator {
                         _ => FALLBACK_COLOR,
                     };
 
-                    self.state
-                        .as_mut()
-                        .unwrap()
-                        .primitives
-                        .push(GpuPrimitive::new(
-                            transform_idx,
-                            color,
-                            fill.opacity.value() as f32,
-                        ));
+                    primitives.push(GpuPrimitive::new(
+                        transform_idx,
+                        color,
+                        fill.opacity.value() as f32,
+                    ));
 
                     fill_tess
                         .tessellate(
@@ -113,8 +107,7 @@ impl Tessellator for LyonTessellator {
                             &mut BuffersBuilder::new(
                                 &mut mesh,
                                 VertexCtor {
-                                    prim_id: self.state.as_ref().unwrap().primitives.len() as u32
-                                        - 1,
+                                    prim_id: primitives.len() as u32 - 1,
                                 },
                             ),
                         )
@@ -123,22 +116,18 @@ impl Tessellator for LyonTessellator {
 
                 if let Some(ref stroke) = p.stroke {
                     let (stroke_color, stroke_opts) = convert_stroke(stroke);
-                    self.state
-                        .as_mut()
-                        .unwrap()
-                        .primitives
-                        .push(GpuPrimitive::new(
-                            transform_idx,
-                            stroke_color,
-                            stroke.opacity.value() as f32,
-                        ));
+                    primitives.push(GpuPrimitive::new(
+                        transform_idx,
+                        stroke_color,
+                        stroke.opacity.value() as f32,
+                    ));
                     let _ = stroke_tess.tessellate(
                         convert_path(p),
                         &stroke_opts.with_tolerance(0.01),
                         &mut BuffersBuilder::new(
                             &mut mesh,
                             VertexCtor {
-                                prim_id: self.state.as_ref().unwrap().primitives.len() as u32 - 1,
+                                prim_id: primitives.len() as u32 - 1,
                             },
                         ),
                     );
@@ -159,18 +148,21 @@ impl Tessellator for LyonTessellator {
         let mut stroke_tess = StrokeTessellator::new();
         let mut mesh: VertexBuffers<_, u32> = VertexBuffers::new();
 
+        let mut transforms = Vec::new();
+        let mut primitives = Vec::new();
+
         for node in self.state.as_ref().unwrap().rtree.root().descendants() {
             if let usvg::NodeKind::Path(ref p) = *node.borrow() {
                 let t = node.transform();
                 if t != self.state.as_ref().unwrap().prev_transform {
-                    self.state.as_mut().unwrap().transforms.push(GpuTransform {
+                    transforms.push(GpuTransform {
                         data0: [t.a as f32, t.b as f32, t.c as f32, t.d as f32],
                         data1: [t.e as f32, t.f as f32, 0.0, 0.0],
                     });
                 }
                 self.state.as_mut().unwrap().prev_transform = t;
 
-                let transform_idx = self.state.as_ref().unwrap().transforms.len() as u32 - 1;
+                let transform_idx = transforms.len() as u32 - 1;
 
                 if let Some(ref fill) = p.fill {
                     // fall back to always use color fill
@@ -180,15 +172,11 @@ impl Tessellator for LyonTessellator {
                         _ => FALLBACK_COLOR,
                     };
 
-                    self.state
-                        .as_mut()
-                        .unwrap()
-                        .primitives
-                        .push(GpuPrimitive::new(
-                            transform_idx,
-                            color,
-                            fill.opacity.value() as f32,
-                        ));
+                    primitives.push(GpuPrimitive::new(
+                        transform_idx,
+                        color,
+                        fill.opacity.value() as f32,
+                    ));
 
                     fill_tess
                         .tessellate(
@@ -197,8 +185,7 @@ impl Tessellator for LyonTessellator {
                             &mut BuffersBuilder::new(
                                 &mut mesh,
                                 VertexCtor {
-                                    prim_id: self.state.as_ref().unwrap().primitives.len() as u32
-                                        - 1,
+                                    prim_id: primitives.len() as u32 - 1,
                                 },
                             ),
                         )
@@ -207,22 +194,18 @@ impl Tessellator for LyonTessellator {
 
                 if let Some(ref stroke) = p.stroke {
                     let (stroke_color, stroke_opts) = convert_stroke(stroke);
-                    self.state
-                        .as_mut()
-                        .unwrap()
-                        .primitives
-                        .push(GpuPrimitive::new(
-                            transform_idx,
-                            stroke_color,
-                            stroke.opacity.value() as f32,
-                        ));
+                    primitives.push(GpuPrimitive::new(
+                        transform_idx,
+                        stroke_color,
+                        stroke.opacity.value() as f32,
+                    ));
                     let _ = stroke_tess.tessellate(
                         convert_path(p),
                         &stroke_opts.with_tolerance(0.01),
                         &mut BuffersBuilder::new(
                             &mut mesh,
                             VertexCtor {
-                                prim_id: self.state.as_ref().unwrap().primitives.len() as u32 - 1,
+                                prim_id: primitives.len() as u32 - 1,
                             },
                         ),
                     );
@@ -230,39 +213,14 @@ impl Tessellator for LyonTessellator {
             }
         }
 
-        let data = TessellationData { mesh };
+        let data = TessellationData {
+            mesh,
+            transforms,
+            primitives,
+        };
 
         // Return result
         Ok(Box::new(data))
-    }
-}
-
-// A 2x3 matrix (last two members of data1 unused).
-#[repr(C)]
-#[derive(Copy, Clone)]
-pub struct GpuTransform {
-    pub data0: [f32; 4],
-    pub data1: [f32; 4],
-}
-
-#[repr(C)]
-#[derive(Copy, Clone)]
-pub struct GpuPrimitive {
-    pub transform: u32,
-    pub color: u32,
-    pub _pad: [u32; 2],
-}
-
-impl GpuPrimitive {
-    pub fn new(transform_idx: u32, color: usvg::Color, alpha: f32) -> Self {
-        GpuPrimitive {
-            transform: transform_idx,
-            color: ((color.red as u32) << 24)
-                + ((color.green as u32) << 16)
-                + ((color.blue as u32) << 8)
-                + (alpha * 255.0) as u32,
-            _pad: [0; 2],
-        }
     }
 }
 

@@ -10,7 +10,8 @@ fn main() {
 
     // Get indices and verts
     let file = SVGFile {
-        path: "/home/spencer/School/Thesis/vgpu-bench/assets/svg/examples/NASA.svg".into(),
+        path: "/home/spencer/School/Thesis/vgpu-bench/assets/svg/examples/Ghostscript_Tiger.svg"
+            .into(),
     };
     let svg_doc = SVGDocument::from(&file);
 

@@ -136,6 +136,17 @@ impl State {
 
         let render_pipeline = device.create_render_pipeline(&render_pipeline_descriptor);
 
+        queue.write_buffer(
+            &buffers.transforms_ubo,
+            0,
+            bytemuck::cast_slice(&data.transforms),
+        );
+        queue.write_buffer(
+            &buffers.prims_ubo,
+            0,
+            bytemuck::cast_slice(&data.primitives),
+        );
+
         Self {
             surface,
             device,
@@ -274,7 +285,3 @@ unsafe impl bytemuck::Pod for GpuGlobals {}
 unsafe impl bytemuck::Zeroable for GpuGlobals {}
 unsafe impl bytemuck::Pod for GpuVertex {}
 unsafe impl bytemuck::Zeroable for GpuVertex {}
-unsafe impl bytemuck::Pod for GpuPrimitive {}
-unsafe impl bytemuck::Zeroable for GpuPrimitive {}
-unsafe impl bytemuck::Pod for GpuTransform {}
-unsafe impl bytemuck::Zeroable for GpuTransform {}

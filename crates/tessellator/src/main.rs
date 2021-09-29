@@ -284,20 +284,13 @@ fn main() {
         usage: wgpu::BufferUsages::UNIFORM | wgpu::BufferUsages::COPY_DST,
         mapped_at_creation: false,
     });
-    let frag_spv = include_spirv!("shaders/geometry.frag.spv").source;
-    let vert_spv = include_spirv!("shaders/geometry.vert.spv").source;
-    let shader = wgpu::ShaderSource::Wgsl(include_str!("shaders/shader.wgsl").into());
-    let shader_module = device.create_shader_module(&wgpu::ShaderModuleDescriptor {
-        label: Some("Frag Shader"),
-        source: shader,
-    });
     let frag_module = device.create_shader_module(&wgpu::ShaderModuleDescriptor {
         label: Some("Frag Shader"),
-        source: frag_spv,
+        source: include_spirv!("shaders/geometry.frag.spv").source,
     });
     let vert_module = device.create_shader_module(&wgpu::ShaderModuleDescriptor {
         label: Some("Vert Shader"),
-        source: vert_spv,
+        source: include_spirv!("shaders/geometry.vert.spv").source,
     });
 
     let bind_group_layout = device.create_bind_group_layout(&wgpu::BindGroupLayoutDescriptor {
@@ -365,7 +358,7 @@ fn main() {
         label: None,
         layout: Some(&pipeline_layout),
         vertex: wgpu::VertexState {
-            module: &shader_module,
+            module: &vert_module,
             entry_point: "main",
             buffers: &[wgpu::VertexBufferLayout {
                 array_stride: std::mem::size_of::<GpuVertex>() as u64,
@@ -385,7 +378,7 @@ fn main() {
             }],
         },
         fragment: Some(wgpu::FragmentState {
-            module: &shader_module,
+            module: &frag_module,
             entry_point: "main",
             targets: &[wgpu::ColorTargetState {
                 format: wgpu::TextureFormat::Bgra8Unorm,
@@ -457,10 +450,6 @@ fn main() {
             }
         }
 
-        //let swap_chain = swap_chain.as_mut().unwrap();
-
-        let swap_chain = &surface;
-
         let mut encoder = device.create_command_encoder(&wgpu::CommandEncoderDescriptor {
             label: Some("Encoder"),
         });
@@ -476,9 +465,9 @@ fn main() {
             }]),
         );
 
-        let output = swap_chain.get_current_frame().unwrap().output;
+        let surface_output = &surface.get_current_frame().unwrap().output;
         // The view texture
-        let view = output
+        let view = surface_output
             .texture
             .create_view(&wgpu::TextureViewDescriptor::default());
         {
