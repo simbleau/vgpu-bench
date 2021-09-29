@@ -6,11 +6,15 @@ use std::time::Duration;
 pub use svg_document::SVGDocument;
 pub use svg_file::SVGFile;
 
-use crate::Tessellator;
+use crate::{renderer::state::GpuVertex, Tessellator};
 
 pub struct TessellationProfile {
     pub vertices: i32,
     pub indices: i32,
+}
+
+pub struct TessellationData {
+    pub mesh: lyon::lyon_tessellation::VertexBuffers<GpuVertex, u32>,
 }
 
 pub struct TessellationTimeResult {

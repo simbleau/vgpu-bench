@@ -1,9 +1,11 @@
-use crate::renderer::state::State;
+use crate::{renderer::state::State, targets::TessellationData};
 use winit::{
     event::*,
     event_loop::{ControlFlow, EventLoop},
     window::WindowBuilder,
 };
+
+use super::util::SceneGlobals;
 
 pub struct Renderer {}
 
@@ -13,11 +15,11 @@ impl Renderer {
         Renderer {}
     }
 
-    pub fn run(&self) {
+    pub fn run(&self, scene: SceneGlobals, data: TessellationData) {
         let event_loop = Box::new(EventLoop::new());
         let window = WindowBuilder::new().build(&event_loop).unwrap();
         window.set_resizable(false);
-        let mut state = pollster::block_on(State::new(&window));
+        let mut state = pollster::block_on(State::new(&window, scene, data));
 
         event_loop.run(move |event, _, control_flow| {
             match event {
