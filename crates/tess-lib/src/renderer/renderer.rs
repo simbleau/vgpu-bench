@@ -51,9 +51,10 @@ impl Renderer {
         let state = self.state.as_mut().unwrap();
         let window = self.window.as_mut().unwrap();
         let event_loop = self.event_loop.as_mut().unwrap();
+
         let mut frame_count = 0;
-        let durations = Arc::from(Mutex::from(Vec::<Duration>::new()));
-        let dur_clone = durations.clone();
+        let frame_times = Arc::from(Mutex::from(Vec::<Duration>::new()));
+        let frame_times_clone = frame_times.clone();
         event_loop.run_return(move |event, _, control_flow| {
             match event {
                 Event::RedrawRequested(_) => {
@@ -63,8 +64,8 @@ impl Renderer {
                             let t2 = Instant::now();
                             let dur = t2.duration_since(t1);
                             {
-                                let mut data = dur_clone.lock().unwrap();
-                                data.push(dur);
+                                let mut frame_times = frame_times_clone.lock().unwrap();
+                                frame_times.push(dur);
                             }
                             frame_count += 1
                         }
@@ -106,17 +107,16 @@ impl Renderer {
                 *control_flow = ControlFlow::Exit;
             }
         });
-        let durations = Mutex::into_inner(Arc::try_unwrap(durations).unwrap()).unwrap();
 
-        println!("Done");
+        let data = &self.state.as_ref().unwrap().data;
         let profile = TessellationProfile {
-            vertices: 0,
-            indices: 0,
-            triangles: 0,
+            vertices: data.vertices.len() as u32,
+            indices: data.indices.len() as u32,
         };
+        let frame_times = Mutex::into_inner(Arc::try_unwrap(frame_times).unwrap()).unwrap();
         Ok(FlattenedRenderResult {
             profile,
-            frame_times: durations,
+            frame_times,
         })
     }
 }

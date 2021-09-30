@@ -72,7 +72,6 @@ impl Tessellator for LyonTessellator {
         Ok(TessellationProfile {
             vertices: data.vertices.len() as u32,
             indices: data.indices.len() as u32,
-            triangles: (data.indices.len() as u32 / 3),
         })
     }
 

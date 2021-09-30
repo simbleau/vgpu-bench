@@ -18,7 +18,7 @@ pub struct State {
     pub render_pipeline: wgpu::RenderPipeline,
     pub buffers: Buffers,
     pub scene: SceneGlobals,
-    pub indices: usize,
+    pub data: TessellationData,
 }
 
 impl State {
@@ -149,7 +149,7 @@ impl State {
             render_pipeline,
             buffers,
             scene,
-            indices: data.indices.len(),
+            data,
         }
     }
 
@@ -214,7 +214,7 @@ impl State {
             pass.set_index_buffer(self.buffers.ibo.slice(..), wgpu::IndexFormat::Uint32);
             pass.set_vertex_buffer(0, self.buffers.vbo.slice(..));
 
-            pass.draw_indexed(0..(self.indices as u32), 0, 0..1);
+            pass.draw_indexed(0..(self.data.indices.len() as u32), 0, 0..1);
         }
 
         // submit will accept anything that implements IntoIter

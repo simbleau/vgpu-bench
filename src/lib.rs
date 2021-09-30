@@ -26,7 +26,8 @@ pub fn analyze() {
     // Profile of artifacts
     profile_svg_examples();
     // Tessellation time vs. primitives
-    bench_primitive_tessellation();
+    //bench_primitive_tessellation();
+
     // TODO: Render time of flattened primitives
     // TODO: Render time of hundreds of flattened real world examples
     // TODO: Tessellation tolerance vs. error
