@@ -1,4 +1,7 @@
-use crate::targets::{SVGDocument, TessellationData, TessellationProfile};
+use crate::{
+    artifacts::{TessellationData, TessellationProfile},
+    targets::SVGDocument,
+};
 use std::error::Error;
 pub trait Tessellator {
     fn name(&self) -> &'static str;

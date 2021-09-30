@@ -7,8 +7,9 @@ use usvg::{NodeExt, Tree, ViewBox};
 use std::error::Error;
 use std::f64::NAN;
 
-use crate::renderer::state::{GpuPrimitive, GpuTransform, GpuVertex};
-use crate::targets::{SVGDocument, TessellationData, TessellationProfile};
+use crate::artifacts::{TessellationData, TessellationProfile};
+use crate::renderer::types::{GpuPrimitive, GpuTransform, GpuVertex};
+use crate::targets::SVGDocument;
 use crate::Tessellator;
 
 pub const FALLBACK_COLOR: usvg::Color = usvg::Color {

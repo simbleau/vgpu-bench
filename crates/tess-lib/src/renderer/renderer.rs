@@ -1,4 +1,4 @@
-use crate::{renderer::state::State, targets::TessellationData};
+use crate::{artifacts::TessellationData, renderer::state::State};
 use winit::{
     event::*,
     event_loop::{ControlFlow, EventLoop},
@@ -6,7 +6,7 @@ use winit::{
     window::{Window, WindowBuilder},
 };
 
-use super::util::SceneGlobals;
+use super::types::SceneGlobals;
 use super::Result;
 
 pub struct Renderer {

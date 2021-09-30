@@ -2,11 +2,13 @@ use wgpu::include_spirv;
 use winit::event::WindowEvent;
 use winit::window::Window;
 
+use crate::artifacts::TessellationData;
+use crate::renderer::types::GpuVertex;
 use crate::renderer::util;
-use crate::targets::TessellationData;
 
-use super::util::SceneGlobals;
-use super::Buffers;
+use super::types::Buffers;
+use super::types::GpuGlobals;
+use super::types::SceneGlobals;
 
 pub struct State {
     pub surface: wgpu::Surface,
@@ -229,57 +231,3 @@ impl State {
         Ok(())
     }
 }
-
-#[repr(C)]
-#[derive(Copy, Clone)]
-pub struct GpuVertex {
-    pub position: [f32; 2],
-    pub prim_id: u32,
-}
-
-// A 2x3 matrix (last two members of data1 unused).
-#[repr(C)]
-#[derive(Copy, Clone)]
-pub struct GpuTransform {
-    pub data0: [f32; 4],
-    pub data1: [f32; 4],
-}
-
-#[repr(C)]
-#[derive(Copy, Clone)]
-pub struct GpuPrimitive {
-    pub transform: u32,
-    pub color: u32,
-    pub _pad: [u32; 2],
-}
-
-impl GpuPrimitive {
-    pub fn new(transform_idx: u32, color: usvg::Color, alpha: f32) -> Self {
-        GpuPrimitive {
-            transform: transform_idx,
-            color: ((color.red as u32) << 24)
-                + ((color.green as u32) << 16)
-                + ((color.blue as u32) << 8)
-                + (alpha * 255.0) as u32,
-            _pad: [0; 2],
-        }
-    }
-}
-
-#[repr(C)]
-#[derive(Copy, Clone)]
-pub struct GpuGlobals {
-    pub zoom: [f32; 2],
-    pub pan: [f32; 2],
-    pub aspect_ratio: f32,
-    pub _pad: f32,
-}
-
-pub struct VertexCtor {
-    pub prim_id: u32,
-}
-
-unsafe impl bytemuck::Pod for GpuGlobals {}
-unsafe impl bytemuck::Zeroable for GpuGlobals {}
-unsafe impl bytemuck::Pod for GpuVertex {}
-unsafe impl bytemuck::Zeroable for GpuVertex {}

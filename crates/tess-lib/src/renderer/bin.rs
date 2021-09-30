@@ -1,6 +1,6 @@
 use tess_lib::{
     backends::LyonTessellator,
-    renderer::{get_globals, Renderer},
+    renderer::{util::get_globals, Renderer},
     targets::{SVGDocument, SVGFile},
     Tessellator,
 };

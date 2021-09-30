@@ -1,26 +1,19 @@
-use wgpu::{util::DeviceExt, BindGroup, BindGroupLayout, Buffer};
+use wgpu::util::DeviceExt;
 use winit::dpi::PhysicalSize;
 
 use crate::{
-    renderer::state::{GpuGlobals, GpuPrimitive, GpuTransform},
-    targets::{SVGDocument, TessellationData},
+    artifacts::TessellationData,
+    renderer::types::{GpuGlobals, GpuPrimitive, GpuTransform},
+    targets::SVGDocument,
 };
+
+use super::types::{Buffers, SceneGlobals};
 
 const WINDOW_SIZE: f32 = 800.0;
 
 // These mush match the uniform buffer sizes in the vertex shader.
 const MAX_PRIMITIVES: usize = 512;
 const MAX_TRANSFORMS: usize = 512;
-
-// Default scene has all values set to zero
-#[derive(Copy, Clone, Debug)]
-pub struct SceneGlobals {
-    pub zoom: f32,
-    pub pan: [f32; 2],
-    pub window_size: PhysicalSize<u32>,
-    pub wireframe: bool,
-    pub size_changed: bool,
-}
 
 pub fn get_globals(file_data: &SVGDocument) -> SceneGlobals {
     let opt = usvg::Options::default();
@@ -48,16 +41,6 @@ pub fn get_globals(file_data: &SVGDocument) -> SceneGlobals {
         size_changed: true,
     };
     scene
-}
-
-pub struct Buffers {
-    pub ibo: Buffer,
-    pub vbo: Buffer,
-    pub prims_ubo: Buffer,
-    pub transforms_ubo: Buffer,
-    pub globals_ubo: Buffer,
-    pub bind_group_layout: BindGroupLayout,
-    pub bind_group: BindGroup,
 }
 
 pub fn get_buffers(device: &wgpu::Device, data: &TessellationData) -> Buffers {
