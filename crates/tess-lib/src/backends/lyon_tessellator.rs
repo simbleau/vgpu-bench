@@ -1,6 +1,8 @@
+use lyon::lyon_tessellation::{
+    BuffersBuilder, FillVertexConstructor, StrokeVertexConstructor, VertexBuffers,
+};
 use lyon::math::Point;
 use lyon::path::PathEvent;
-use lyon::tessellation::geometry_builder::*;
 use lyon::tessellation::{self, FillOptions, FillTessellator, StrokeOptions, StrokeTessellator};
 use usvg::{NodeExt, Tree, ViewBox};
 
@@ -68,8 +70,8 @@ impl Tessellator for LyonTessellator {
     fn tessellate(&mut self) -> Result<TessellationProfile, Box<dyn Error>> {
         let data = self.get_tessellate_data()?;
         Ok(TessellationProfile {
-            vertices: data.mesh.vertices.len() as u32,
-            indices: data.mesh.indices.len() as u32,
+            vertices: data.vertices.len() as u32,
+            indices: data.indices.len() as u32,
         })
     }
 
@@ -145,7 +147,8 @@ impl Tessellator for LyonTessellator {
         }
 
         let data = TessellationData {
-            mesh,
+            vertices: mesh.vertices,
+            indices: mesh.indices,
             transforms,
             primitives,
         };

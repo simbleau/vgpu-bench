@@ -19,7 +19,7 @@ fn main() {
 
     let mut r = Renderer::new();
     r.init(scene, data).unwrap();
-    r.run(50000).unwrap();
+    r.run(120).unwrap();
 
     println!("Finished");
 }

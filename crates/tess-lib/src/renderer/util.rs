@@ -47,13 +47,13 @@ pub fn get_buffers(device: &wgpu::Device, data: &TessellationData) -> Buffers {
     // Create vertex buffer object
     let vbo = device.create_buffer_init(&wgpu::util::BufferInitDescriptor {
         label: None,
-        contents: bytemuck::cast_slice(&data.mesh.vertices),
+        contents: bytemuck::cast_slice(&data.vertices),
         usage: wgpu::BufferUsages::VERTEX,
     });
     // Create index buffer object
     let ibo = device.create_buffer_init(&wgpu::util::BufferInitDescriptor {
         label: None,
-        contents: bytemuck::cast_slice(&data.mesh.indices),
+        contents: bytemuck::cast_slice(&data.indices),
         usage: wgpu::BufferUsages::INDEX,
     });
 

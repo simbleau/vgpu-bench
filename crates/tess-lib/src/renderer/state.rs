@@ -157,7 +157,7 @@ impl State {
             render_pipeline,
             buffers,
             scene,
-            indices: data.mesh.indices.len(),
+            indices: data.indices.len(),
         }
     }
 

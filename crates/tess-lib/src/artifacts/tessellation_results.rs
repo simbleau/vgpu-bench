@@ -11,7 +11,8 @@ pub struct TessellationProfile {
 
 #[derive(Debug)]
 pub struct TessellationData {
-    pub mesh: lyon::lyon_tessellation::VertexBuffers<GpuVertex, u32>,
+    pub vertices: Vec<GpuVertex>,
+    pub indices: Vec<u32>,
     pub transforms: Vec<GpuTransform>,
     pub primitives: Vec<GpuPrimitive>,
 }
