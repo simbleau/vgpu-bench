@@ -6,3 +6,6 @@ pub use primitive_results::PrimitiveTimeResult;
 
 mod tessellation_results;
 pub use tessellation_results::{TessellationData, TessellationProfile, TessellationTimeResult};
+
+mod render_results;
+pub use render_results::FlattenedRenderResult;

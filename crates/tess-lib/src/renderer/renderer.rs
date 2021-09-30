@@ -1,6 +1,14 @@
-use crate::{artifacts::TessellationData, renderer::state::State};
+use std::{
+    sync::{Arc, Mutex},
+    time::{Duration, Instant},
+};
+
+use crate::{
+    artifacts::{FlattenedRenderResult, TessellationData, TessellationProfile},
+    renderer::state::State,
+};
 use winit::{
-    event::*,
+    event::{ElementState, Event, KeyboardInput, VirtualKeyCode, WindowEvent},
     event_loop::{ControlFlow, EventLoop},
     platform::run_return::EventLoopExtRunReturn,
     window::{Window, WindowBuilder},
@@ -39,17 +47,25 @@ impl Renderer {
         Ok(())
     }
 
-    pub fn run(&mut self, frames: u32) -> Result<()> {
+    pub fn run(&mut self, frames: u32) -> Result<FlattenedRenderResult> {
         let state = self.state.as_mut().unwrap();
         let window = self.window.as_mut().unwrap();
         let event_loop = self.event_loop.as_mut().unwrap();
         let mut frame_count = 0;
+        let durations = Arc::from(Mutex::from(Vec::<Duration>::new()));
+        let dur_clone = durations.clone();
         event_loop.run_return(move |event, _, control_flow| {
             match event {
                 Event::RedrawRequested(_) => {
+                    let t1 = Instant::now();
                     match state.render() {
                         Ok(_) => {
-                            println!("Frame");
+                            let t2 = Instant::now();
+                            let dur = t2.duration_since(t1);
+                            {
+                                let mut data = dur_clone.lock().unwrap();
+                                data.push(dur);
+                            }
                             frame_count += 1
                         }
                         // Reconfigure the surface if lost
@@ -90,6 +106,16 @@ impl Renderer {
                 *control_flow = ControlFlow::Exit;
             }
         });
-        Ok(())
+        let durations = Mutex::into_inner(Arc::try_unwrap(durations).unwrap()).unwrap();
+
+        println!("Done");
+        let profile = TessellationProfile {
+            vertices: 0,
+            indices: 0,
+        };
+        Ok(FlattenedRenderResult {
+            profile,
+            frame_times: durations,
+        })
     }
 }
