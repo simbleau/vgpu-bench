@@ -5,6 +5,7 @@ use std::{
 
 use crate::{
     artifacts::{FlattenedRenderResult, TessellationData, TessellationProfile},
+    renderer::error::RendererError::FatalRenderingError,
     renderer::state::State,
 };
 use winit::{
@@ -47,7 +48,7 @@ impl Renderer {
         Ok(())
     }
 
-    pub fn run(&mut self, frames: u32) -> Result<FlattenedRenderResult> {
+    pub fn run(&mut self, frames: usize) -> Result<FlattenedRenderResult> {
         let state = self.state.as_mut().unwrap();
         let window = self.window.as_mut().unwrap();
         let event_loop = self.event_loop.as_mut().unwrap();
@@ -69,37 +70,22 @@ impl Renderer {
                             }
                             frame_count += 1
                         }
-                        // Reconfigure the surface if lost
                         Err(wgpu::SurfaceError::Lost) => state.resize(state.size),
-                        // The system is out of memory, we should probably quit
                         Err(wgpu::SurfaceError::OutOfMemory) => *control_flow = ControlFlow::Exit,
-                        // All other errors (Outdated, Timeout) should be resolved by the next frame
                         Err(e) => eprintln!("{:?}", e),
                     }
                 }
                 Event::MainEventsCleared => {
-                    // RedrawRequested will only trigger once, unless we manually
-                    // request it.
                     window.request_redraw();
                 }
                 Event::WindowEvent {
                     window_id: _,
                     event,
                 } => match event {
-                    WindowEvent::CloseRequested
-                    | WindowEvent::KeyboardInput {
-                        input:
-                            KeyboardInput {
-                                state: ElementState::Pressed,
-                                virtual_keycode: Some(VirtualKeyCode::Escape),
-                                ..
-                            },
-                        ..
-                    } => *control_flow = ControlFlow::Exit,
                     WindowEvent::Resized(size) => state.resize(size),
                     _ => {}
                 },
-                _ => {} // Do nothing
+                _ => {}
             }
 
             // Return if frames have been drawn
@@ -108,14 +94,16 @@ impl Renderer {
             }
         });
 
-        let data = &self.state.as_ref().unwrap().data;
-        let profile = TessellationProfile {
-            vertices: data.vertices.len() as u32,
-            indices: data.indices.len() as u32,
-        };
+        // Ensure all frames were rendered.
         let frame_times = Mutex::into_inner(Arc::try_unwrap(frame_times).unwrap()).unwrap();
+        if frame_times.len() != frames {
+            return Err(FatalRenderingError);
+        }
+
+        // Collect results
+        let triangles = (&self.state.as_ref().unwrap().data.indices.len() / 3) as u32;
         Ok(FlattenedRenderResult {
-            profile,
+            triangles,
             frame_times,
         })
     }

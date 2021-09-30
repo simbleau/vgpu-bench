@@ -14,6 +14,8 @@ use crate::renderer::types::{GpuPrimitive, GpuTransform, GpuVertex};
 use crate::targets::SVGDocument;
 use crate::Tessellator;
 
+const TOLERANCE: f32 = 0.1;
+
 pub const FALLBACK_COLOR: usvg::Color = usvg::Color {
     red: 0,
     green: 0,
@@ -114,7 +116,7 @@ impl Tessellator for LyonTessellator {
                     fill_tess
                         .tessellate(
                             convert_path(p),
-                            &FillOptions::tolerance(0.01),
+                            &FillOptions::tolerance(TOLERANCE),
                             &mut BuffersBuilder::new(
                                 &mut mesh,
                                 VertexCtor {
@@ -134,7 +136,7 @@ impl Tessellator for LyonTessellator {
                     ));
                     let _ = stroke_tess.tessellate(
                         convert_path(p),
-                        &stroke_opts.with_tolerance(0.01),
+                        &stroke_opts.with_tolerance(TOLERANCE),
                         &mut BuffersBuilder::new(
                             &mut mesh,
                             VertexCtor {
@@ -310,7 +312,7 @@ pub fn convert_stroke(s: &usvg::Stroke) -> (usvg::Color, StrokeOptions) {
         usvg::LineJoin::Round => tessellation::LineJoin::Round,
     };
 
-    let opt = StrokeOptions::tolerance(0.01)
+    let opt = StrokeOptions::tolerance(TOLERANCE)
         .with_line_width(s.width.value() as f32)
         .with_line_cap(linecap)
         .with_line_join(linejoin);

@@ -19,8 +19,8 @@ fn main() {
 
     let mut r = Renderer::new();
     r.init(scene, data).unwrap();
-    let results = r.run(120).unwrap();
-    println!("{:?}", results.frame_times);
+    let results = r.run(10).unwrap();
+    println!("{:?}", results);
 
     println!("Finished");
 }

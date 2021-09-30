@@ -5,6 +5,7 @@ pub type Result<T> = std::result::Result<T, RendererError>;
 #[derive(Debug)]
 pub enum RendererError {
     RendererNotInitialized,
+    FatalRenderingError,
     OsError(OsError),
 }
 
