@@ -112,6 +112,7 @@ impl Renderer {
         let profile = TessellationProfile {
             vertices: 0,
             indices: 0,
+            triangles: 0,
         };
         Ok(FlattenedRenderResult {
             profile,

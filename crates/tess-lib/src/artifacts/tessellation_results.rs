@@ -7,6 +7,7 @@ use crate::renderer::types::{GpuPrimitive, GpuTransform, GpuVertex};
 pub struct TessellationProfile {
     pub vertices: u32,
     pub indices: u32,
+    pub triangles: u32,
 }
 
 #[derive(Debug, Serialize)]
