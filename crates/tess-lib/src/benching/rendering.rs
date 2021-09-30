@@ -29,13 +29,16 @@ where
                 .ok_or(Logic("File name unkown"))?
                 .to_string_lossy()
                 .to_string();
-            let csv_entry = SVGFlatRenderTimeResult {
-                tessellator: backend.name().to_owned(),
-                filename,
-                triangles: result.triangles,
-                frame_times: result.frame_times,
-            };
-            csv_wtr.serialize(csv_entry)?;
+
+            for frame_time in result.frame_times {
+                let csv_entry = SVGFlatRenderTimeResult {
+                    tessellator: backend.name().to_owned(),
+                    filename: filename.to_owned(),
+                    triangles: result.triangles,
+                    frame_time: frame_time.as_nanos(),
+                };
+                csv_wtr.serialize(csv_entry)?;
+            }
         }
     }
     csv_wtr.flush()?;
