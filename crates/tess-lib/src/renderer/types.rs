@@ -1,7 +1,8 @@
+use serde::Serialize;
+
 use wgpu::{BindGroup, BindGroupLayout, Buffer};
 use winit::dpi::PhysicalSize;
 
-// Default scene has all values set to zero
 #[derive(Copy, Clone, Debug)]
 pub struct SceneGlobals {
     pub zoom: f32,
@@ -23,7 +24,7 @@ pub struct Buffers {
 }
 
 #[repr(C)]
-#[derive(Debug, Copy, Clone)]
+#[derive(Debug, Copy, Clone, Serialize)]
 pub struct GpuVertex {
     pub position: [f32; 2],
     pub prim_id: u32,
@@ -31,14 +32,14 @@ pub struct GpuVertex {
 
 // A 2x3 matrix (last two members of data1 unused).
 #[repr(C)]
-#[derive(Debug, Copy, Clone)]
+#[derive(Debug, Copy, Clone, Serialize)]
 pub struct GpuTransform {
     pub data0: [f32; 4],
     pub data1: [f32; 4],
 }
 
 #[repr(C)]
-#[derive(Debug, Copy, Clone)]
+#[derive(Debug, Copy, Clone, Serialize)]
 pub struct GpuPrimitive {
     pub transform: u32,
     pub color: u32,
@@ -59,7 +60,7 @@ impl GpuPrimitive {
 }
 
 #[repr(C)]
-#[derive(Debug, Copy, Clone)]
+#[derive(Debug, Copy, Clone, Serialize)]
 pub struct GpuGlobals {
     pub zoom: [f32; 2],
     pub pan: [f32; 2],
@@ -67,6 +68,7 @@ pub struct GpuGlobals {
     pub _pad: f32,
 }
 
+#[derive(Debug, Copy, Clone, Serialize)]
 pub struct VertexCtor {
     pub prim_id: u32,
 }

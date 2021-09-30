@@ -9,7 +9,8 @@ pub struct TessellationProfile {
     pub indices: u32,
 }
 
-#[derive(Debug)]
+#[derive(Debug, Serialize)]
+
 pub struct TessellationData {
     pub vertices: Vec<GpuVertex>,
     pub indices: Vec<u32>,
