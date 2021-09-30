@@ -4,12 +4,12 @@ use std::{
 };
 
 use crate::{
-    artifacts::{FlattenedRenderResult, TessellationData, TessellationProfile},
+    artifacts::{FlatRenderTimeResult, TessellationData},
     renderer::error::RendererError::FatalRenderingError,
     renderer::state::State,
 };
 use winit::{
-    event::{ElementState, Event, KeyboardInput, VirtualKeyCode, WindowEvent},
+    event::{Event, WindowEvent},
     event_loop::{ControlFlow, EventLoop},
     platform::run_return::EventLoopExtRunReturn,
     window::{Window, WindowBuilder},
@@ -26,7 +26,6 @@ pub struct Renderer {
 
 impl Renderer {
     pub fn new() -> Self {
-        env_logger::init();
         Renderer {
             window: None,
             event_loop: None,
@@ -48,7 +47,7 @@ impl Renderer {
         Ok(())
     }
 
-    pub fn run(&mut self, frames: usize) -> Result<FlattenedRenderResult> {
+    pub fn run(&mut self, frames: usize) -> Result<FlatRenderTimeResult> {
         let state = self.state.as_mut().unwrap();
         let window = self.window.as_mut().unwrap();
         let event_loop = self.event_loop.as_mut().unwrap();
@@ -102,7 +101,7 @@ impl Renderer {
 
         // Collect results
         let triangles = (&self.state.as_ref().unwrap().data.indices.len() / 3) as u32;
-        Ok(FlattenedRenderResult {
+        Ok(FlatRenderTimeResult {
             triangles,
             frame_times,
         })

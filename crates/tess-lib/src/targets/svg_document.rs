@@ -1,6 +1,10 @@
 use std::time::Instant;
 
-use crate::Tessellator;
+use crate::{
+    artifacts::FlatRenderTimeResult,
+    renderer::{util::get_globals, Renderer},
+    Tessellator,
+};
 
 use super::{SVGFile, TessellationProfile, TessellationTarget, TessellationTimeResult};
 pub struct SVGDocument {
@@ -51,5 +55,16 @@ impl TessellationTarget for SVGDocument {
             init_time: dur1,
             tess_time: dur2,
         }
+    }
+
+    fn time_render(&mut self, t: Box<&mut dyn Tessellator>, frames: usize) -> FlatRenderTimeResult {
+        let scene = get_globals(&self);
+        t.init(&self);
+        let data = *t.get_tessellate_data().unwrap();
+
+        let mut r = Renderer::new();
+        r.init(scene, data).unwrap();
+
+        r.run(frames).unwrap()
     }
 }

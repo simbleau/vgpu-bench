@@ -8,6 +8,9 @@ pub use primitive_benching::time_primitive;
 mod profiling;
 pub use profiling::profile_svgs;
 
+mod rendering;
+pub use rendering::render_svgs;
+
 mod error;
 use error::Result;
 

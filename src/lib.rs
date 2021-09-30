@@ -23,10 +23,12 @@ pub fn analyze() {
 
     // Goal A: Tessellation Analysis
     //
-    // Profile of artifacts
-    profile_svg_examples();
     // Tessellation time vs. primitives
     //bench_primitive_tessellation();
+    // Profile of artifacts
+    //profile_svg_examples();
+    // Render time of SVGs
+    render_svg_examples();
 
     // TODO: Render time of flattened primitives
     // TODO: Render time of hundreds of flattened real world examples
@@ -67,6 +69,13 @@ fn profile_svg_examples() {
     let path = concatcp![EXAMPLES_OUTPUT_DIR, "profiles.csv"];
     perform_with_output("SVG profiling", path, || {
         tess::benching::profile_svgs(EXAMPLES_ASSETS_DIR, path).unwrap();
+    });
+}
+
+fn render_svg_examples() {
+    let path = concatcp![EXAMPLES_OUTPUT_DIR, "renders.csv"];
+    perform_with_output("SVG rendering", path, || {
+        tess::benching::render_svgs(EXAMPLES_ASSETS_DIR, path).unwrap();
     });
 }
 
