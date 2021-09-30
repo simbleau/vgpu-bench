@@ -1,4 +1,3 @@
-use wgpu::include_spirv;
 use winit::event::WindowEvent;
 use winit::window::Window;
 
@@ -60,24 +59,17 @@ impl State {
             format: wgpu::TextureFormat::Bgra8Unorm,
             width: size.width,
             height: size.height,
-            present_mode: wgpu::PresentMode::Mailbox,
+            present_mode: wgpu::PresentMode::Immediate,
         };
 
         surface.configure(&device, &config);
 
         // Make pipeline
-        let frag_spv = include_spirv!("shaders/geometry.frag.spv").source;
-        let _frag_wgsl = wgpu::ShaderSource::Wgsl(include_str!("shaders/frag.wgsl").into());
-        let frag_module = device.create_shader_module(&wgpu::ShaderModuleDescriptor {
-            label: Some("Frag Shader"),
-            source: frag_spv,
-        });
-
-        let vert_spv = include_spirv!("shaders/geometry.vert.spv").source;
-        let _vert_wgsl = wgpu::ShaderSource::Wgsl(include_str!("shaders/vert.wgsl").into());
-        let vert_module = device.create_shader_module(&wgpu::ShaderModuleDescriptor {
-            label: Some("Vert Shader"),
-            source: vert_spv,
+        let wgsl_shader_source =
+            wgpu::ShaderSource::Wgsl(include_str!("shaders/shader.wgsl").into());
+        let shader_module = device.create_shader_module(&wgpu::ShaderModuleDescriptor {
+            label: Some("Shader"),
+            source: wgsl_shader_source,
         });
 
         // Get buffers
@@ -94,7 +86,7 @@ impl State {
             label: None,
             layout: Some(&pipeline_layout),
             vertex: wgpu::VertexState {
-                module: &vert_module,
+                module: &shader_module,
                 entry_point: "main",
                 buffers: &[wgpu::VertexBufferLayout {
                     array_stride: std::mem::size_of::<GpuVertex>() as u64,
@@ -114,7 +106,7 @@ impl State {
                 }],
             },
             fragment: Some(wgpu::FragmentState {
-                module: &frag_module,
+                module: &shader_module,
                 entry_point: "main",
                 targets: &[wgpu::ColorTargetState {
                     format: wgpu::TextureFormat::Bgra8Unorm,

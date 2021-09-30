@@ -26,6 +26,6 @@ winit = "0.25"
 cgmath = "0.18"
 env_logger = "0.9"
 log = "0.4"
-wgpu = {version = "0.10", features = ["spirv"]} 
+wgpu = "0.10"
 pollster = "0.2"
 bytemuck = "1.2.0"
