@@ -65,80 +65,10 @@ impl Tessellator for LyonTessellator {
     }
 
     fn tessellate(&mut self) -> Result<TessellationProfile, Box<dyn Error>> {
-        // Create vertex buffer
-        let mut fill_tess = FillTessellator::new();
-        let mut stroke_tess = StrokeTessellator::new();
-        let mut mesh: VertexBuffers<_, u32> = VertexBuffers::new();
-
-        let mut transforms = Vec::new();
-        let mut primitives = Vec::new();
-
-        for node in self.state.as_ref().unwrap().rtree.root().descendants() {
-            if let usvg::NodeKind::Path(ref p) = *node.borrow() {
-                let t = node.transform();
-                if t != self.state.as_ref().unwrap().prev_transform {
-                    transforms.push(GpuTransform {
-                        data0: [t.a as f32, t.b as f32, t.c as f32, t.d as f32],
-                        data1: [t.e as f32, t.f as f32, 0.0, 0.0],
-                    });
-                }
-                self.state.as_mut().unwrap().prev_transform = t;
-
-                let transform_idx = transforms.len() as u32 - 1;
-
-                if let Some(ref fill) = p.fill {
-                    // fall back to always use color fill
-                    // no gradients (yet?)
-                    let color = match fill.paint {
-                        usvg::Paint::Color(c) => c,
-                        _ => FALLBACK_COLOR,
-                    };
-
-                    primitives.push(GpuPrimitive::new(
-                        transform_idx,
-                        color,
-                        fill.opacity.value() as f32,
-                    ));
-
-                    fill_tess
-                        .tessellate(
-                            convert_path(p),
-                            &FillOptions::tolerance(0.01),
-                            &mut BuffersBuilder::new(
-                                &mut mesh,
-                                VertexCtor {
-                                    prim_id: primitives.len() as u32 - 1,
-                                },
-                            ),
-                        )
-                        .expect("Error during tesselation!");
-                }
-
-                if let Some(ref stroke) = p.stroke {
-                    let (stroke_color, stroke_opts) = convert_stroke(stroke);
-                    primitives.push(GpuPrimitive::new(
-                        transform_idx,
-                        stroke_color,
-                        stroke.opacity.value() as f32,
-                    ));
-                    let _ = stroke_tess.tessellate(
-                        convert_path(p),
-                        &stroke_opts.with_tolerance(0.01),
-                        &mut BuffersBuilder::new(
-                            &mut mesh,
-                            VertexCtor {
-                                prim_id: primitives.len() as u32 - 1,
-                            },
-                        ),
-                    );
-                }
-            }
-        }
-
-        // Return result
+        let data = self.get_tessellate_data()?;
         Ok(TessellationProfile {
-            vertices: mesh.vertices.len() as i32,
-            indices: mesh.indices.len() as i32,
+            vertices: data.mesh.vertices.len() as u32,
+            indices: data.mesh.indices.len() as u32,
         })
     }
 

@@ -3,14 +3,14 @@ use serde::Serialize;
 pub struct SVGProfileResult {
     pub tessellator: String,
     pub filename: String,
-    pub vertices: i32,
-    pub indices: i32,
+    pub vertices: u32,
+    pub indices: u32,
 }
 
 #[derive(Debug, Serialize)]
 pub struct SVGTimeResult {
     pub tessellator: String,
     pub filename: String,
-    pub init_time: i32,
-    pub tess_time: i32,
+    pub init_time: u32,
+    pub tess_time: u32,
 }

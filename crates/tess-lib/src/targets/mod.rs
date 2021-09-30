@@ -12,8 +12,8 @@ use crate::{
 };
 
 pub struct TessellationProfile {
-    pub vertices: i32,
-    pub indices: i32,
+    pub vertices: u32,
+    pub indices: u32,
 }
 
 pub struct TessellationData {
