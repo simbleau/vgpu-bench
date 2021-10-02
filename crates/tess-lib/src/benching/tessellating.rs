@@ -4,7 +4,7 @@ use svg_gen::Primitive;
 
 use super::Result;
 use crate::{
-    artifacts::PrimitiveTimeResult,
+    artifacts::serializable::PrimitiveTime,
     targets::{SVGDocument, TessellationTarget},
     Tessellator,
 };
@@ -33,7 +33,7 @@ where
             for _ in 0..trials {
                 let time_result = target.time(Box::new(backend));
 
-                let result = PrimitiveTimeResult {
+                let result = PrimitiveTime {
                     tessellator: backend.name().to_owned(),
                     primitive: prim_name.to_owned(),
                     amount: count,

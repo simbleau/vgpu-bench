@@ -2,14 +2,14 @@ use std::path::PathBuf;
 
 use walkdir::WalkDir;
 
-mod primitive_benching;
-pub use primitive_benching::time_primitive;
-
 mod profiling;
 pub use profiling::profile_svgs;
 
 mod rendering;
 pub use rendering::render_svgs;
+
+mod tessellating;
+pub use tessellating::time_primitive;
 
 mod error;
 use error::Result;

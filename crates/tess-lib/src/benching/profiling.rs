@@ -1,7 +1,7 @@
 use std::{fs::File, path::PathBuf};
 
 use crate::{
-    artifacts::SVGProfileResult,
+    artifacts::serializable::SVGProfile,
     targets::{SVGFile, TessellationTarget},
     Tessellator,
 };
@@ -32,7 +32,7 @@ where
                 .ok_or(Logic("File name unkown"))?
                 .to_string_lossy()
                 .to_string();
-            let result = SVGProfileResult {
+            let result = SVGProfile {
                 tessellator: backend.name().to_owned(),
                 filename,
                 vertices: profile_result.vertices,

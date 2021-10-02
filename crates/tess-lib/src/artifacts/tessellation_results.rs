@@ -1,15 +1,13 @@
 use std::time::Duration;
 
-use serde::Serialize;
-
 use crate::renderer::types::{GpuPrimitive, GpuTransform, GpuVertex};
-#[derive(Debug, Serialize)]
+#[derive(Debug)]
 pub struct TessellationProfile {
     pub vertices: u32,
     pub indices: u32,
 }
 
-#[derive(Debug, Serialize)]
+#[derive(Debug)]
 
 pub struct TessellationData {
     pub vertices: Vec<GpuVertex>,
@@ -18,7 +16,7 @@ pub struct TessellationData {
     pub primitives: Vec<GpuPrimitive>,
 }
 
-#[derive(Debug, Serialize)]
+#[derive(Debug)]
 pub struct TessellationTimeResult {
     pub init_time: Duration,
     pub tess_time: Duration,

@@ -1,8 +1,4 @@
-mod svg_results;
-pub use svg_results::{SVGFlatRenderTimeResult, SVGProfileResult, SVGTessellationTimeResult};
-
-mod primitive_results;
-pub use primitive_results::PrimitiveTimeResult;
+pub mod serializable;
 
 mod tessellation_results;
 pub use tessellation_results::{TessellationData, TessellationProfile, TessellationTimeResult};

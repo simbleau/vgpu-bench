@@ -1,7 +1,7 @@
 use serde::Serialize;
 
 #[derive(Debug, Serialize)]
-pub struct SVGProfileResult {
+pub struct SVGProfile {
     pub tessellator: String,
     pub filename: String,
     pub vertices: u32,
@@ -9,7 +9,7 @@ pub struct SVGProfileResult {
 }
 
 #[derive(Debug, Serialize)]
-pub struct SVGTessellationTimeResult {
+pub struct SVGTessellationTime {
     pub tessellator: String,
     pub filename: String,
     pub init_time: u32,
@@ -17,9 +17,18 @@ pub struct SVGTessellationTimeResult {
 }
 
 #[derive(Debug, Serialize)]
-pub struct SVGFlatRenderTimeResult {
+pub struct SVGFlatRenderTime {
     pub tessellator: String,
     pub filename: String,
     pub triangles: u32,
     pub frame_time: u128,
+}
+
+#[derive(Debug, Serialize)]
+pub struct PrimitiveTime {
+    pub tessellator: String,
+    pub primitive: String,
+    pub amount: u32,
+    pub init_time: u128,
+    pub tess_time: u128,
 }

@@ -1,6 +1,6 @@
 use std::{fs::File, path::PathBuf};
 
-use crate::artifacts::SVGFlatRenderTimeResult;
+use crate::artifacts::serializable::SVGFlatRenderTime;
 use crate::benching::error::BenchingError::Logic;
 use crate::targets::TessellationTarget;
 use crate::{targets::SVGFile, Tessellator};
@@ -31,7 +31,7 @@ where
                 .to_string();
 
             for frame_time in result.frame_times {
-                let csv_entry = SVGFlatRenderTimeResult {
+                let csv_entry = SVGFlatRenderTime {
                     tessellator: backend.name().to_owned(),
                     filename: filename.to_owned(),
                     triangles: result.triangles,
