@@ -82,6 +82,9 @@ impl Renderer {
                 event,
             } => match event {
                 WindowEvent::Resized(size) => state.resize(size),
+                WindowEvent::CloseRequested | WindowEvent::Destroyed => {
+                    *control_flow = ControlFlow::Exit
+                }
                 _ => {}
             },
             _ => {}
