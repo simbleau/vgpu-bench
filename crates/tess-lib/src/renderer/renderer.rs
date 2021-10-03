@@ -1,7 +1,7 @@
 use super::error::Result;
 use super::types::SceneGlobals;
 use crate::{
-    artifacts::{FlatRenderTimeResult, TessellationData},
+    artifacts::{RenderTimeResult, TessellationData},
     backends::Tessellator,
     renderer::error::RendererError::FatalRenderingError,
     renderer::state::State,
@@ -62,7 +62,7 @@ impl Renderer {
         Ok(())
     }
 
-    pub fn run(&mut self, frames: usize) -> Result<FlatRenderTimeResult> {
+    pub fn run(&mut self, frames: usize) -> Result<RenderTimeResult> {
         let state = self.state.as_mut().unwrap();
         let window = self.window.as_mut().unwrap();
         let event_loop = self.event_loop.as_mut().unwrap();
@@ -117,7 +117,7 @@ impl Renderer {
 
         // Collect results
         let triangles = (&self.state.as_ref().unwrap().data.indices.len() / 3) as u32;
-        Ok(FlatRenderTimeResult {
+        Ok(RenderTimeResult {
             triangles,
             frame_times,
         })

@@ -32,7 +32,7 @@ impl TessellationTarget for SVGFile {
         &mut self,
         t: Box<&mut dyn Tessellator>,
         frames: usize,
-    ) -> crate::artifacts::FlatRenderTimeResult {
+    ) -> crate::artifacts::RenderTimeResult {
         let file_ref: &SVGFile = self.borrow();
         let mut svg_document: SVGDocument = SVGDocument::from(file_ref);
         svg_document.time_render(t, frames)
