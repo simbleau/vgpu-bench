@@ -6,7 +6,7 @@ pub use svg_file::SVGFile;
 
 use crate::{
     artifacts::{FlatRenderTimeResult, TessellationProfile, TessellationTimeResult},
-    Tessellator,
+    backends::Tessellator,
 };
 
 pub trait TessellationTarget {

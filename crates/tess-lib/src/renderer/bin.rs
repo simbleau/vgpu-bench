@@ -1,8 +1,7 @@
 use tess_lib::{
-    backends::LyonTessellator,
+    backends::{LyonTessellator, Tessellator},
     renderer::{util::get_globals, Renderer},
     targets::{SVGDocument, SVGFile},
-    Tessellator,
 };
 
 fn main() {

@@ -1,22 +1,19 @@
+use super::error::{BenchingError::Logic, Result};
+use crate::backends::Tessellator;
+use crate::benching::output::SVGFlatRenderTime;
+use crate::targets::{SVGFile, TessellationTarget};
 use std::{fs::File, path::PathBuf};
-
-use crate::artifacts::serializable::SVGFlatRenderTime;
-use crate::benching::error::BenchingError::Logic;
-use crate::targets::TessellationTarget;
-use crate::{targets::SVGFile, Tessellator};
-
-use super::Result;
 
 pub fn render_svgs<P>(svg_dir: P, output: P) -> Result<()>
 where
     P: Into<PathBuf>,
 {
-    let files = super::get_files(svg_dir, false)?;
+    let files = super::io::get_files(svg_dir, false)?;
     let output_file = File::create(output.into())?;
     let mut csv_wtr = csv::Writer::from_writer(output_file);
 
     // For each backend, retrieve the file profiles
-    for mut backend in crate::backends::backends() {
+    for mut backend in crate::backends::all() {
         let backend: &mut dyn Tessellator = &mut *backend; // Unwrap & Shadow
 
         // Retrieve the profile from files and record the results

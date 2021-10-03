@@ -1,8 +1,6 @@
 #![allow(dead_code)]
-use std::io::Write;
-
 use const_format::concatcp;
-
+use std::io::Write;
 extern crate tess;
 
 const OUTPUT_DIR: &'static str = "output/data/";
@@ -16,11 +14,6 @@ const PRIMITIVES_ASSETS_DIR: &'static str = concatcp![SVG_ASSETS_DIR, "primitive
 const EXAMPLES_ASSETS_DIR: &'static str = concatcp![SVG_ASSETS_DIR, "examples/"];
 
 pub fn analyze() {
-    let debug = true;
-    if !debug {
-        todo!();
-    }
-
     // Goal A: Tessellation Analysis
     //
     // Tessellation time vs. primitives
@@ -68,14 +61,14 @@ fn perform_with_output(action_message: &'static str, path: &'static str, action:
 fn profile_svg_examples() {
     let path = concatcp![EXAMPLES_OUTPUT_DIR, "profiles.csv"];
     perform_with_output("SVG profiling", path, || {
-        tess::benching::profile_svgs(EXAMPLES_ASSETS_DIR, path).unwrap();
+        tess::benching::profiling::profile_svgs(EXAMPLES_ASSETS_DIR, path).unwrap();
     });
 }
 
 fn render_svg_examples() {
     let path = concatcp![EXAMPLES_OUTPUT_DIR, "renders.csv"];
     perform_with_output("SVG rendering", path, || {
-        tess::benching::render_svgs(EXAMPLES_ASSETS_DIR, path).unwrap();
+        tess::benching::rendering::render_svgs(EXAMPLES_ASSETS_DIR, path).unwrap();
     });
 }
 
@@ -84,7 +77,7 @@ fn bench_primitive_tessellation() {
     // Triangles
     let path = concatcp![PRIMITIVES_OUTPUT_DIR, "time_triangles.csv"];
     perform_with_output("triangle tessellation benchmarking", path, || {
-        tess::benching::time_primitive(
+        tess::benching::tessellating::time_primitive(
             "triangle".to_owned(),
             svg_gen::Primitive::Triangle,
             path,
@@ -96,7 +89,7 @@ fn bench_primitive_tessellation() {
     // Quadratic Curves
     let path = concatcp![PRIMITIVES_OUTPUT_DIR, "time_curves.csv"];
     perform_with_output("quadratic curve tessellation benchmarking", path, || {
-        tess::benching::time_primitive(
+        tess::benching::tessellating::time_primitive(
             "quadratic bezier curve".to_owned(),
             svg_gen::Primitive::BezierCurve,
             path,
@@ -108,7 +101,7 @@ fn bench_primitive_tessellation() {
     // Cubic Curves
     let path = concatcp![PRIMITIVES_OUTPUT_DIR, "time_cubic_curves.csv"];
     perform_with_output("cubic curve tessellation benchmarking", path, || {
-        tess::benching::time_primitive(
+        tess::benching::tessellating::time_primitive(
             "cubic bezier curve".to_owned(),
             svg_gen::Primitive::CubicBezierCurve,
             path,

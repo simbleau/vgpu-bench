@@ -1,7 +1,9 @@
+use crate::backends::Tessellator;
+use crate::targets::{
+    SVGDocument, TessellationProfile, TessellationTarget, TessellationTimeResult,
+};
 use std::{borrow::Borrow, path::PathBuf};
 
-use super::{SVGDocument, TessellationProfile, TessellationTarget, TessellationTimeResult};
-use crate::Tessellator;
 pub struct SVGFile {
     pub path: PathBuf,
 }

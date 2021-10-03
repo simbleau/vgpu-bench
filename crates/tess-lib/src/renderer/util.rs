@@ -1,13 +1,11 @@
-use wgpu::util::DeviceExt;
-use winit::dpi::PhysicalSize;
-
+use super::types::{Buffers, SceneGlobals};
 use crate::{
     artifacts::TessellationData,
-    renderer::types::{GpuGlobals, GpuPrimitive, GpuTransform},
+    renderer::types::{GpuGlobals, GpuPrimitive, GpuTransform, GpuVertex},
     targets::SVGDocument,
 };
-
-use super::types::{Buffers, SceneGlobals};
+use wgpu::{util::DeviceExt, RenderPipeline};
+use winit::dpi::PhysicalSize;
 
 const WINDOW_SIZE: f32 = 800.0;
 
@@ -43,7 +41,70 @@ pub fn get_globals(file_data: &SVGDocument) -> SceneGlobals {
     scene
 }
 
-pub fn get_buffers(device: &wgpu::Device, data: &TessellationData) -> Buffers {
+pub fn build_pipeline(device: &wgpu::Device, buffers: &Buffers) -> RenderPipeline {
+    // Get triangle shader
+    let wgsl_shader_source = wgpu::ShaderSource::Wgsl(include_str!("shaders/shader.wgsl").into());
+    let shader_module = device.create_shader_module(&wgpu::ShaderModuleDescriptor {
+        label: Some("Shader"),
+        source: wgsl_shader_source,
+    });
+
+    // Make pipeline layout
+    let pipeline_layout = device.create_pipeline_layout(&wgpu::PipelineLayoutDescriptor {
+        bind_group_layouts: &[&buffers.bind_group_layout],
+        push_constant_ranges: &[],
+        label: None,
+    });
+
+    let render_pipeline_descriptor = wgpu::RenderPipelineDescriptor {
+        label: None,
+        layout: Some(&pipeline_layout),
+        vertex: wgpu::VertexState {
+            module: &shader_module,
+            entry_point: "main",
+            buffers: &[wgpu::VertexBufferLayout {
+                array_stride: std::mem::size_of::<GpuVertex>() as u64,
+                step_mode: wgpu::VertexStepMode::Vertex,
+                attributes: &[
+                    wgpu::VertexAttribute {
+                        offset: 0,
+                        format: wgpu::VertexFormat::Float32x2,
+                        shader_location: 0,
+                    },
+                    wgpu::VertexAttribute {
+                        offset: 8,
+                        format: wgpu::VertexFormat::Uint32,
+                        shader_location: 1,
+                    },
+                ],
+            }],
+        },
+        fragment: Some(wgpu::FragmentState {
+            module: &shader_module,
+            entry_point: "main",
+            targets: &[wgpu::ColorTargetState {
+                format: wgpu::TextureFormat::Bgra8Unorm,
+                blend: None,
+                write_mask: wgpu::ColorWrites::ALL,
+            }],
+        }),
+        primitive: wgpu::PrimitiveState {
+            topology: wgpu::PrimitiveTopology::TriangleList,
+            polygon_mode: wgpu::PolygonMode::Fill,
+            front_face: wgpu::FrontFace::Ccw,
+            strip_index_format: None,
+            cull_mode: None,
+            clamp_depth: false,
+            conservative: false,
+        },
+        depth_stencil: None,
+        multisample: wgpu::MultisampleState::default(),
+    };
+
+    device.create_render_pipeline(&render_pipeline_descriptor)
+}
+
+pub fn build_buffers(device: &wgpu::Device, data: &TessellationData) -> Buffers {
     // Create vertex buffer object
     let vbo = device.create_buffer_init(&wgpu::util::BufferInitDescriptor {
         label: None,

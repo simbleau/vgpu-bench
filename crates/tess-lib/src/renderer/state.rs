@@ -1,13 +1,10 @@
-use winit::event::WindowEvent;
-use winit::window::Window;
-
-use crate::artifacts::TessellationData;
-use crate::renderer::types::GpuVertex;
-use crate::renderer::util;
-
 use super::types::Buffers;
 use super::types::GpuGlobals;
 use super::types::SceneGlobals;
+use crate::artifacts::TessellationData;
+use crate::renderer::util;
+use winit::event::WindowEvent;
+use winit::window::Window;
 
 pub struct State {
     pub surface: wgpu::Surface,
@@ -62,72 +59,14 @@ impl State {
             present_mode: wgpu::PresentMode::Immediate,
         };
 
+        // Make surface
         surface.configure(&device, &config);
 
-        // Make pipeline
-        let wgsl_shader_source =
-            wgpu::ShaderSource::Wgsl(include_str!("shaders/shader.wgsl").into());
-        let shader_module = device.create_shader_module(&wgpu::ShaderModuleDescriptor {
-            label: Some("Shader"),
-            source: wgsl_shader_source,
-        });
+        // Make buffers
+        let buffers = util::build_buffers(&device, &data);
 
-        // Get buffers
-        let buffers = util::get_buffers(&device, &data);
-
-        // Make pipeline layout
-        let pipeline_layout = device.create_pipeline_layout(&wgpu::PipelineLayoutDescriptor {
-            bind_group_layouts: &[&buffers.bind_group_layout],
-            push_constant_ranges: &[],
-            label: None,
-        });
-
-        let render_pipeline_descriptor = wgpu::RenderPipelineDescriptor {
-            label: None,
-            layout: Some(&pipeline_layout),
-            vertex: wgpu::VertexState {
-                module: &shader_module,
-                entry_point: "main",
-                buffers: &[wgpu::VertexBufferLayout {
-                    array_stride: std::mem::size_of::<GpuVertex>() as u64,
-                    step_mode: wgpu::VertexStepMode::Vertex,
-                    attributes: &[
-                        wgpu::VertexAttribute {
-                            offset: 0,
-                            format: wgpu::VertexFormat::Float32x2,
-                            shader_location: 0,
-                        },
-                        wgpu::VertexAttribute {
-                            offset: 8,
-                            format: wgpu::VertexFormat::Uint32,
-                            shader_location: 1,
-                        },
-                    ],
-                }],
-            },
-            fragment: Some(wgpu::FragmentState {
-                module: &shader_module,
-                entry_point: "main",
-                targets: &[wgpu::ColorTargetState {
-                    format: wgpu::TextureFormat::Bgra8Unorm,
-                    blend: None,
-                    write_mask: wgpu::ColorWrites::ALL,
-                }],
-            }),
-            primitive: wgpu::PrimitiveState {
-                topology: wgpu::PrimitiveTopology::TriangleList,
-                polygon_mode: wgpu::PolygonMode::Fill,
-                front_face: wgpu::FrontFace::Ccw,
-                strip_index_format: None,
-                cull_mode: None,
-                clamp_depth: false,
-                conservative: false,
-            },
-            depth_stencil: None,
-            multisample: wgpu::MultisampleState::default(),
-        };
-
-        let render_pipeline = device.create_render_pipeline(&render_pipeline_descriptor);
+        // Choose pipeline
+        let render_pipeline = util::build_pipeline(&device, &buffers);
 
         queue.write_buffer(
             &buffers.transforms_ubo,
@@ -163,12 +102,8 @@ impl State {
     }
 
     pub fn input(&mut self, _event: &WindowEvent) -> bool {
-        // Input handling currently not supported.
+        // Input handling not supported.
         false
-    }
-
-    pub fn update(&mut self) {
-        // Currently does nothing.
     }
 
     pub fn render(&mut self) -> Result<(), wgpu::SurfaceError> {

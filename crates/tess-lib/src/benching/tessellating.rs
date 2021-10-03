@@ -1,13 +1,11 @@
-use std::{fs::File, path::PathBuf};
-
-use svg_gen::Primitive;
-
-use super::Result;
+use super::error::Result;
 use crate::{
-    artifacts::serializable::PrimitiveTime,
+    backends::Tessellator,
+    benching::output::PrimitiveTime,
     targets::{SVGDocument, TessellationTarget},
-    Tessellator,
 };
+use std::{fs::File, path::PathBuf};
+use svg_gen::Primitive;
 
 pub fn time_primitive<P>(
     prim_name: String,
@@ -22,7 +20,7 @@ where
     let mut csv_wtr = csv::Writer::from_writer(output_file);
 
     // For each backend, tessellate the files
-    for mut backend in crate::backends::backends() {
+    for mut backend in crate::backends::all() {
         let backend: &mut dyn Tessellator = &mut *backend; // Unwrap & Shadow
         let max: u32 = 10_000;
         let step: u32 = 1000;

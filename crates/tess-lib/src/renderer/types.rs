@@ -1,5 +1,4 @@
 use serde::Serialize;
-
 use wgpu::{BindGroup, BindGroupLayout, Buffer};
 use winit::dpi::PhysicalSize;
 

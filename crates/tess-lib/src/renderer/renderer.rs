@@ -1,12 +1,13 @@
-use std::{
-    sync::{Arc, Mutex},
-    time::{Duration, Instant},
-};
-
+use super::error::Result;
+use super::types::SceneGlobals;
 use crate::{
     artifacts::{FlatRenderTimeResult, TessellationData},
     renderer::error::RendererError::FatalRenderingError,
     renderer::state::State,
+};
+use std::{
+    sync::{Arc, Mutex},
+    time::{Duration, Instant},
 };
 use winit::{
     event::{Event, WindowEvent},
@@ -14,9 +15,6 @@ use winit::{
     platform::run_return::EventLoopExtRunReturn,
     window::{Window, WindowBuilder},
 };
-
-use super::types::SceneGlobals;
-use super::Result;
 
 pub struct Renderer {
     window: Option<Window>,
@@ -54,7 +52,7 @@ impl Renderer {
 
         let mut frame_count = 0;
         let frame_times = Arc::from(Mutex::from(Vec::<Duration>::new()));
-        let frame_times_clone = frame_times.clone();
+        let frame_times_arc = frame_times.clone();
         event_loop.run_return(move |event, _, control_flow| {
             match event {
                 Event::RedrawRequested(_) => {
@@ -64,7 +62,7 @@ impl Renderer {
                             let t2 = Instant::now();
                             let dur = t2.duration_since(t1);
                             {
-                                let mut frame_times = frame_times_clone.lock().unwrap();
+                                let mut frame_times = frame_times_arc.lock().unwrap();
                                 frame_times.push(dur);
                             }
                             frame_count += 1
@@ -92,9 +90,10 @@ impl Renderer {
                 *control_flow = ControlFlow::Exit;
             }
         });
+        // Unwrap
+        let frame_times = Mutex::into_inner(Arc::try_unwrap(frame_times).unwrap()).unwrap();
 
         // Ensure all frames were rendered.
-        let frame_times = Mutex::into_inner(Arc::try_unwrap(frame_times).unwrap()).unwrap();
         if frame_times.len() != frames {
             return Err(FatalRenderingError);
         }

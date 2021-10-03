@@ -1,6 +1,6 @@
+use crate::renderer::types::{GpuPrimitive, GpuTransform, GpuVertex};
 use std::time::Duration;
 
-use crate::renderer::types::{GpuPrimitive, GpuTransform, GpuVertex};
 #[derive(Debug)]
 pub struct TessellationProfile {
     pub vertices: u32,

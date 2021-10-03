@@ -1,12 +1,11 @@
-use std::time::Instant;
-
+use crate::targets::{SVGFile, TessellationProfile, TessellationTarget, TessellationTimeResult};
 use crate::{
     artifacts::FlatRenderTimeResult,
+    backends::Tessellator,
     renderer::{util::get_globals, Renderer},
-    Tessellator,
 };
+use std::time::Instant;
 
-use super::{SVGFile, TessellationProfile, TessellationTarget, TessellationTimeResult};
 pub struct SVGDocument {
     pub content: String,
 }

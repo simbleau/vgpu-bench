@@ -1,18 +1,16 @@
+use crate::artifacts::{TessellationData, TessellationProfile};
+use crate::backends::Tessellator;
+use crate::renderer::types::{GpuPrimitive, GpuTransform, GpuVertex};
+use crate::targets::SVGDocument;
 use lyon::lyon_tessellation::{
     BuffersBuilder, FillVertexConstructor, StrokeVertexConstructor, VertexBuffers,
 };
 use lyon::math::Point;
 use lyon::path::PathEvent;
 use lyon::tessellation::{self, FillOptions, FillTessellator, StrokeOptions, StrokeTessellator};
-use usvg::{NodeExt, Tree, ViewBox};
-
 use std::error::Error;
 use std::f64::NAN;
-
-use crate::artifacts::{TessellationData, TessellationProfile};
-use crate::renderer::types::{GpuPrimitive, GpuTransform, GpuVertex};
-use crate::targets::SVGDocument;
-use crate::Tessellator;
+use usvg::{NodeExt, Tree, ViewBox};
 
 const TOLERANCE: f32 = 0.1;
 
