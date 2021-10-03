@@ -3,7 +3,7 @@ use super::types::GpuGlobals;
 use super::types::SceneGlobals;
 use crate::artifacts::TessellationData;
 use crate::renderer::util;
-use winit::event::WindowEvent;
+use winit::event::VirtualKeyCode;
 use winit::window::Window;
 
 pub struct State {
@@ -101,9 +101,31 @@ impl State {
         }
     }
 
-    pub fn input(&mut self, _event: &WindowEvent) -> bool {
-        // Input handling not supported.
-        false
+    pub fn input(&mut self, keycode: VirtualKeyCode) {
+        match keycode {
+            VirtualKeyCode::PageDown => {
+                self.scene.zoom *= 0.8;
+            }
+            VirtualKeyCode::PageUp => {
+                self.scene.zoom *= 1.25;
+            }
+            VirtualKeyCode::Left => {
+                self.scene.pan[0] -= 500.0 / self.scene.pan[0];
+            }
+            VirtualKeyCode::Right => {
+                self.scene.pan[0] += 500.0 / self.scene.pan[0];
+            }
+            VirtualKeyCode::Up => {
+                self.scene.pan[1] += 500.0 / self.scene.pan[1];
+            }
+            VirtualKeyCode::Down => {
+                self.scene.pan[1] -= 500.0 / self.scene.pan[1];
+            }
+            VirtualKeyCode::W => {
+                self.toggle_wireframe();
+            }
+            _key => {}
+        }
     }
 
     pub fn render(&mut self) -> Result<(), wgpu::SurfaceError> {
@@ -159,5 +181,12 @@ impl State {
         self.queue.submit(std::iter::once(encoder.finish()));
 
         Ok(())
+    }
+
+    pub fn toggle_wireframe(&mut self) {
+        self.scene.wireframe = !self.scene.wireframe;
+        let new_pipeline =
+            super::util::build_pipeline(&self.device, &self.buffers, self.scene.wireframe);
+        self.render_pipeline = new_pipeline;
     }
 }

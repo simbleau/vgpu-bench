@@ -12,7 +12,7 @@ use std::{
     time::{Duration, Instant},
 };
 use winit::{
-    event::{Event, WindowEvent},
+    event::{ElementState, Event, KeyboardInput, WindowEvent},
     event_loop::{ControlFlow, EventLoop},
     platform::run_return::EventLoopExtRunReturn,
     window::{Window, WindowBuilder},
@@ -64,11 +64,7 @@ impl Renderer {
 
     pub fn toggle_wireframe(&mut self) {
         let state = self.state.as_mut().unwrap();
-        state.scene.wireframe = !state.scene.wireframe;
-
-        let new_pipeline =
-            super::util::build_pipeline(&state.device, &state.buffers, state.scene.wireframe);
-        state.render_pipeline = new_pipeline;
+        state.toggle_wireframe();
     }
 
     pub fn run(&mut self) {
@@ -77,6 +73,19 @@ impl Renderer {
         let event_loop = self.event_loop.as_mut().unwrap();
 
         event_loop.run_return(move |event, _, control_flow| match event {
+            Event::WindowEvent {
+                event:
+                    WindowEvent::KeyboardInput {
+                        input:
+                            KeyboardInput {
+                                state: ElementState::Pressed,
+                                virtual_keycode: Some(key),
+                                ..
+                            },
+                        ..
+                    },
+                ..
+            } => state.input(key),
             Event::RedrawRequested(_) => match state.render() {
                 Ok(_) => {}
                 Err(wgpu::SurfaceError::Lost) => state.resize(state.size),

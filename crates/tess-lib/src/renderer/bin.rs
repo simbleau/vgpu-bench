@@ -13,6 +13,5 @@ fn main() {
 
     let mut r = Renderer::new();
     r.init_with_svg(tessellator.as_mut(), svg_document).unwrap();
-    r.toggle_wireframe();
     r.run();
 }
