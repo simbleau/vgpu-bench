@@ -2,8 +2,10 @@ use super::error::Result;
 use super::types::SceneGlobals;
 use crate::{
     artifacts::{FlatRenderTimeResult, TessellationData},
+    backends::Tessellator,
     renderer::error::RendererError::FatalRenderingError,
     renderer::state::State,
+    targets::SVGDocument,
 };
 use std::{
     sync::{Arc, Mutex},
@@ -29,6 +31,21 @@ impl Renderer {
             event_loop: None,
             state: None,
         }
+    }
+
+    pub fn init_with_svg(
+        &mut self,
+        tessellator: Box<&mut dyn Tessellator>,
+        svg_document: &SVGDocument,
+    ) -> Result<()> {
+        // Get global scene space
+        let scene = crate::renderer::util::get_globals(svg_document);
+
+        // Tessellate the data
+        tessellator.init(svg_document);
+        let data = *(tessellator.get_tessellate_data().unwrap());
+
+        self.init(scene, data)
     }
 
     pub fn init(&mut self, scene: SceneGlobals, data: TessellationData) -> Result<()> {

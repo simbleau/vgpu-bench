@@ -8,7 +8,6 @@ use wgpu::{util::DeviceExt, RenderPipeline};
 use winit::dpi::PhysicalSize;
 
 const WINDOW_SIZE: f32 = 800.0;
-
 // These mush match the uniform buffer sizes in the vertex shader.
 const MAX_PRIMITIVES: usize = 512;
 const MAX_TRANSFORMS: usize = 512;
