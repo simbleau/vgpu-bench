@@ -21,7 +21,7 @@ fn main() {
         .get_matches();
 
     // Get file
-    let file_path: &PathBuf = &app.value_of("input").unwrap().into();
+    let file_path: &PathBuf = &app.value_of("file path").unwrap().into();
     let file = SVGFile::from(file_path);
     let svg_document = &SVGDocument::from(&file);
 
