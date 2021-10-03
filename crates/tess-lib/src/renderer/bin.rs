@@ -1,17 +1,35 @@
+use std::path::PathBuf;
+
+use clap::{App, Arg};
 use tess_lib::{
     renderer::Renderer,
     targets::{SVGDocument, SVGFile},
 };
 
 fn main() {
-    // Get indices and verts
-    let file = SVGFile {
-        path: "/home/spencer/School/Thesis/vgpu-bench/assets/svg/examples/NASA.svg".into(),
-    };
-    let svg_document = &SVGDocument::from(&file);
-    let mut tessellator = tess_lib::backends::default();
+    let app = App::new("SVG Tessellation Renderer")
+        .version("1.0")
+        .author("Spencer C. Imbleau <spencer@imbleau.com>")
+        .about("A basic renderer for SVGs using triangulation.")
+        .arg(
+            Arg::with_name("file path")
+                .help("Select an SVG file to render")
+                .takes_value(true)
+                .required(true)
+                .index(1), // Args start at 1
+        )
+        .get_matches();
 
-    let mut r = Renderer::new();
-    r.init_with_svg(tessellator.as_mut(), svg_document).unwrap();
-    r.run();
+    // Get file
+    let file_path: &PathBuf = &app.value_of("input").unwrap().into();
+    let file = SVGFile::from(file_path);
+    let svg_document = &SVGDocument::from(&file);
+
+    // Run demo
+    let mut tessellator = tess_lib::backends::default();
+    let mut renderer = Renderer::new();
+    renderer
+        .init_with_svg(tessellator.as_mut(), svg_document)
+        .unwrap();
+    renderer.run();
 }

@@ -13,6 +13,7 @@ name = "renderer"
 path = "src/renderer/bin.rs"
 
 [dependencies]
+clap = "2.33.3"
 lyon = {version ="0.17.5", features = ["extra"]}
 svg-gen = { package = "svg-generator", path = "../svg-generator" }
 usvg = "0.18.0"
