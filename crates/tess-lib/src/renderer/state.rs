@@ -66,7 +66,7 @@ impl State {
         let buffers = util::build_buffers(&device, &data);
 
         // Choose pipeline
-        let render_pipeline = util::build_pipeline(&device, &buffers);
+        let render_pipeline = util::build_pipeline(&device, &buffers, false);
 
         queue.write_buffer(
             &buffers.transforms_ubo,
@@ -136,7 +136,10 @@ impl State {
                 color_attachments: &[wgpu::RenderPassColorAttachment {
                     view: &view,
                     ops: wgpu::Operations {
-                        load: wgpu::LoadOp::Clear(wgpu::Color::WHITE),
+                        load: wgpu::LoadOp::Clear(match self.scene.wireframe {
+                            true => wgpu::Color::BLACK,
+                            false => wgpu::Color::WHITE,
+                        }),
                         store: true,
                     },
                     resolve_target: None,

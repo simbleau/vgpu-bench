@@ -40,7 +40,7 @@ pub fn get_globals(file_data: &SVGDocument) -> SceneGlobals {
     scene
 }
 
-pub fn build_pipeline(device: &wgpu::Device, buffers: &Buffers) -> RenderPipeline {
+pub fn build_pipeline(device: &wgpu::Device, buffers: &Buffers, wireframe: bool) -> RenderPipeline {
     // Get triangle shader
     let wgsl_shader_source = wgpu::ShaderSource::Wgsl(include_str!("shaders/shader.wgsl").into());
     let shader_module = device.create_shader_module(&wgpu::ShaderModuleDescriptor {
@@ -88,7 +88,10 @@ pub fn build_pipeline(device: &wgpu::Device, buffers: &Buffers) -> RenderPipelin
             }],
         }),
         primitive: wgpu::PrimitiveState {
-            topology: wgpu::PrimitiveTopology::TriangleList,
+            topology: match wireframe {
+                true => wgpu::PrimitiveTopology::LineList,
+                false => wgpu::PrimitiveTopology::TriangleList,
+            },
             polygon_mode: wgpu::PolygonMode::Fill,
             front_face: wgpu::FrontFace::Ccw,
             strip_index_format: None,

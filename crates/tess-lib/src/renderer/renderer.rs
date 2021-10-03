@@ -62,6 +62,15 @@ impl Renderer {
         Ok(())
     }
 
+    pub fn toggle_wireframe(&mut self) {
+        let state = self.state.as_mut().unwrap();
+        state.scene.wireframe = !state.scene.wireframe;
+
+        let new_pipeline =
+            super::util::build_pipeline(&state.device, &state.buffers, state.scene.wireframe);
+        state.render_pipeline = new_pipeline;
+    }
+
     pub fn run(&mut self) {
         let state = self.state.as_mut().unwrap();
         let window = self.window.as_mut().unwrap();
