@@ -60,20 +60,14 @@ fn main([[location(0)]] a_position: vec2<f32>, [[location(1)]] a_prim_id: u32) -
 
 
     var mask: u32 = 255u;
-    var color: u32;
-    let e79: Primitive = prim;
-    color = e79.color;
-    let e82: u32 = color;
-    let e86: u32 = mask;
-    let e89: u32 = color;
-    let e93: u32 = mask;
-    let e96: u32 = color;
-    let e100: u32 = mask;
-    let e103: u32 = color;
-    let e104: u32 = mask;
-    v_color = (vec4<f32>(f32(((e82 >> u32(24)) & e86)), f32(((e89 >> u32(16)) & e93)), f32(((e96 >> u32(8)) & e100)), f32((e103 & e104))) / vec4<f32>(255.0));
+    var color = prim.color;
 
-    let e21: vec4<f32> = v_color;
-    let e23: vec4<f32> = gl_Position;
-    return VertexOutput(e21, e23);
+    v_color = vec4<f32>(
+        f32(((color >> u32(24)) & mask)), 
+        f32(((color >> u32(16)) & mask)), 
+        f32(((color >> u32(8)) & mask)), 
+        f32((color & mask))
+        ) / vec4<f32>(255.0);
+
+    return VertexOutput(v_color, gl_Position);
 }
