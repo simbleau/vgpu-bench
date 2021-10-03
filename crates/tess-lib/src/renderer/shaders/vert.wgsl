@@ -43,39 +43,24 @@ var<private> gl_Position: vec4<f32>;
 
 [[stage(vertex)]]
 fn main([[location(0)]] a_position: vec2<f32>, [[location(1)]] a_prim_id: u32) -> VertexOutput {
-    var prim: Primitive;
-    var t: Transform;
-
-    var transform: mat3x3<f32>;
+    var prim: Primitive = u_primitives.primitives[a_prim_id];
+    
+    var t: Transform = u_transforms.transforms[prim.transform];
+    var transform: mat3x3<f32> = mat3x3<f32>(
+        vec3<f32>(t.data0_.x, t.data0_.y, 0.0), 
+        vec3<f32>(t.data0_.z, t.data0_.w, 0.0), 
+        vec3<f32>(t.data1_.x, t.data1_.y, 1.0)
+    );
+    
     var invert_y: vec2<f32> = vec2<f32>(1.0, -1.0);
-    var pos: vec2<f32>;
+
+    var pos: vec2<f32> = (transform * vec3<f32>(a_position, 1.0)).xy;
+    gl_Position = vec4<f32>((((pos.xy + global.u_pan) * global.u_zoom) * invert_y), 0.0, 1.0);
+    gl_Position.x = (gl_Position.x / global.u_aspect_ratio);
+
+
     var mask: u32 = 255u;
     var color: u32;
-
-    let e13: u32 = a_prim_id;
-    let e15: Primitive = u_primitives.primitives[e13];
-    prim = e15;
-    let e17: Primitive = prim;
-    let e20: Transform = u_transforms.transforms[e17.transform];
-    t = e20;
-    let e22: Transform = t;
-    let e25: Transform = t;
-    let e29: Transform = t;
-    let e32: Transform = t;
-    let e36: Transform = t;
-    let e39: Transform = t;
-    transform = mat3x3<f32>(vec3<f32>(e22.data0_.x, e25.data0_.y, 0.0), vec3<f32>(e29.data0_.z, e32.data0_.w, 0.0), vec3<f32>(e36.data1_.x, e39.data1_.y, 1.0));
-    let e53: mat3x3<f32> = transform;
-    let e54: vec2<f32> = a_position;
-    pos = (e53 * vec3<f32>(e54, 1.0)).xy;
-    let e61: vec2<f32> = pos;
-    let e63: vec2<f32> = global.u_pan;
-    let e65: vec2<f32> = global.u_zoom;
-    let e67: vec2<f32> = invert_y;
-    gl_Position = vec4<f32>((((e61.xy + e63) * e65) * e67), 0.0, 1.0);
-    let e73: vec4<f32> = gl_Position;
-    let e75: f32 = global.u_aspect_ratio;
-    gl_Position.x = (e73.x / e75);
     let e79: Primitive = prim;
     color = e79.color;
     let e82: u32 = color;
