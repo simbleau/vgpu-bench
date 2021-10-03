@@ -73,19 +73,6 @@ impl Renderer {
         let event_loop = self.event_loop.as_mut().unwrap();
 
         event_loop.run_return(move |event, _, control_flow| match event {
-            Event::WindowEvent {
-                event:
-                    WindowEvent::KeyboardInput {
-                        input:
-                            KeyboardInput {
-                                state: ElementState::Pressed,
-                                virtual_keycode: Some(key),
-                                ..
-                            },
-                        ..
-                    },
-                ..
-            } => state.input(key),
             Event::RedrawRequested(_) => match state.render() {
                 Ok(_) => {}
                 Err(wgpu::SurfaceError::Lost) => state.resize(state.size),
@@ -103,6 +90,15 @@ impl Renderer {
                 WindowEvent::CloseRequested | WindowEvent::Destroyed => {
                     *control_flow = ControlFlow::Exit
                 }
+                WindowEvent::KeyboardInput {
+                    input:
+                        KeyboardInput {
+                            state: ElementState::Pressed,
+                            virtual_keycode: Some(key),
+                            ..
+                        },
+                    ..
+                } => state.input(key),
                 _ => {}
             },
             _ => {}
