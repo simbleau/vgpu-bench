@@ -41,11 +41,15 @@ pub fn get_globals(file_data: &SVGDocument) -> SceneGlobals {
 }
 
 pub fn build_pipeline(device: &wgpu::Device, buffers: &Buffers, wireframe: bool) -> RenderPipeline {
-    // Get triangle shader
-    let wgsl_shader_source = wgpu::ShaderSource::Wgsl(include_str!("shaders/shader.wgsl").into());
-    let shader_module = device.create_shader_module(&wgpu::ShaderModuleDescriptor {
-        label: Some("Shader"),
-        source: wgsl_shader_source,
+    // Get vertex shader
+    let vert_module = device.create_shader_module(&wgpu::ShaderModuleDescriptor {
+        label: Some("Vertex Shader"),
+        source: wgpu::ShaderSource::Wgsl(include_str!("shaders/vert.wgsl").into()),
+    });
+    // Get fragment shader
+    let frag_module = device.create_shader_module(&wgpu::ShaderModuleDescriptor {
+        label: Some("Fragment Shader"),
+        source: wgpu::ShaderSource::Wgsl(include_str!("shaders/frag.wgsl").into()),
     });
 
     // Make pipeline layout
@@ -59,7 +63,7 @@ pub fn build_pipeline(device: &wgpu::Device, buffers: &Buffers, wireframe: bool)
         label: None,
         layout: Some(&pipeline_layout),
         vertex: wgpu::VertexState {
-            module: &shader_module,
+            module: &vert_module,
             entry_point: "main",
             buffers: &[wgpu::VertexBufferLayout {
                 array_stride: std::mem::size_of::<GpuVertex>() as u64,
@@ -79,7 +83,7 @@ pub fn build_pipeline(device: &wgpu::Device, buffers: &Buffers, wireframe: bool)
             }],
         },
         fragment: Some(wgpu::FragmentState {
-            module: &shader_module,
+            module: &frag_module,
             entry_point: "main",
             targets: &[wgpu::ColorTargetState {
                 format: wgpu::TextureFormat::Bgra8Unorm,
