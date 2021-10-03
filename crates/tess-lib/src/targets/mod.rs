@@ -10,7 +10,7 @@ use crate::{
 };
 
 pub trait TessellationTarget {
-    fn get_data(&self, t: Box<&mut dyn Tessellator>) -> TessellationProfile;
-    fn time(&mut self, t: Box<&mut dyn Tessellator>) -> TessellationTimeResult;
-    fn time_render(&mut self, t: Box<&mut dyn Tessellator>, frames: usize) -> RenderTimeResult;
+    fn get_data(&self, t: &mut dyn Tessellator) -> TessellationProfile;
+    fn time(&mut self, t: &mut dyn Tessellator) -> TessellationTimeResult;
+    fn time_render(&mut self, t: &mut dyn Tessellator, frames: usize) -> RenderTimeResult;
 }

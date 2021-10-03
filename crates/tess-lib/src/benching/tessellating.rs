@@ -29,7 +29,7 @@ where
             let mut target: SVGDocument =
                 SVGDocument::from(svg_gen::generate_svg(primitive, count, true));
             for _ in 0..trials {
-                let time_result = target.time(Box::new(backend));
+                let time_result = target.time(backend);
 
                 let result = PrimitiveTime {
                     tessellator: backend.name().to_owned(),

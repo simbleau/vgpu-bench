@@ -35,7 +35,7 @@ impl Renderer {
 
     pub fn init_with_svg(
         &mut self,
-        tessellator: Box<&mut dyn Tessellator>,
+        tessellator: &mut dyn Tessellator,
         svg_document: &SVGDocument,
     ) -> Result<()> {
         // Get global scene space
@@ -62,7 +62,33 @@ impl Renderer {
         Ok(())
     }
 
-    pub fn run(&mut self, frames: usize) -> Result<RenderTimeResult> {
+    pub fn run(&mut self) {
+        let state = self.state.as_mut().unwrap();
+        let window = self.window.as_mut().unwrap();
+        let event_loop = self.event_loop.as_mut().unwrap();
+
+        event_loop.run_return(move |event, _, control_flow| match event {
+            Event::RedrawRequested(_) => match state.render() {
+                Ok(_) => {}
+                Err(wgpu::SurfaceError::Lost) => state.resize(state.size),
+                Err(wgpu::SurfaceError::OutOfMemory) => *control_flow = ControlFlow::Exit,
+                Err(e) => eprintln!("{:?}", e),
+            },
+            Event::MainEventsCleared => {
+                window.request_redraw();
+            }
+            Event::WindowEvent {
+                window_id: _,
+                event,
+            } => match event {
+                WindowEvent::Resized(size) => state.resize(size),
+                _ => {}
+            },
+            _ => {}
+        });
+    }
+
+    pub fn time(&mut self, frames: usize) -> Result<RenderTimeResult> {
         let state = self.state.as_mut().unwrap();
         let window = self.window.as_mut().unwrap();
         let event_loop = self.event_loop.as_mut().unwrap();

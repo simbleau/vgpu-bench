@@ -27,12 +27,12 @@ where
 }
 
 impl TessellationTarget for SVGDocument {
-    fn get_data(&self, t: Box<&mut dyn Tessellator>) -> TessellationProfile {
+    fn get_data(&self, t: &mut dyn Tessellator) -> TessellationProfile {
         t.init(&self);
         t.tessellate().unwrap()
     }
 
-    fn time(&mut self, t: Box<&mut dyn Tessellator>) -> TessellationTimeResult {
+    fn time(&mut self, t: &mut dyn Tessellator) -> TessellationTimeResult {
         // Time pre-processing
         let t1 = Instant::now();
         t.init(&self);
@@ -52,10 +52,10 @@ impl TessellationTarget for SVGDocument {
         }
     }
 
-    fn time_render(&mut self, t: Box<&mut dyn Tessellator>, frames: usize) -> RenderTimeResult {
+    fn time_render(&mut self, t: &mut dyn Tessellator, frames: usize) -> RenderTimeResult {
         let mut r = Renderer::new();
         r.init_with_svg(t, &self).unwrap();
 
-        r.run(frames).unwrap()
+        r.time(frames).unwrap()
     }
 }

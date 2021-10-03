@@ -1,6 +1,5 @@
 use tess_lib::{
-    backends::{LyonTessellator, Tessellator},
-    renderer::{util::get_globals, Renderer},
+    renderer::Renderer,
     targets::{SVGDocument, SVGFile},
 };
 
@@ -9,17 +8,10 @@ fn main() {
     let file = SVGFile {
         path: "/home/spencer/School/Thesis/vgpu-bench/assets/svg/examples/NASA.svg".into(),
     };
-    let svg_doc = SVGDocument::from(&file);
-
-    let scene = get_globals(&svg_doc);
-    let mut tess = LyonTessellator::new();
-    tess.init(&svg_doc);
-    let data = *tess.get_tessellate_data().unwrap();
+    let svg_document = &SVGDocument::from(&file);
+    let mut tessellator = tess_lib::backends::default();
 
     let mut r = Renderer::new();
-    r.init(scene, data).unwrap();
-    let results = r.run(10).unwrap();
-    println!("{:?}", results);
-
-    println!("Finished");
+    r.init_with_svg(tessellator.as_mut(), svg_document).unwrap();
+    r.run();
 }

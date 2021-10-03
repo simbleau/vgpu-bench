@@ -21,7 +21,7 @@ where
         // Retrieve the profile from files and record the results
         for file in &files {
             let target: SVGFile = file.into();
-            let profile_result = target.get_data(Box::new(backend));
+            let profile_result = target.get_data(backend);
 
             let filename = file
                 .file_name()

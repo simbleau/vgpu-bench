@@ -12,6 +12,10 @@ pub trait Tessellator {
     fn get_tessellate_data(&mut self) -> Result<Box<TessellationData>, Box<dyn std::error::Error>>;
 }
 
+pub fn default() -> Box<dyn Tessellator> {
+    Box::new(LyonTessellator::new())
+}
+
 pub fn all() -> Vec<Box<dyn Tessellator>> {
     let mut tessellators: Vec<Box<dyn Tessellator>> = vec![];
     tessellators.push(Box::new(LyonTessellator::new()));
