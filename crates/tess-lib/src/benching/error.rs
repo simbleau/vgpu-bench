@@ -27,3 +27,8 @@ impl From<csv::Error> for BenchingError {
         BenchingError::CSV(item)
     }
 }
+impl From<Box<dyn std::error::Error>> for BenchingError {
+    fn from(item: Box<dyn std::error::Error>) -> Self {
+        BenchingError::Other(item)
+    }
+}

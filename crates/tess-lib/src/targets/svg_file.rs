@@ -19,12 +19,18 @@ impl From<&PathBuf> for SVGFile {
 }
 
 impl TessellationTarget for SVGFile {
-    fn get_data(&self, t: &mut dyn Tessellator) -> TessellationProfile {
+    fn get_data(
+        &self,
+        t: &mut dyn Tessellator,
+    ) -> Result<TessellationProfile, Box<dyn std::error::Error>> {
         let svg_document: SVGDocument = SVGDocument::from(self);
         svg_document.get_data(t)
     }
 
-    fn time(&mut self, t: &mut dyn Tessellator) -> TessellationTimeResult {
+    fn time(
+        &mut self,
+        t: &mut dyn Tessellator,
+    ) -> Result<TessellationTimeResult, Box<dyn std::error::Error>> {
         let file_ref: &SVGFile = self.borrow();
         let mut svg_document: SVGDocument = SVGDocument::from(file_ref);
         svg_document.time(t)

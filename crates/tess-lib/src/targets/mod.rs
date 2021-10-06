@@ -11,8 +11,16 @@ use crate::{
 };
 
 pub trait TessellationTarget {
-    fn get_data(&self, t: &mut dyn Tessellator) -> TessellationProfile;
-    fn time(&mut self, t: &mut dyn Tessellator) -> TessellationTimeResult;
+    fn get_data(
+        &self,
+        t: &mut dyn Tessellator,
+    ) -> Result<TessellationProfile, Box<dyn std::error::Error>>;
+
+    fn time(
+        &mut self,
+        t: &mut dyn Tessellator,
+    ) -> Result<TessellationTimeResult, Box<dyn std::error::Error>>;
+
     fn time_render(
         &mut self,
         t: &mut dyn Tessellator,
