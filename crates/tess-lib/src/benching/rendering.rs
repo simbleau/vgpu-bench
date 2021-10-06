@@ -4,7 +4,7 @@ use crate::benching::output::SVGFlatRenderTime;
 use crate::targets::{SVGFile, TessellationTarget};
 use std::{fs::File, path::PathBuf};
 
-pub fn render_svgs<P>(svg_dir: P, output: P) -> Result<()>
+pub fn render_svgs<P>(svg_dir: P, output: P, frames: usize) -> Result<()>
 where
     P: Into<PathBuf>,
 {
@@ -19,7 +19,7 @@ where
         // Retrieve the profile from files and record the results
         for file in &files {
             let mut target: SVGFile = file.into();
-            let result = target.time_render(backend, 5)?;
+            let result = target.time_render(backend, frames)?;
 
             let filename = file
                 .file_name()

@@ -68,7 +68,7 @@ fn profile_svg_examples() {
 fn render_svg_examples() {
     let path = concatcp![EXAMPLES_OUTPUT_DIR, "renders.csv"];
     perform_with_output("SVG rendering", path, || {
-        tess::benching::rendering::render_svgs(EXAMPLES_ASSETS_DIR, path).unwrap();
+        tess::benching::rendering::render_svgs(EXAMPLES_ASSETS_DIR, path, 100).unwrap();
     });
 }
 
