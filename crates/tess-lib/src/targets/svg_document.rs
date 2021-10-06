@@ -1,3 +1,4 @@
+use crate::renderer;
 use crate::targets::{SVGFile, TessellationProfile, TessellationTarget, TessellationTimeResult};
 use crate::{artifacts::RenderTimeResult, backends::Tessellator, renderer::Renderer};
 use std::time::Instant;
@@ -52,10 +53,14 @@ impl TessellationTarget for SVGDocument {
         }
     }
 
-    fn time_render(&mut self, t: &mut dyn Tessellator, frames: usize) -> RenderTimeResult {
+    fn time_render(
+        &mut self,
+        t: &mut dyn Tessellator,
+        frames: usize,
+    ) -> renderer::error::Result<RenderTimeResult> {
         let mut r = Renderer::new();
-        r.init_with_svg(t, &self).unwrap();
+        r.init_with_svg(t, &self)?;
 
-        r.time(frames).unwrap()
+        Ok(r.time(frames)?)
     }
 }

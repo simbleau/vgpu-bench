@@ -19,7 +19,7 @@ where
         // Retrieve the profile from files and record the results
         for file in &files {
             let mut target: SVGFile = file.into();
-            let result = target.time_render(backend, 5);
+            let result = target.time_render(backend, 5)?;
 
             let filename = file
                 .file_name()
