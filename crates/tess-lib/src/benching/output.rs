@@ -21,6 +21,7 @@ pub struct SVGFlatRenderTime {
     pub tessellator: String,
     pub filename: String,
     pub triangles: u32,
+    pub frame: u32,
     pub frame_time: u128,
 }
 

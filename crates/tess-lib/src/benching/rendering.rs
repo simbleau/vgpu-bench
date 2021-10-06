@@ -27,12 +27,14 @@ where
                 .to_string_lossy()
                 .to_string();
 
-            for frame_time in result.frame_times {
+            for frame in 0..result.frame_times.len() {
+                let frame_time = result.frame_times[frame].as_nanos();
                 let csv_entry = SVGFlatRenderTime {
                     tessellator: backend.name().to_owned(),
                     filename: filename.to_owned(),
                     triangles: result.triangles,
-                    frame_time: frame_time.as_nanos(),
+                    frame: (frame + 1) as u32,
+                    frame_time,
                 };
                 csv_wtr.serialize(csv_entry)?;
             }
