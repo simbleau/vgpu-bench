@@ -1,7 +1,10 @@
+use svg_gen::Primitive;
+
 use super::error::{BenchingError::Logic, Result};
+use super::output::PrimitiveFlatRenderTime;
 use crate::backends::Tessellator;
 use crate::benching::output::SVGFlatRenderTime;
-use crate::targets::{SVGFile, TessellationTarget};
+use crate::targets::{SVGDocument, SVGFile, TessellationTarget};
 use std::{fs::File, path::PathBuf};
 
 pub fn render_svgs<P>(svg_dir: P, output: P, frames: usize) -> Result<()>
@@ -40,6 +43,46 @@ where
             }
         }
     }
+    csv_wtr.flush()?;
+
+    Ok(())
+}
+
+pub fn render_primitives<P>(
+    prim_name: String,
+    primitive: Primitive,
+    count: u32,
+    output: P,
+    frames: usize,
+) -> Result<()>
+where
+    P: Into<PathBuf>,
+{
+    let output_file = File::create(output.into())?;
+    let mut csv_wtr = csv::Writer::from_writer(output_file);
+
+    // For each backend, tessellate the files
+    for mut backend in crate::backends::all() {
+        let backend: &mut dyn Tessellator = &mut *backend; // Unwrap & Shadow
+        let mut target: SVGDocument =
+            SVGDocument::from(svg_gen::generate_svg(primitive, count, true));
+        let profile = target.get_data(backend)?;
+        let result = target.time_render(backend, frames)?;
+
+        for frame in 0..result.frame_times.len() {
+            let frame_time = result.frame_times[frame].as_nanos();
+            let result = PrimitiveFlatRenderTime {
+                tessellator: backend.name().to_owned(),
+                primitive: prim_name.to_owned(),
+                amount: count,
+                triangles: profile.triangles,
+                frame: (frame + 1) as u32,
+                frame_time,
+            };
+            csv_wtr.serialize(result)?;
+        }
+    }
+
     csv_wtr.flush()?;
 
     Ok(())

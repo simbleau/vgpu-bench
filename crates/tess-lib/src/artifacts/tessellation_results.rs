@@ -5,6 +5,7 @@ use std::time::Duration;
 pub struct TessellationProfile {
     pub vertices: u32,
     pub indices: u32,
+    pub triangles: u32,
 }
 
 #[derive(Debug)]
