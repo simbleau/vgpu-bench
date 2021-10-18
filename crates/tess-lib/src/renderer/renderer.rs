@@ -1,4 +1,4 @@
-use super::error::Result;
+use super::error::{RendererError, Result};
 use super::types::SceneGlobals;
 use crate::{
     artifacts::{RenderTimeResult, TessellationData},
@@ -62,47 +62,58 @@ impl Renderer {
         Ok(())
     }
 
-    pub fn toggle_wireframe(&mut self) {
-        let state = self.state.as_mut().unwrap();
-        state.toggle_wireframe();
+    pub fn toggle_wireframe(&mut self) -> Result<()> {
+        if let Some(state) = self.state.as_mut() {
+            state.toggle_wireframe();
+        } else {
+            return Err(RendererError::RendererNotInitialized);
+        }
+
+        Ok(())
     }
 
-    pub fn run(&mut self) {
-        let state = self.state.as_mut().unwrap();
-        let window = self.window.as_mut().unwrap();
-        let event_loop = self.event_loop.as_mut().unwrap();
-
-        event_loop.run_return(move |event, _, control_flow| match event {
-            Event::RedrawRequested(_) => match state.render() {
-                Ok(_) => {}
-                Err(wgpu::SurfaceError::Lost) => state.resize(state.size),
-                Err(wgpu::SurfaceError::OutOfMemory) => *control_flow = ControlFlow::Exit,
-                Err(e) => eprintln!("{:?}", e),
-            },
-            Event::MainEventsCleared => {
-                window.request_redraw();
-            }
-            Event::WindowEvent {
-                window_id: _,
-                event,
-            } => match event {
-                WindowEvent::Resized(size) => state.resize(size),
-                WindowEvent::CloseRequested | WindowEvent::Destroyed => {
-                    *control_flow = ControlFlow::Exit
+    pub fn run(&mut self) -> Result<()> {
+        if let (Some(state), Some(window), Some(event_loop)) = (
+            self.state.as_mut(),
+            self.window.as_mut(),
+            self.event_loop.as_mut(),
+        ) {
+            event_loop.run_return(move |event, _, control_flow| match event {
+                Event::RedrawRequested(_) => match state.render() {
+                    Ok(_) => {}
+                    Err(wgpu::SurfaceError::Lost) => state.resize(state.size),
+                    Err(wgpu::SurfaceError::OutOfMemory) => *control_flow = ControlFlow::Exit,
+                    Err(e) => eprintln!("{:?}", e),
+                },
+                Event::MainEventsCleared => {
+                    window.request_redraw();
                 }
-                WindowEvent::KeyboardInput {
-                    input:
-                        KeyboardInput {
-                            state: ElementState::Pressed,
-                            virtual_keycode: Some(key),
-                            ..
-                        },
-                    ..
-                } => state.input(key),
+                Event::WindowEvent {
+                    window_id: _,
+                    event,
+                } => match event {
+                    WindowEvent::Resized(size) => state.resize(size),
+                    WindowEvent::CloseRequested | WindowEvent::Destroyed => {
+                        *control_flow = ControlFlow::Exit
+                    }
+                    WindowEvent::KeyboardInput {
+                        input:
+                            KeyboardInput {
+                                state: ElementState::Pressed,
+                                virtual_keycode: Some(key),
+                                ..
+                            },
+                        ..
+                    } => state.input(key),
+                    _ => {}
+                },
                 _ => {}
-            },
-            _ => {}
-        });
+            });
+        } else {
+            return Err(RendererError::RendererNotInitialized);
+        }
+
+        Ok(())
     }
 
     pub fn time(&mut self, frames: usize) -> Result<RenderTimeResult> {

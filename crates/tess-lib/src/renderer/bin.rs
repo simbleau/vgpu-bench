@@ -31,5 +31,5 @@ fn main() {
     renderer
         .init_with_svg(tessellator.as_mut(), svg_document)
         .unwrap();
-    renderer.run();
+    renderer.run().unwrap();
 }
