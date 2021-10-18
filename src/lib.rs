@@ -21,7 +21,7 @@ pub fn analyze() {
     // Profile of artifacts
     //profile_svg_examples();
     // Render time of SVGs
-    render_svg_examples();
+    render_primitives();
 
     // TODO: Render time of flattened primitives
     // TODO: Render time of hundreds of flattened real world examples
@@ -69,6 +69,26 @@ fn render_svg_examples() {
     let path = concatcp![EXAMPLES_OUTPUT_DIR, "renders.csv"];
     perform_with_output("SVG rendering", path, || {
         tess::benching::rendering::render_svgs(EXAMPLES_ASSETS_DIR, path, 100).unwrap();
+    });
+}
+
+fn render_primitives() {
+    let path = concatcp![PRIMITIVES_OUTPUT_DIR, "renders.csv"];
+
+    // TODO : Fix this - Temporary
+    let prim_name = String::from("Bezier Curve");
+    let primitive = svg_gen::Primitive::BezierCurve;
+    let count = 1000;
+
+    perform_with_output("SVG rendering", path, move || {
+        tess::benching::rendering::render_primitives(
+            prim_name.to_owned(),
+            primitive,
+            count,
+            path,
+            100,
+        )
+        .unwrap();
     });
 }
 

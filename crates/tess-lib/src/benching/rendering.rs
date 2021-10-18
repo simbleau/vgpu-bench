@@ -66,6 +66,7 @@ where
         let backend: &mut dyn Tessellator = &mut *backend; // Unwrap & Shadow
         let mut target: SVGDocument =
             SVGDocument::from(svg_gen::generate_svg(primitive, count, true));
+
         let profile = target.get_data(backend)?;
         let result = target.time_render(backend, frames)?;
 
