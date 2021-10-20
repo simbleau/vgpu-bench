@@ -73,18 +73,40 @@ fn render_svg_examples() {
 }
 
 fn render_primitives() {
-    let path = concatcp![PRIMITIVES_OUTPUT_DIR, "renders.csv"];
-
-    // TODO : Fix this - Temporary
-    let prim_name = String::from("Bezier Curve");
-    let primitive = svg_gen::Primitive::BezierCurve;
-    let count = 1000;
-
-    perform_with_output("SVG rendering", path, move || {
+    println!("Benching primitive tessellation...");
+    // Triangles
+    let path = concatcp![PRIMITIVES_OUTPUT_DIR, "rendering_triangles.csv"];
+    perform_with_output("triangle rendering benchmarking", path, move || {
         tess::benching::rendering::render_primitives(
-            prim_name.to_owned(),
-            primitive,
-            count,
+            "triangle".to_owned(),
+            svg_gen::Primitive::Triangle,
+            1,
+            path,
+            100,
+        )
+        .unwrap();
+    });
+
+    // Quadratic Curves
+    let path = concatcp![PRIMITIVES_OUTPUT_DIR, "rendering_curves.csv"];
+    perform_with_output("quadratic curve rendering benchmarking", path, move || {
+        tess::benching::rendering::render_primitives(
+            "quadratic bezier curve".to_owned(),
+            svg_gen::Primitive::BezierCurve,
+            1,
+            path,
+            100,
+        )
+        .unwrap();
+    });
+
+    // Cubic Curves
+    let path = concatcp![PRIMITIVES_OUTPUT_DIR, "rendering_cubic_curves.csv"];
+    perform_with_output("cubic curve rendering benchmarking", path, move || {
+        tess::benching::rendering::render_primitives(
+            "cubic bezier curve".to_owned(),
+            svg_gen::Primitive::CubicBezierCurve,
+            1,
             path,
             100,
         )
@@ -93,9 +115,8 @@ fn render_primitives() {
 }
 
 fn bench_primitive_tessellation() {
-    println!("Benching primitive tessellation...");
     // Triangles
-    let path = concatcp![PRIMITIVES_OUTPUT_DIR, "time_triangles.csv"];
+    let path = concatcp![PRIMITIVES_OUTPUT_DIR, "render_triangles.csv"];
     perform_with_output("triangle tessellation benchmarking", path, || {
         tess::benching::tessellating::time_primitive(
             "triangle".to_owned(),

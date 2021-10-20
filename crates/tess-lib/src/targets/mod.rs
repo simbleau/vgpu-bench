@@ -1,14 +1,12 @@
 mod svg_document;
 mod svg_file;
-
-pub use svg_document::SVGDocument;
-pub use svg_file::SVGFile;
-
 use crate::{
     artifacts::{RenderTimeResult, TessellationProfile, TessellationTimeResult},
     backends::Tessellator,
     renderer,
 };
+pub use svg_document::SVGDocument;
+pub use svg_file::SVGFile;
 
 pub trait TessellationTarget {
     fn get_data(
