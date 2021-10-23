@@ -1,0 +1,3 @@
+fn test() {
+    // Do nothing
+}
