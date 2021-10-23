@@ -8,6 +8,10 @@ license = "MIT OR Apache-2.0"
 repository = "https://github.com/simbleau/vgpu-bench"
 workspace = "../.."
 
+[lib]
+name = "tess_lib"
+path = "src/lib.rs"
+
 [[bin]]
 name = "renderer"
 path = "src/renderer/bin.rs"
