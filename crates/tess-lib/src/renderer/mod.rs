@@ -1,5 +1,6 @@
 mod renderer;
-pub use renderer::Renderer;
+pub use renderer::TriangleRenderer;
+
 pub mod error;
 pub mod state;
 pub mod types;

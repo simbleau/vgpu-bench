@@ -18,15 +18,15 @@ use winit::{
     window::{Window, WindowBuilder},
 };
 
-pub struct Renderer {
+pub struct TriangleRenderer {
     window: Option<Window>,
     event_loop: Option<EventLoop<()>>,
     state: Option<State>,
 }
 
-impl Renderer {
+impl TriangleRenderer {
     pub fn new() -> Self {
-        Renderer {
+        TriangleRenderer {
             window: None,
             event_loop: None,
             state: None,
