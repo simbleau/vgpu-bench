@@ -2,51 +2,76 @@ import os
 import matplotlib.pyplot as plt
 import pandas as pd
 import numpy as np
-from scipy.interpolate import UnivariateSpline
+import helper_methods
 
+INPUT_CSV = "../../output/data/svg/primitives/rendering_triangles.csv"
+OUTPUT_DIR = "../../output/figs/svg/primitives/rendering"
+OUTPUT_PREFIX = "frametimes_"
+OUTPUT_TYPE = "png"
 
-data = pd.read_csv("../../output/data/svg/primitives/rendering_triangles.csv")
-
-# Sort by frames in order
-data = data.sort_values(by=["frame"], ascending=True)
-
-chart_labels = data["frame"].unique()
-primitive = data['primitive'].unique()[0]
-
-# Plot data
+# Make subplots
 fig, ax = plt.subplots()
 
-trials = data[data["primitive"] == primitive]
-amt_trials = len(trials)
-# Plot frametimes
-ft = round(trials["frame_time"] / 1000000, 3)  # nanosec to ms
-# Append chart data
-chart_frame_times = []
-for trial in range(len(trials)):
-    frame_time_nanos = trials['frame_time'].values[trial]
-    frame_time_ms = round(frame_time_nanos / 1000000, 3)
-    chart_frame_times.append(frame_time_ms)
-line = ax.plot(chart_labels, chart_frame_times,
-               linewidth=3, alpha=0.5, color="grey")
+# Get data
+data = pd.read_csv(INPUT_CSV)
+# Sort by frames in order
+data = data.sort_values(by=["frame"], ascending=True)
+# Filter rows
+primitives = data['primitive'].unique()
 
-# Calculate best fit
-spline = UnivariateSpline(
-    chart_labels, chart_frame_times, s=10)
-xs = np.linspace(chart_labels.min(), chart_labels.max(),
-                 amt_trials)
-ys = spline(xs)
-plt.plot(xs, ys, "--", color="blue")
+for primitive in primitives:
+    # Get rows for this primitive
+    rows = data[data["primitive"] == primitive]
+    num_rows = len(rows)
 
-# Dress plot
-ax.set_xlabel("Frame")
-ax.set_ylabel("Total time (ms)")
-ax.set_title(
-    f"Continuous frame-times of {primitive}, flattened")
-ax.yaxis.grid()
-plt.tight_layout()
+    # Make plot
+    # Get chart data
+    decimals = 3
 
-# Save plot
-if not os.path.exists('../../output/figs/svg/primitives/rendering'):
-    os.makedirs('../../output/figs/svg/primitives/rendering')
-fig.savefig(
-    f"../../output/figs/svg/primitives/rendering/frametime_{primitive}.png", dpi=500)
+    frame_times = []
+    for frame in range(num_rows):
+        frame_time_nanos = rows['frame_time'].values[frame]
+        frame_time_ms = helper_methods.ns_to_ms(
+            frame_time_nanos, rounding=False)
+        frame_times.append(frame_time_ms)
+
+    min_frametime = round(np.amin(frame_times), decimals)
+    max_frametime = round(np.amax(frame_times), decimals)
+    med_frametime = round(np.median(frame_times), decimals)
+    mean_frametime = round(np.mean(frame_times), decimals)
+    std_dev_frametime = round(np.std(frame_times), decimals)
+
+    # Plot frame times
+    line = ax.plot(rows["frame"].unique(), frame_times,
+                   linewidth=3, alpha=0.5, color="grey")
+    # Plot lowest-line
+    ax.axhline(y=min_frametime, color='blue', linestyle='--')
+
+    # Dress plot
+    ax.set_xlabel("Frame")
+    ax.set_ylabel("Total time (ms)")
+    ax.set_title(
+        f"Continuous frame-times of {primitive}, flattened")
+    ax.yaxis.grid()
+    plt.tight_layout()
+
+    # Make table
+    table_vals = [['Min', min_frametime],
+                  ['Max', max_frametime],
+                  ['Median', med_frametime],
+                  ['Mean', mean_frametime],
+                  ['Standard Deviation', std_dev_frametime]]
+
+    # Make room for table
+    space = 0.35  # Percent of area used for table
+    fig.subplots_adjust(bottom=space)
+    # Add table
+    the_table = plt.table(cellText=table_vals,
+                          colWidths=[0.4, 0.6],
+                          bbox=[0.1, -space * 1.6, 0.8, space])
+
+    # Save plot
+    if not os.path.exists(OUTPUT_DIR):
+        os.makedirs(OUTPUT_DIR)
+    fig.savefig(
+        f"{OUTPUT_DIR}/{OUTPUT_PREFIX}{primitive}.{OUTPUT_TYPE}", dpi=500)
