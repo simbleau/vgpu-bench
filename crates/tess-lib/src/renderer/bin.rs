@@ -2,7 +2,7 @@ use std::path::PathBuf;
 
 use clap::{App, Arg};
 use tess_lib::{
-    renderer::Renderer,
+    renderer::TriangleRenderer,
     targets::{SVGDocument, SVGFile},
 };
 
@@ -27,7 +27,7 @@ fn main() {
 
     // Run demo
     let mut tessellator = tess_lib::backends::default();
-    let mut renderer = Renderer::new();
+    let mut renderer = TriangleRenderer::new();
     renderer
         .init_with_svg(tessellator.as_mut(), svg_document)
         .unwrap();
