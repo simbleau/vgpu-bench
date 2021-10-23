@@ -4,13 +4,12 @@ import pandas as pd
 import numpy as np
 import helper_methods
 
-INPUT_CSV = "../../output/data/svg/primitives/rendering_triangles.csv"
+INPUT_CSV = "../../output/data/svg/primitives/rendering_primitives.csv"
 OUTPUT_DIR = "../../output/figs/svg/primitives/rendering"
 OUTPUT_PREFIX = "frametimes_"
 OUTPUT_TYPE = "png"
 
 # Make subplots
-fig, ax = plt.subplots()
 
 # Get data
 data = pd.read_csv(INPUT_CSV)
@@ -20,13 +19,15 @@ data = data.sort_values(by=["frame"], ascending=True)
 primitives = data['primitive'].unique()
 
 for primitive in primitives:
+    fig, ax = plt.subplots()
+
     # Get rows for this primitive
     rows = data[data["primitive"] == primitive]
     num_rows = len(rows)
 
     # Make plot
     # Get chart data
-    decimals = 3
+    decimals = 4
 
     frame_times = []
     for frame in range(num_rows):
@@ -56,11 +57,10 @@ for primitive in primitives:
     plt.tight_layout()
 
     # Make table
-    table_vals = [['Min', min_frametime],
-                  ['Max', max_frametime],
-                  ['Median', med_frametime],
-                  ['Mean', mean_frametime],
-                  ['Standard Deviation', std_dev_frametime]]
+    table_vals = [['Domain (y)', f"{{ y | {min_frametime} ≤ y ≤ {max_frametime} }} ms"],
+                  ['Median (ỹ)', f"{med_frametime} ms"],
+                  ['Mean (ȳ)', f"{mean_frametime} ms"],
+                  ['Std. Deviation (σ)', f"{std_dev_frametime} ms"]]
 
     # Make room for table
     space = 0.35  # Percent of area used for table
