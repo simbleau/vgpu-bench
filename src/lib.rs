@@ -1,6 +1,7 @@
 #![allow(dead_code)]
 use const_format::concatcp;
 use std::io::Write;
+use svg_gen::Primitive;
 extern crate tess;
 
 const OUTPUT_DIR: &'static str = "output/data/";
@@ -74,43 +75,17 @@ fn render_svg_examples() {
 
 fn render_primitives() {
     println!("Benching primitive tessellation...");
-    // Triangles
-    let path = concatcp![PRIMITIVES_OUTPUT_DIR, "rendering_triangles.csv"];
+    let mut primitives = Vec::<(String, Primitive)>::new();
+    primitives.push(("triangle".to_string(), Primitive::Triangle));
+    primitives.push(("quadratic bezier curve".to_string(), Primitive::BezierCurve));
+    primitives.push((
+        "cubic bezier curve".to_string(),
+        Primitive::CubicBezierCurve,
+    ));
+
+    let path = concatcp![PRIMITIVES_OUTPUT_DIR, "rendering_primitives.csv"];
     perform_with_output("triangle rendering benchmarking", path, move || {
-        tess::benching::rendering::render_primitives(
-            "triangle".to_owned(),
-            svg_gen::Primitive::Triangle,
-            1,
-            path,
-            100,
-        )
-        .unwrap();
-    });
-
-    // Quadratic Curves
-    let path = concatcp![PRIMITIVES_OUTPUT_DIR, "rendering_curves.csv"];
-    perform_with_output("quadratic curve rendering benchmarking", path, move || {
-        tess::benching::rendering::render_primitives(
-            "quadratic bezier curve".to_owned(),
-            svg_gen::Primitive::BezierCurve,
-            1,
-            path,
-            100,
-        )
-        .unwrap();
-    });
-
-    // Cubic Curves
-    let path = concatcp![PRIMITIVES_OUTPUT_DIR, "rendering_cubic_curves.csv"];
-    perform_with_output("cubic curve rendering benchmarking", path, move || {
-        tess::benching::rendering::render_primitives(
-            "cubic bezier curve".to_owned(),
-            svg_gen::Primitive::CubicBezierCurve,
-            1,
-            path,
-            100,
-        )
-        .unwrap();
+        tess::benching::rendering::render_primitives(&primitives, 1, path, 100).unwrap();
     });
 }
 

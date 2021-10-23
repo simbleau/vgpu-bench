@@ -49,8 +49,7 @@ where
 }
 
 pub fn render_primitives<P>(
-    prim_name: String,
-    primitive: Primitive,
+    primitives: &Vec<(String, Primitive)>,
     count: u32,
     output: P,
     frames: usize,
@@ -64,22 +63,24 @@ where
     // For each backend, tessellate the files
     for mut backend in crate::backends::all() {
         let backend: &mut dyn Tessellator = &mut *backend; // Unwrap & Shadow
-        let mut target = SVGDocument::from(svg_gen::generate_svg(primitive, count, true));
+        for (prim_name, primitive) in primitives {
+            let mut target = SVGDocument::from(svg_gen::generate_svg(*primitive, count, true));
 
-        let profile = target.get_data(backend)?;
-        let result = target.time_render(backend, frames)?;
+            let profile = target.get_data(backend)?;
+            let result = target.time_render(backend, frames)?;
 
-        for frame in 0..result.frame_times.len() {
-            let frame_time = result.frame_times[frame].as_nanos();
-            let result = PrimitiveFlatRenderTime {
-                tessellator: backend.name().to_owned(),
-                primitive: prim_name.to_owned(),
-                amount: count,
-                triangles: profile.triangles,
-                frame: (frame + 1) as u32,
-                frame_time,
-            };
-            csv_wtr.serialize(result)?;
+            for frame in 0..result.frame_times.len() {
+                let frame_time = result.frame_times[frame].as_nanos();
+                let result = PrimitiveFlatRenderTime {
+                    tessellator: backend.name().to_owned(),
+                    primitive: prim_name.to_owned(),
+                    amount: count,
+                    triangles: profile.triangles,
+                    frame: (frame + 1) as u32,
+                    frame_time,
+                };
+                csv_wtr.serialize(result)?;
+            }
         }
     }
 
