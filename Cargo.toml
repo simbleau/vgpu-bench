@@ -3,7 +3,7 @@ name = "vgpu-bench"
 description = "A testing framework for vector graphic rendering libraries"
 version = "0.1.0"
 authors = ["Spencer Imbleau <spencer@imbleau.com>"]
-edition = "2018"
+edition = "2021"
 license = "MIT OR Apache-2.0"
 readme = "README.md"
 repository = "https://github.com/simbleau/vgpu-bench"
@@ -24,8 +24,7 @@ name = "mybin"
 path = "src/bin.rs"
 
 [workspace]
-members = ["crates/svg-generator", "crates/tess-lib"]
-resolver = "2"
+members = ["crates/svg-generator", "crates/tess-lib", "crates/render-lib"]
 
 [dependencies]
 const_format = "0.2.21"
