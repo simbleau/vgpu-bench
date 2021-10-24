@@ -37,7 +37,7 @@ where
 
                     let result = PrimitiveTime {
                         tessellator: backend.name().to_owned(),
-                        prim_name: prim_name.to_owned(),
+                        primitive: prim_name.to_owned(),
                         amount: count,
                         init_time: time_result.init_time.as_nanos(),
                         tess_time: time_result.tess_time.as_nanos(),
