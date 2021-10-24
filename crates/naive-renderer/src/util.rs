@@ -6,8 +6,8 @@ use winit::dpi::PhysicalSize;
 
 const WINDOW_SIZE: f32 = 800.0;
 // These mush match the uniform buffer sizes in the vertex shader.
-const MAX_PRIMITIVES: usize = 512;
-const MAX_TRANSFORMS: usize = 512;
+const MAX_PRIMITIVES: usize = 16384;
+const MAX_TRANSFORMS: usize = 16384;
 
 pub fn get_globals(file_data: &SVGTarget) -> SceneGlobals {
     let opt = usvg::Options::default();
@@ -128,14 +128,18 @@ pub fn build_buffers(device: &wgpu::Device, data: &TessellationData) -> Buffers 
     let prims_ubo = device.create_buffer(&wgpu::BufferDescriptor {
         label: Some("Prims ubo"),
         size: prim_buffer_byte_size,
-        usage: wgpu::BufferUsages::UNIFORM | wgpu::BufferUsages::COPY_DST,
+        usage: wgpu::BufferUsages::VERTEX
+            | wgpu::BufferUsages::STORAGE
+            | wgpu::BufferUsages::COPY_DST,
         mapped_at_creation: false,
     });
 
     let transforms_ubo = device.create_buffer(&wgpu::BufferDescriptor {
         label: Some("Transforms ubo"),
         size: transform_buffer_byte_size,
-        usage: wgpu::BufferUsages::UNIFORM | wgpu::BufferUsages::COPY_DST,
+        usage: wgpu::BufferUsages::VERTEX
+            | wgpu::BufferUsages::STORAGE
+            | wgpu::BufferUsages::COPY_DST,
         mapped_at_creation: false,
     });
 
@@ -162,7 +166,7 @@ pub fn build_buffers(device: &wgpu::Device, data: &TessellationData) -> Buffers 
                 binding: 1,
                 visibility: wgpu::ShaderStages::VERTEX,
                 ty: wgpu::BindingType::Buffer {
-                    ty: wgpu::BufferBindingType::Uniform,
+                    ty: wgpu::BufferBindingType::Storage { read_only: true },
                     has_dynamic_offset: false,
                     min_binding_size: wgpu::BufferSize::new(prim_buffer_byte_size),
                 },
@@ -172,7 +176,7 @@ pub fn build_buffers(device: &wgpu::Device, data: &TessellationData) -> Buffers 
                 binding: 2,
                 visibility: wgpu::ShaderStages::VERTEX,
                 ty: wgpu::BindingType::Buffer {
-                    ty: wgpu::BufferBindingType::Uniform,
+                    ty: wgpu::BufferBindingType::Storage { read_only: true },
                     has_dynamic_offset: false,
                     min_binding_size: wgpu::BufferSize::new(transform_buffer_byte_size),
                 },
