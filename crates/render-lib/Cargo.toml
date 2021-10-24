@@ -11,3 +11,29 @@ workspace = "../.."
 [lib]
 name = "render_lib"
 path = "src/lib.rs"
+
+[[bin]]
+name = "naive_renderer"
+path = "src/rendering/naive/bin.rs"
+
+[dependencies]
+svg-gen = { package = "svg-generator", path = "../svg-generator" }
+tess-lib = { package = "tess-lib", path = "../tess-lib" }
+
+# TO BE SCRUBBED
+clap = "2.33.3"
+lyon = {version ="0.17.5", features = ["extra"]}
+usvg = "0.18.0"
+futures = "0.3.5"
+serde = { version = "1.0.130", features = ["derive"] }
+walkdir = "2"
+csv = "1.1"
+# For the renderer
+image = "0.23"
+winit = "0.25"
+cgmath = "0.18"
+env_logger = "0.9"
+log = "0.4"
+wgpu = "0.10"
+pollster = "0.2"
+bytemuck = "1.2.0"

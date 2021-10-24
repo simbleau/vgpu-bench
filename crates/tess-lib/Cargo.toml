@@ -12,11 +12,8 @@ workspace = "../.."
 name = "tess_lib"
 path = "src/lib.rs"
 
-[[bin]]
-name = "renderer"
-path = "src/renderer/bin.rs"
-
 [dependencies]
+# TO BE SCRUBBED
 clap = "2.33.3"
 lyon = {version ="0.17.5", features = ["extra"]}
 svg-gen = { package = "svg-generator", path = "../svg-generator" }

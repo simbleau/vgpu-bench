@@ -1,16 +1,14 @@
 use super::error::{RendererError, Result};
+use super::state::State;
 use super::types::SceneGlobals;
-use crate::{
-    artifacts::{RenderTimeResult, TessellationData},
-    backends::Tessellator,
-    renderer::error::RendererError::FatalRenderingError,
-    renderer::state::State,
-    targets::SVGDocument,
-};
+use crate::artifacts::RenderTimeResult;
 use std::{
     sync::{Arc, Mutex},
     time::{Duration, Instant},
 };
+use tess_lib::artifacts::TessellationData;
+use tess_lib::backends::Tessellator;
+use tess_lib::targets::SVGDocument;
 use winit::{
     event::{ElementState, Event, KeyboardInput, WindowEvent},
     event_loop::{ControlFlow, EventLoop},
@@ -39,7 +37,7 @@ impl TriangleRenderer {
         svg_document: &SVGDocument,
     ) -> Result<()> {
         // Get global scene space
-        let scene = crate::renderer::util::get_globals(svg_document);
+        let scene = super::util::get_globals(svg_document);
 
         // Tessellate the data
         tessellator.init(svg_document);
@@ -166,7 +164,7 @@ impl TriangleRenderer {
 
         // Ensure all frames were rendered.
         if frame_times.len() != frames {
-            return Err(FatalRenderingError);
+            return Err(RendererError::FatalRenderingError);
         }
 
         // Collect results

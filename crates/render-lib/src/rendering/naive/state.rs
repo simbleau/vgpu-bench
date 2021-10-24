@@ -1,8 +1,8 @@
 use super::types::Buffers;
 use super::types::GpuGlobals;
 use super::types::SceneGlobals;
-use crate::artifacts::TessellationData;
-use crate::renderer::util;
+use super::util;
+use tess_lib::artifacts::TessellationData;
 use winit::event::VirtualKeyCode;
 use winit::window::Window;
 

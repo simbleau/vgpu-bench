@@ -1,9 +1,8 @@
 mod svg_document;
 mod svg_file;
 use crate::{
-    artifacts::{RenderTimeResult, TessellationProfile, TessellationTimeResult},
+    artifacts::{TessellationProfile, TessellationTimeResult},
     backends::Tessellator,
-    renderer,
 };
 pub use svg_document::SVGDocument;
 pub use svg_file::SVGFile;
@@ -18,10 +17,4 @@ pub trait TessellationTarget {
         &mut self,
         t: &mut dyn Tessellator,
     ) -> Result<TessellationTimeResult, Box<dyn std::error::Error>>;
-
-    fn time_render(
-        &mut self,
-        t: &mut dyn Tessellator,
-        frames: usize,
-    ) -> renderer::error::Result<RenderTimeResult>;
 }

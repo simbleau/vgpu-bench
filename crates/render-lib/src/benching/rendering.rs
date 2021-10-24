@@ -1,13 +1,20 @@
 use svg_gen::Primitive;
+use tess_lib::targets::{SVGDocument, SVGFile, TessellationTarget};
+use tess_lib::{backends, backends::Tessellator};
 
 use super::error::{BenchingError::Logic, Result};
 use super::output::PrimitiveFlatRenderTime;
-use crate::backends::Tessellator;
+use super::timing;
 use crate::benching::output::SVGFlatRenderTime;
-use crate::targets::{SVGDocument, SVGFile, TessellationTarget};
+use crate::rendering::Renderer;
 use std::{fs::File, path::PathBuf};
 
-pub fn render_svgs<P>(svg_dir: P, output: P, frames: usize) -> Result<()>
+pub fn write_frametimes_svgs<P>(
+    renderer: &mut dyn Renderer,
+    svg_dir: P,
+    output: P,
+    frames: usize,
+) -> Result<()>
 where
     P: Into<PathBuf>,
 {
@@ -16,13 +23,14 @@ where
     let mut csv_wtr = csv::Writer::from_writer(output_file);
 
     // For each backend, retrieve the file profiles
-    for mut backend in crate::backends::all() {
+    for mut backend in backends::all() {
         let backend: &mut dyn Tessellator = &mut *backend; // Unwrap & Shadow
 
         // Retrieve the profile from files and record the results
         for file in &files {
-            let mut target: SVGFile = file.into();
-            let result = target.time_render(backend, frames)?;
+            let svg_file: SVGFile = file.into();
+            let mut target: SVGDocument = (&svg_file).into();
+            let result = timing::time_svg(renderer, &mut target, frames)?;
 
             let filename = file
                 .file_name()
@@ -48,7 +56,8 @@ where
     Ok(())
 }
 
-pub fn render_primitives<P>(
+pub fn write_frametimes_primitives<P>(
+    renderer: &mut dyn Renderer,
     primitives: &Vec<(String, Primitive)>,
     count: u32,
     output: P,
@@ -61,13 +70,13 @@ where
     let mut csv_wtr = csv::Writer::from_writer(output_file);
 
     // For each backend, tessellate the files
-    for mut backend in crate::backends::all() {
+    for mut backend in backends::all() {
         let backend: &mut dyn Tessellator = &mut *backend; // Unwrap & Shadow
         for (prim_name, primitive) in primitives {
             let mut target = SVGDocument::from(svg_gen::generate_svg(*primitive, count, true));
 
             let profile = target.get_data(backend)?;
-            let result = target.time_render(backend, frames)?;
+            let result = timing::time_svg(renderer, &mut target, frames)?;
 
             for frame in 0..result.frame_times.len() {
                 let frame_time = result.frame_times[frame].as_nanos();

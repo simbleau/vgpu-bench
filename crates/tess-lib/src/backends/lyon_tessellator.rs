@@ -1,6 +1,6 @@
+use crate::artifacts::types::{GpuPrimitive, GpuTransform, GpuVertex};
 use crate::artifacts::{TessellationData, TessellationProfile};
 use crate::backends::Tessellator;
-use crate::renderer::types::{GpuPrimitive, GpuTransform, GpuVertex};
 use crate::targets::SVGDocument;
 use lyon::lyon_tessellation::{
     BuffersBuilder, FillVertexConstructor, StrokeVertexConstructor, VertexBuffers,

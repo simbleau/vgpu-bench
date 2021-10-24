@@ -1,7 +1,10 @@
-use super::types::{Buffers, SceneGlobals};
-use crate::{
-    artifacts::TessellationData,
-    renderer::types::{GpuGlobals, GpuPrimitive, GpuTransform, GpuVertex},
+use super::types::{Buffers, GpuGlobals, SceneGlobals};
+
+use tess_lib::{
+    artifacts::{
+        types::{GpuPrimitive, GpuTransform, GpuVertex},
+        TessellationData,
+    },
     targets::SVGDocument,
 };
 use wgpu::{util::DeviceExt, RenderPipeline};

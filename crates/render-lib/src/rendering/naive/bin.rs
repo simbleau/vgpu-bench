@@ -1,10 +1,7 @@
-use std::path::PathBuf;
-
 use clap::{App, Arg};
-use tess_lib::{
-    renderer::TriangleRenderer,
-    targets::{SVGDocument, SVGFile},
-};
+use render_lib::rendering::naive::TriangleRenderer;
+use std::path::PathBuf;
+use tess_lib::targets::{SVGDocument, SVGFile};
 
 fn main() {
     let app = App::new("SVG Tessellation Renderer")
