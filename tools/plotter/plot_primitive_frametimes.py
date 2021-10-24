@@ -9,8 +9,6 @@ OUTPUT_DIR = "../../output/figs/svg/primitives/rendering"
 OUTPUT_PREFIX = "frametimes_"
 OUTPUT_TYPE = "png"
 
-# Make subplots
-
 # Get data
 data = pd.read_csv(INPUT_CSV)
 # Sort by frames in order
@@ -19,6 +17,7 @@ data = data.sort_values(by=["frame"], ascending=True)
 primitives = data['primitive'].unique()
 
 for primitive in primitives:
+    # Make subplots
     fig, ax = plt.subplots()
 
     # Get rows for this primitive
@@ -27,8 +26,6 @@ for primitive in primitives:
 
     # Make plot
     # Get chart data
-    decimals = 4
-
     frame_times = []
     for frame in range(num_rows):
         frame_time_nanos = rows['frame_time'].values[frame]
@@ -36,6 +33,8 @@ for primitive in primitives:
             frame_time_nanos, rounding=False)
         frame_times.append(frame_time_ms)
 
+    # Get table data
+    decimals = 4
     min_frametime = round(np.amin(frame_times), decimals)
     max_frametime = round(np.amax(frame_times), decimals)
     med_frametime = round(np.median(frame_times), decimals)
