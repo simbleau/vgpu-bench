@@ -43,15 +43,15 @@ pub fn main() {
         write_primitive_tessellation_times(&primitives, 100, 10, 10, path).unwrap();
     });
 
-    // Time rendering SVG examples
-    let path = concatcp![EXAMPLES_OUTPUT_DIR, "frametimes.csv"];
+    // Time naive rendering SVG examples
+    let path = concatcp![EXAMPLES_OUTPUT_DIR, "naive_frametimes.csv"];
     perform("SVG example flat render timing", path, || {
         let mut renderer = NaiveRenderer::new();
         write_frametimes_svgs(&mut renderer, EXAMPLES_ASSETS_DIR, path, 100).unwrap();
     });
 
-    // Time rendering primitives
-    let path = concatcp![PRIMITIVES_OUTPUT_DIR, "frametimes.csv"];
+    // Time naive rendering primitives
+    let path = concatcp![PRIMITIVES_OUTPUT_DIR, "naive_frametimes.csv"];
     perform("primitive flat render timing", path, || {
         let mut renderer = NaiveRenderer::new();
         write_frametimes_primitives(&mut renderer, &primitives, 1, path, 100).unwrap();

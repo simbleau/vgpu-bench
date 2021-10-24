@@ -4,8 +4,8 @@ import pandas as pd
 import numpy as np
 import helper_methods
 
-INPUT_CSV = "../../output/data/svg/examples/frametimes.csv"
-OUTPUT_DIR = "../../output/figs/svg/examples/rendering"
+INPUT_CSV = "../../output/data/svg/primitives/naive_frametimes.csv"
+OUTPUT_DIR = "../../output/figs/svg/primitives/naive_frametimes"
 OUTPUT_PREFIX = "frametimes_"
 OUTPUT_TYPE = "png"
 
@@ -14,14 +14,14 @@ data = pd.read_csv(INPUT_CSV)
 # Sort by frames in order
 data = data.sort_values(by=["frame"], ascending=True)
 # Filter rows
-filenames = data["filename"].unique()
+primitives = data['primitive'].unique()
 
-for filename in filenames:
+for primitive in primitives:
     # Make subplots
     fig, ax = plt.subplots()
 
-    # Get rows for this file
-    rows = data[data["filename"] == filename]
+    # Get rows for this primitive
+    rows = data[data["primitive"] == primitive]
     num_rows = len(rows)
 
     # Make plot
@@ -51,7 +51,7 @@ for filename in filenames:
     ax.set_xlabel("Frame")
     ax.set_ylabel("Total time (ms)")
     ax.set_title(
-        f"Continuous frame-times of {filename}, flattened")
+        f"Continuous frame-times of {primitive}, flattened")
     ax.yaxis.grid()
     plt.tight_layout()
 
@@ -73,4 +73,4 @@ for filename in filenames:
     if not os.path.exists(OUTPUT_DIR):
         os.makedirs(OUTPUT_DIR)
     fig.savefig(
-        f"{OUTPUT_DIR}/{OUTPUT_PREFIX}{filename}.{OUTPUT_TYPE}", dpi=500)
+        f"{OUTPUT_DIR}/{OUTPUT_PREFIX}{primitive}.{OUTPUT_TYPE}", dpi=500)
