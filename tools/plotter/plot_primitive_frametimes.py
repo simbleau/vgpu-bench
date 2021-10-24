@@ -4,7 +4,7 @@ import pandas as pd
 import numpy as np
 import helper_methods
 
-INPUT_CSV = "../../output/data/svg/primitives/rendering_primitives.csv"
+INPUT_CSV = "../../output/data/svg/primitives/frametimes.csv"
 OUTPUT_DIR = "../../output/figs/svg/primitives/rendering"
 OUTPUT_PREFIX = "frametimes_"
 OUTPUT_TYPE = "png"
