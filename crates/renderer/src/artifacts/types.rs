@@ -24,6 +24,7 @@ pub struct GpuPrimitive {
 }
 
 impl GpuPrimitive {
+    // TODO: Change usvg::Color to uint32
     pub fn new(transform_idx: u32, color: usvg::Color, alpha: f32) -> Self {
         GpuPrimitive {
             transform: transform_idx,
@@ -38,3 +39,7 @@ impl GpuPrimitive {
 
 unsafe impl bytemuck::Pod for GpuVertex {}
 unsafe impl bytemuck::Zeroable for GpuVertex {}
+unsafe impl bytemuck::Pod for GpuPrimitive {}
+unsafe impl bytemuck::Zeroable for GpuPrimitive {}
+unsafe impl bytemuck::Pod for GpuTransform {}
+unsafe impl bytemuck::Zeroable for GpuTransform {}

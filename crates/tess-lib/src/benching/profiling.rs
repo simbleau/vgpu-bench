@@ -1,8 +1,10 @@
+use renderer::targets::{SVGDocument, SVGFile};
+
 use super::error::{BenchingError::Logic, Result};
 use crate::{
     backends::Tessellator,
     benching::output::SVGProfile,
-    targets::{SVGFile, TessellationTarget},
+    targets::{SVGTarget, TessellationTarget},
 };
 use std::{fs::File, path::PathBuf};
 
@@ -20,7 +22,11 @@ where
 
         // Retrieve the profile from files and record the results
         for file in &files {
-            let target: SVGFile = file.into();
+            // TODO clean this up
+            let svg_file: SVGFile = file.into();
+            let svg_doc: SVGDocument = SVGDocument::from(svg_file);
+            let target: SVGTarget = svg_doc.into();
+
             let profile_result = target.get_data(backend)?;
 
             let filename = file

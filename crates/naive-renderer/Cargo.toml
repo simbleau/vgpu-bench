@@ -1,6 +1,6 @@
 [package]
-name = "tess-lib"
-description = "Library for tessellation benching"
+name = "naive-renderer"
+description = "A naive-renderer using SVG tessellation and triangle rendering"
 version = "0.1.0"
 authors = ["Spencer Imbleau <spencer@imbleau.com>"]
 edition = "2021"
@@ -9,13 +9,17 @@ repository = "https://github.com/simbleau/vgpu-bench"
 workspace = "../.."
 
 [lib]
-name = "tess_lib"
+name = "naive_renderer"
 path = "src/lib.rs"
+
+[[bin]]
+name = "naive_renderer"
+path = "src/main.rs"
 
 [dependencies]
 svg-gen = { package = "svg-generator", path = "../svg-generator" }
+tess-lib = { package = "tess-lib", path = "../tess-lib" }
 renderer = { package = "renderer", path = "../renderer" }
-
 
 # TO BE SCRUBBED
 clap = "2.33.3"

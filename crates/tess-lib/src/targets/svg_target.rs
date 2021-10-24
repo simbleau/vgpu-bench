@@ -1,32 +1,26 @@
 use crate::backends::Tessellator;
-use crate::targets::{SVGFile, TessellationProfile, TessellationTarget, TessellationTimeResult};
+use crate::targets::{TessellationProfile, TessellationTarget, TessellationTimeResult};
+use renderer::targets::SVGDocument;
 use std::time::Instant;
 
-pub struct SVGDocument {
-    pub content: String,
-}
+pub struct SVGTarget(SVGDocument);
 
-impl From<&SVGFile> for SVGDocument {
-    fn from(item: &SVGFile) -> Self {
-        let source = std::fs::read(item.path.clone()).unwrap();
-        SVGDocument {
-            content: String::from_utf8(source).unwrap(),
-        }
+impl SVGTarget {
+    pub fn content(&self) -> &str {
+        self.0.content()
     }
 }
 
-impl<T> From<T> for SVGDocument
+impl<T> From<T> for SVGTarget
 where
-    T: Into<String>,
+    T: Into<SVGDocument>,
 {
     fn from(item: T) -> Self {
-        SVGDocument {
-            content: item.into(),
-        }
+        SVGTarget(item.into())
     }
 }
 
-impl TessellationTarget for SVGDocument {
+impl TessellationTarget for SVGTarget {
     fn get_data(
         &self,
         t: &mut dyn Tessellator,

@@ -1,12 +1,6 @@
 use super::types::{Buffers, GpuGlobals, SceneGlobals};
-
-use tess_lib::{
-    artifacts::{
-        types::{GpuPrimitive, GpuTransform, GpuVertex},
-        TessellationData,
-    },
-    targets::SVGDocument,
-};
+use renderer::artifacts::types::{GpuPrimitive, GpuTransform, GpuVertex};
+use tess_lib::{artifacts::TessellationData, targets::SVGTarget};
 use wgpu::{util::DeviceExt, RenderPipeline};
 use winit::dpi::PhysicalSize;
 
@@ -15,9 +9,9 @@ const WINDOW_SIZE: f32 = 800.0;
 const MAX_PRIMITIVES: usize = 512;
 const MAX_TRANSFORMS: usize = 512;
 
-pub fn get_globals(file_data: &SVGDocument) -> SceneGlobals {
+pub fn get_globals(file_data: &SVGTarget) -> SceneGlobals {
     let opt = usvg::Options::default();
-    let content: &[u8] = file_data.content.as_bytes();
+    let content: &[u8] = file_data.content().as_bytes();
     let rtree = usvg::Tree::from_data(content, &opt.to_ref()).unwrap();
     let view_box = rtree.svg_node().view_box;
 

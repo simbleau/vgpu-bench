@@ -1,6 +1,6 @@
-use crate::{artifacts::RenderTimeResult, rendering::Renderer};
 use std::error::Error;
-use tess_lib::targets::SVGDocument;
+
+use renderer::{artifacts::RenderTimeResult, targets::SVGDocument, Renderer};
 
 pub fn time_svg(
     renderer: &mut dyn Renderer,

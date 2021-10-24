@@ -1,12 +1,13 @@
+use renderer::targets::{SVGDocument, SVGFile};
+use renderer::Renderer;
 use svg_gen::Primitive;
-use tess_lib::targets::{SVGDocument, SVGFile, TessellationTarget};
+use tess_lib::targets::{SVGTarget, TessellationTarget};
 use tess_lib::{backends, backends::Tessellator};
 
 use super::error::{BenchingError::Logic, Result};
 use super::output::PrimitiveFlatRenderTime;
 use super::timing;
 use crate::benching::output::SVGFlatRenderTime;
-use crate::rendering::Renderer;
 use std::{fs::File, path::PathBuf};
 
 pub fn write_frametimes_svgs<P>(
@@ -28,8 +29,9 @@ where
 
         // Retrieve the profile from files and record the results
         for file in &files {
+            // TODO Clean up next 2 lines
             let svg_file: SVGFile = file.into();
-            let mut target: SVGDocument = (&svg_file).into();
+            let mut target: SVGDocument = svg_file.into();
             let result = timing::time_svg(renderer, &mut target, frames)?;
 
             let filename = file
@@ -73,10 +75,11 @@ where
     for mut backend in backends::all() {
         let backend: &mut dyn Tessellator = &mut *backend; // Unwrap & Shadow
         for (prim_name, primitive) in primitives {
-            let mut target = SVGDocument::from(svg_gen::generate_svg(*primitive, count, true));
+            let mut svg_doc = SVGDocument::from(svg_gen::generate_svg(*primitive, count, true));
+            let target: SVGTarget = SVGTarget::from(svg_doc.clone());
 
             let profile = target.get_data(backend)?;
-            let result = timing::time_svg(renderer, &mut target, frames)?;
+            let result = timing::time_svg(renderer, &mut svg_doc, frames)?;
 
             for frame in 0..result.frame_times.len() {
                 let frame_time = result.frame_times[frame].as_nanos();

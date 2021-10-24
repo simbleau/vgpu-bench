@@ -1,7 +1,8 @@
 use clap::{App, Arg};
-use render_lib::rendering::naive::TriangleRenderer;
+use naive_renderer::TriangleRenderer;
+use renderer::targets::{SVGDocument, SVGFile};
 use std::path::PathBuf;
-use tess_lib::targets::{SVGDocument, SVGFile};
+use tess_lib::targets::SVGTarget;
 
 fn main() {
     let app = App::new("SVG Tessellation Renderer")
@@ -19,14 +20,16 @@ fn main() {
 
     // Get file
     let file_path: &PathBuf = &app.value_of("file path").unwrap().into();
+    // TODO: clean up next 3 lines
     let file = SVGFile::from(file_path);
-    let svg_document = &SVGDocument::from(&file);
+    let svg_document = SVGDocument::from(file);
+    let svg_target = SVGTarget::from(svg_document);
 
     // Run demo
     let mut tessellator = tess_lib::backends::default();
     let mut renderer = TriangleRenderer::new();
     renderer
-        .init_with_svg(tessellator.as_mut(), svg_document)
+        .init_with_svg(tessellator.as_mut(), &svg_target)
         .unwrap();
     renderer.run().unwrap();
 }

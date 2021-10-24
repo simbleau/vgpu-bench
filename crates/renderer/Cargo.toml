@@ -1,0 +1,18 @@
+[package]
+name = "renderer"
+description = "A renderer interface used for benching"
+version = "0.1.0"
+authors = ["Spencer Imbleau <spencer@imbleau.com>"]
+edition = "2021"
+license = "MIT OR Apache-2.0"
+repository = "https://github.com/simbleau/vgpu-bench"
+workspace = "../.."
+
+[lib]
+name = "renderer"
+path = "src/lib.rs"
+
+[dependencies]
+serde = { version = "1.0.130", features = ["derive"] }
+usvg = "0.18.0"
+bytemuck = "1.2.0"

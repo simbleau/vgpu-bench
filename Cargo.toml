@@ -24,11 +24,19 @@ name = "mybin"
 path = "src/bin.rs"
 
 [workspace]
-members = ["crates/svg-generator", "crates/tess-lib", "crates/render-lib"]
+members = [
+    "crates/renderer",
+    "crates/svg-generator",
+    "crates/tess-lib",
+    "crates/render-lib",
+    "crates/naive-renderer",
+]
 
 [dependencies]
+renderer = { package = "renderer", path = "crates/renderer" }
 tess = { package = "tess-lib", path = "crates/tess-lib" }
 rendering = { package = "render-lib", path = "crates/render-lib" }
+naive-renderer = { package = "naive-renderer", path = "crates/naive-renderer" }
 svg-gen = { package = "svg-generator", path = "crates/svg-generator" }
 
 const_format = "0.2.21"

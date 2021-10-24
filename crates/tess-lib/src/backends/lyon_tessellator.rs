@@ -1,13 +1,13 @@
-use crate::artifacts::types::{GpuPrimitive, GpuTransform, GpuVertex};
 use crate::artifacts::{TessellationData, TessellationProfile};
 use crate::backends::Tessellator;
-use crate::targets::SVGDocument;
+use crate::targets::SVGTarget;
 use lyon::lyon_tessellation::{
     BuffersBuilder, FillVertexConstructor, StrokeVertexConstructor, VertexBuffers,
 };
 use lyon::math::Point;
 use lyon::path::PathEvent;
 use lyon::tessellation::{self, FillOptions, FillTessellator, StrokeOptions, StrokeTessellator};
+use renderer::artifacts::types::{GpuPrimitive, GpuTransform, GpuVertex};
 use std::error::Error;
 use std::f64::NAN;
 use usvg::{NodeExt, Tree, ViewBox};
@@ -43,9 +43,9 @@ impl Tessellator for LyonTessellator {
         "Lyon"
     }
 
-    fn init(&mut self, t: &SVGDocument) {
+    fn init(&mut self, t: &SVGTarget) {
         let opt = usvg::Options::default();
-        let file_data = t.content.as_bytes();
+        let file_data = t.content().as_bytes();
 
         let rtree = usvg::Tree::from_data(&file_data, &opt.to_ref()).unwrap();
         let view_box = rtree.svg_node().view_box;
@@ -321,7 +321,3 @@ pub fn convert_stroke(s: &usvg::Stroke) -> (usvg::Color, StrokeOptions) {
 
 unsafe impl bytemuck::Pod for GpuGlobals {}
 unsafe impl bytemuck::Zeroable for GpuGlobals {}
-unsafe impl bytemuck::Pod for GpuPrimitive {}
-unsafe impl bytemuck::Zeroable for GpuPrimitive {}
-unsafe impl bytemuck::Pod for GpuTransform {}
-unsafe impl bytemuck::Zeroable for GpuTransform {}

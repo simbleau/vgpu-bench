@@ -1,6 +1,6 @@
-pub mod types;
-use self::types::{GpuPrimitive, GpuTransform, GpuVertex};
 use std::time::Duration;
+
+use renderer::artifacts::types::{GpuPrimitive, GpuTransform, GpuVertex};
 
 #[derive(Debug)]
 pub struct TessellationProfile {

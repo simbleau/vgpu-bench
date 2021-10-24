@@ -1,6 +1,5 @@
+use renderer::Renderer;
 use std::path::PathBuf;
-
-use rendering::rendering::Renderer;
 use svg_gen::Primitive;
 
 pub fn write_frametimes_svgs<P>(

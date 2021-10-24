@@ -2,8 +2,9 @@ use super::error::Result;
 use crate::{
     backends::Tessellator,
     benching::output::PrimitiveTime,
-    targets::{SVGDocument, TessellationTarget},
+    targets::{SVGTarget, TessellationTarget},
 };
+use renderer::targets::SVGDocument;
 use std::{fs::File, path::PathBuf};
 use svg_gen::Primitive;
 
@@ -26,8 +27,11 @@ where
             let backend: &mut dyn Tessellator = &mut *backend; // Unwrap & Shadow
             let counts = (step_size..max_prims).step_by(step_size as usize);
             for count in counts.clone() {
-                let mut target: SVGDocument =
+                // TODO clean up next 2 lines
+                let svg_doc: SVGDocument =
                     SVGDocument::from(svg_gen::generate_svg(*primitive, count, true));
+                let mut target: SVGTarget = svg_doc.into();
+
                 for _ in 0..trials {
                     let time_result = target.time(backend)?;
 

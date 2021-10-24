@@ -1,10 +1,10 @@
-use crate::{artifacts::RenderTimeResult, rendering::Renderer};
+use renderer::{artifacts::RenderTimeResult, targets::SVGDocument, Renderer};
 use tess_lib::{
     backends::{LyonTessellator, Tessellator},
-    targets::SVGDocument,
+    targets::SVGTarget,
 };
 
-use super::renderer::TriangleRenderer;
+use crate::TriangleRenderer;
 
 // Wrapper
 pub struct NaiveRenderer {
@@ -26,9 +26,12 @@ impl Renderer for NaiveRenderer {
         Ok(()) // Renderer has no initialization
     }
 
-    fn stage(&mut self, svg: &mut SVGDocument) -> Result<(), Box<dyn std::error::Error>> {
+    fn stage(&mut self, svg: &SVGDocument) -> Result<(), Box<dyn std::error::Error>> {
         let tessellator = &mut *self.backend;
-        Ok(self.renderer.init_with_svg(tessellator, svg)?)
+        // Convert to target
+        let x = svg.clone();
+        let target = SVGTarget::from(x);
+        Ok(self.renderer.init_with_svg(tessellator, &target)?)
     }
 
     fn render(&mut self, frames: usize) -> Result<RenderTimeResult, Box<dyn std::error::Error>> {
