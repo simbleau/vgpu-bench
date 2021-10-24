@@ -12,7 +12,9 @@ pub struct SceneGlobals {
 }
 
 #[derive(Debug)]
-pub struct Buffers {
+pub struct BufferState {
+    pub primitives: u64,
+    pub transforms: u64,
     pub ibo: Buffer,
     pub vbo: Buffer,
     pub prims_ubo: Buffer,

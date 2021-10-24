@@ -1,14 +1,11 @@
-use super::types::{Buffers, GpuGlobals, SceneGlobals};
+use super::types::{BufferState, GpuGlobals, SceneGlobals};
 use renderer::artifacts::types::{GpuPrimitive, GpuTransform, GpuVertex};
 use tess_lib::{artifacts::TessellationData, targets::SVGTarget};
-use wgpu::{util::DeviceExt, RenderPipeline};
+use wgpu::{include_wgsl, util::DeviceExt, RenderPipeline};
 use winit::dpi::PhysicalSize;
 
 const WINDOW_SIZE: f32 = 800.0;
 // These mush match the uniform buffer sizes in the vertex shader.
-const MAX_PRIMITIVES: usize = 16384;
-const MAX_TRANSFORMS: usize = 16384;
-
 pub fn get_globals(file_data: &SVGTarget) -> SceneGlobals {
     let opt = usvg::Options::default();
     let content: &[u8] = file_data.content().as_bytes();
@@ -37,17 +34,21 @@ pub fn get_globals(file_data: &SVGTarget) -> SceneGlobals {
     scene
 }
 
-pub fn build_pipeline(device: &wgpu::Device, buffers: &Buffers, wireframe: bool) -> RenderPipeline {
+pub fn build_pipeline(
+    device: &wgpu::Device,
+    buffers: &BufferState,
+    wireframe: bool,
+) -> RenderPipeline {
     // Get vertex shader
+    let vert_source = include_str!("shaders/vert.wgsl.template")
+        .replace("{primitives}", &buffers.primitives.to_string())
+        .replace("{transforms}", &buffers.transforms.to_string());
     let vert_module = device.create_shader_module(&wgpu::ShaderModuleDescriptor {
         label: Some("Vertex Shader"),
-        source: wgpu::ShaderSource::Wgsl(include_str!("shaders/vert.wgsl").into()),
+        source: wgpu::ShaderSource::Wgsl(vert_source.into()),
     });
     // Get fragment shader
-    let frag_module = device.create_shader_module(&wgpu::ShaderModuleDescriptor {
-        label: Some("Fragment Shader"),
-        source: wgpu::ShaderSource::Wgsl(include_str!("shaders/frag.wgsl").into()),
-    });
+    let frag_module = device.create_shader_module(&include_wgsl!("shaders/frag.wgsl"));
 
     // Make pipeline layout
     let pipeline_layout = device.create_pipeline_layout(&wgpu::PipelineLayoutDescriptor {
@@ -107,7 +108,7 @@ pub fn build_pipeline(device: &wgpu::Device, buffers: &Buffers, wireframe: bool)
     device.create_render_pipeline(&render_pipeline_descriptor)
 }
 
-pub fn build_buffers(device: &wgpu::Device, data: &TessellationData) -> Buffers {
+pub fn build_buffers(device: &wgpu::Device, data: &TessellationData) -> BufferState {
     // Create vertex buffer object
     let vbo = device.create_buffer_init(&wgpu::util::BufferInitDescriptor {
         label: None,
@@ -121,8 +122,10 @@ pub fn build_buffers(device: &wgpu::Device, data: &TessellationData) -> Buffers 
         usage: wgpu::BufferUsages::INDEX,
     });
 
-    let prim_buffer_byte_size = (MAX_PRIMITIVES * std::mem::size_of::<GpuPrimitive>()) as u64;
-    let transform_buffer_byte_size = (MAX_TRANSFORMS * std::mem::size_of::<GpuTransform>()) as u64;
+    let prim_buffer_byte_size =
+        (data.primitives.len() * std::mem::size_of::<GpuPrimitive>()) as u64;
+    let transform_buffer_byte_size =
+        (data.transforms.len() * std::mem::size_of::<GpuTransform>()) as u64;
     let globals_buffer_byte_size = std::mem::size_of::<GpuGlobals>() as u64;
 
     let prims_ubo = device.create_buffer(&wgpu::BufferDescriptor {
@@ -204,7 +207,9 @@ pub fn build_buffers(device: &wgpu::Device, data: &TessellationData) -> Buffers 
         ],
     });
 
-    Buffers {
+    BufferState {
+        primitives: data.primitives.len() as u64,
+        transforms: data.transforms.len() as u64,
         ibo,
         vbo,
         prims_ubo,

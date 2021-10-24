@@ -1,4 +1,4 @@
-use super::types::Buffers;
+use super::types::BufferState;
 use super::types::GpuGlobals;
 use super::types::SceneGlobals;
 use super::util;
@@ -13,7 +13,7 @@ pub struct State {
     pub config: wgpu::SurfaceConfiguration,
     pub size: winit::dpi::PhysicalSize<u32>,
     pub render_pipeline: wgpu::RenderPipeline,
-    pub buffers: Buffers,
+    pub buffers: BufferState,
     pub scene: SceneGlobals,
     pub data: TessellationData,
 }
