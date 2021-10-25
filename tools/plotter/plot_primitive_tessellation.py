@@ -51,7 +51,7 @@ for primitive in primitives:
         chart_tess_stds.append(helper_methods.ns_to_ms(tess_time_std))
 
     # Plot data
-    width = 5  # the width of the bars
+    width = 700  # the width of the bars
     bar1 = ax.bar(chart_labels, chart_init_means, width, yerr=chart_init_stds,
                   alpha=0.5, ecolor='black', capsize=5, label='Initialization')
     bar2 = ax.bar(chart_labels, chart_tess_means, width, yerr=chart_tess_stds,
