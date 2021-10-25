@@ -40,7 +40,7 @@ pub fn main() {
     // Time primitive tessellation
     let path = concatcp![PRIMITIVES_OUTPUT_DIR, "tessellation.csv"];
     perform("primitive tessellation timing", path, || {
-        write_primitive_tessellation_times(&primitives, 100, 10, 10, path).unwrap();
+        write_primitive_tessellation_times(&primitives, 10000, 1000, 5, path).unwrap();
     });
 
     // Time naive rendering SVG examples
