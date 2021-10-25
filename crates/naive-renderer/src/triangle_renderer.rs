@@ -114,7 +114,7 @@ impl TriangleRenderer {
         Ok(())
     }
 
-    pub fn time(&mut self, frames: usize) -> Result<RenderTimeResult> {
+    pub fn time(&mut self, frames: u64) -> Result<RenderTimeResult> {
         let state = self.state.as_mut().unwrap();
         let window = self.window.as_mut().unwrap();
         let event_loop = self.event_loop.as_mut().unwrap();
@@ -163,7 +163,7 @@ impl TriangleRenderer {
         let frame_times = Mutex::into_inner(Arc::try_unwrap(frame_times).unwrap()).unwrap();
 
         // Ensure all frames were rendered.
-        if frame_times.len() != frames {
+        if frame_times.len() as u64 != frames {
             return Err(RendererError::FatalRenderingError);
         }
 

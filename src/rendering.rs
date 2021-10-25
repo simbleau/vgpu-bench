@@ -6,7 +6,7 @@ pub fn write_frametimes_svgs<P>(
     renderer: &mut dyn Renderer,
     svg_dir: P,
     output: P,
-    frames: usize,
+    frames: u64,
 ) -> rendering::benching::error::Result<()>
 where
     P: Into<PathBuf>,
@@ -22,7 +22,7 @@ pub fn write_frametimes_primitives<P>(
     primitives: &Vec<(String, Primitive)>,
     count: u32,
     output: P,
-    frames: usize,
+    frames: u64,
 ) -> rendering::benching::error::Result<()>
 where
     P: Into<PathBuf>,

@@ -5,7 +5,7 @@ use renderer::{artifacts::RenderTimeResult, targets::SVGDocument, Renderer};
 pub fn time_svg(
     renderer: &mut dyn Renderer,
     svg: &mut SVGDocument,
-    frames: usize,
+    frames: u64,
 ) -> Result<RenderTimeResult, Box<dyn Error>> {
     renderer.init()?;
     renderer.stage(svg)?;

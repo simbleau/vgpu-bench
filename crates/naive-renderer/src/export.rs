@@ -34,7 +34,7 @@ impl Renderer for NaiveRenderer {
         Ok(self.renderer.init_with_svg(tessellator, &target)?)
     }
 
-    fn render(&mut self, frames: usize) -> Result<RenderTimeResult, Box<dyn std::error::Error>> {
+    fn render(&mut self, frames: u64) -> Result<RenderTimeResult, Box<dyn std::error::Error>> {
         Ok(self.renderer.time(frames)?)
     }
 }

@@ -8,6 +8,6 @@ pub trait Renderer {
 
     fn render(
         &mut self,
-        frames: usize,
+        frames: u64,
     ) -> Result<artifacts::RenderTimeResult, Box<dyn std::error::Error>>;
 }
