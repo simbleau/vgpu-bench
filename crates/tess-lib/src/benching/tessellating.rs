@@ -25,7 +25,7 @@ where
     for (prim_name, primitive) in primitives {
         for mut backend in crate::backends::all() {
             let backend: &mut dyn Tessellator = &mut *backend; // Unwrap & Shadow
-            let counts = (step_size..max_prims).step_by(step_size as usize);
+            let counts = (step_size..=max_prims).step_by(step_size as usize);
             for count in counts.clone() {
                 // TODO clean up next 2 lines
                 let svg_doc: SVGDocument =
