@@ -59,7 +59,7 @@ for backend in backends:
     ax.set_xlabel("Files")
     ax.set_ylabel("Triangles")
     ax.set_title(
-        "Tessellation Triangle Output via {backend}")
+        f"Tessellation Triangle Output via {backend}")
     ax.yaxis.grid()
     plt.tight_layout()
 
