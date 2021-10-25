@@ -51,7 +51,7 @@ for primitive in primitives:
     ax.set_xlabel("Frame")
     ax.set_ylabel("Total time (ms)")
     ax.set_title(
-        f"Continuous frame-times of {primitive}, flattened")
+        f"Continuous frame-times of {primitive}, naive")
     ax.yaxis.grid()
     plt.tight_layout()
 

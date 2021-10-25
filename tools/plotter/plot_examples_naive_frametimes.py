@@ -51,7 +51,7 @@ for filename in filenames:
     ax.set_xlabel("Frame")
     ax.set_ylabel("Total time (ms)")
     ax.set_title(
-        f"Continuous frame-times of {filename}, flattened")
+        f"Continuous frame-times of {filename}, naive")
     ax.yaxis.grid()
     plt.tight_layout()
 
