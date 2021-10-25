@@ -34,13 +34,13 @@ pub fn main() {
     // Profile SVG examples
     let path = concatcp![EXAMPLES_OUTPUT_DIR, "profiles.csv"];
     perform("SVG example profiling", path, || {
-        //write_svg_profiles(EXAMPLES_ASSETS_DIR, path).unwrap();
+        write_svg_profiles(EXAMPLES_ASSETS_DIR, path).unwrap();
     });
 
     // Time primitive tessellation
     let path = concatcp![PRIMITIVES_OUTPUT_DIR, "tessellation.csv"];
     perform("primitive tessellation timing", path, || {
-        //write_primitive_tessellation_times(&primitives, 100, 10, 10, path).unwrap();
+        write_primitive_tessellation_times(&primitives, 100, 10, 10, path).unwrap();
     });
 
     // Time naive rendering SVG examples
@@ -54,7 +54,7 @@ pub fn main() {
     let path = concatcp![PRIMITIVES_OUTPUT_DIR, "naive_frametimes.csv"];
     perform("primitive flat render timing", path, || {
         let mut renderer = NaiveRenderer::new();
-        //write_frametimes_primitives(&mut renderer, &primitives, 1, path, 100).unwrap();
+        write_frametimes_primitives(&mut renderer, &primitives, 1, path, 100).unwrap();
     });
 }
 
