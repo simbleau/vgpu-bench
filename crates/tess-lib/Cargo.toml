@@ -18,7 +18,7 @@ renderer = { package = "renderer", path = "../renderer" }
 
 clap = "2.33.3"
 lyon = {version ="0.17.5", features = ["extra"]}
-usvg = "0.18.0"
+usvg = "0.19.0"
 serde = { version = "1.0.130", features = ["derive"] }
 walkdir = "2"
 csv = "1.1"
