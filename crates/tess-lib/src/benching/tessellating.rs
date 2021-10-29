@@ -27,10 +27,9 @@ where
             let backend: &mut dyn Tessellator = &mut *backend; // Unwrap & Shadow
             let counts = (step_size..=max_prims).step_by(step_size as usize);
             for count in counts.clone() {
-                // TODO clean up next 2 lines
-                let svg_doc: SVGDocument =
-                    SVGDocument::from(svg_gen::generate_svg(*primitive, count, true));
-                let mut target: SVGTarget = svg_doc.into();
+                let svg_src = svg_gen::generate_svg(*primitive, count, true);
+                let svg_doc = SVGDocument::from(svg_src);
+                let mut target = SVGTarget::from(svg_doc);
 
                 for _ in 0..trials {
                     let time_result = target.time(backend)?;

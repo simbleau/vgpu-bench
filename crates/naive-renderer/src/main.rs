@@ -20,7 +20,6 @@ fn main() {
 
     // Get file
     let file_path: &PathBuf = &app.value_of("file path").unwrap().into();
-    // TODO: clean up next 3 lines
     let file = SVGFile::from(file_path);
     let svg_document = SVGDocument::from(file);
     let svg_target = SVGTarget::from(svg_document);

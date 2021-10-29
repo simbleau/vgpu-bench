@@ -22,10 +22,9 @@ where
 
         // Retrieve the profile from files and record the results
         for file in &files {
-            // TODO clean this up
-            let svg_file: SVGFile = file.into();
-            let svg_doc: SVGDocument = SVGDocument::from(svg_file);
-            let target: SVGTarget = svg_doc.into();
+            let svg_file = SVGFile::from(file);
+            let svg_doc = SVGDocument::from(svg_file);
+            let target = SVGTarget::from(svg_doc);
 
             let profile_result = target.get_data(backend)?;
 
