@@ -1,7 +1,6 @@
 import os
 import matplotlib.pyplot as plt
 import pandas as pd
-import numpy as np
 import helper_methods
 
 INPUT_CSV = "../../output/data/svg/primitives/tessellation.csv"
