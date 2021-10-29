@@ -1,5 +1,12 @@
 use serde::Serialize;
 
+pub struct GpuColor {
+    pub red: u8,
+    pub green: u8,
+    pub blue: u8,
+    pub alpha: u8,
+}
+
 #[repr(C)]
 #[derive(Debug, Copy, Clone, Serialize)]
 pub struct GpuVertex {
@@ -24,14 +31,13 @@ pub struct GpuPrimitive {
 }
 
 impl GpuPrimitive {
-    // TODO: Change usvg::Color to uint32
-    pub fn new(transform_idx: u32, color: usvg::Color, alpha: f32) -> Self {
+    pub fn new(transform_idx: u32, color: GpuColor) -> Self {
         GpuPrimitive {
             transform: transform_idx,
             color: ((color.red as u32) << 24)
                 + ((color.green as u32) << 16)
                 + ((color.blue as u32) << 8)
-                + (alpha * 255.0) as u32,
+                + color.alpha as u32,
             _pad: [0; 2],
         }
     }

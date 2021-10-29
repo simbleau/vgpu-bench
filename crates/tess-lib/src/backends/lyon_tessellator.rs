@@ -7,14 +7,14 @@ use lyon::lyon_tessellation::{
 use lyon::math::Point;
 use lyon::path::PathEvent;
 use lyon::tessellation::{self, FillOptions, FillTessellator, StrokeOptions, StrokeTessellator};
-use renderer::artifacts::types::{GpuPrimitive, GpuTransform, GpuVertex};
+use renderer::artifacts::types::{GpuColor, GpuPrimitive, GpuTransform, GpuVertex};
 use std::error::Error;
 use std::f64::NAN;
 use usvg::{NodeExt, Tree, ViewBox};
 
 const TOLERANCE: f32 = 0.1;
 
-pub const FALLBACK_COLOR: usvg::Color = usvg::Color {
+pub const FALLBACK_COLOR: GpuColor = GpuColor {
     red: 0,
     green: 0,
     blue: 0,
@@ -102,15 +102,16 @@ impl Tessellator for LyonTessellator {
                     // fall back to always use color fill
                     // no gradients (yet?)
                     let color = match fill.paint {
-                        usvg::Paint::Color(c) => c,
+                        usvg::Paint::Color(c) => GpuColor {
+                            red: c.red,
+                            green: c.green,
+                            blue: c.blue,
+                            alpha: (fill.opacity.value() * 255_f64) as u8,
+                        },
                         _ => FALLBACK_COLOR,
                     };
 
-                    primitives.push(GpuPrimitive::new(
-                        transform_idx,
-                        color,
-                        fill.opacity.value() as f32,
-                    ));
+                    primitives.push(GpuPrimitive::new(transform_idx, color));
 
                     fill_tess
                         .tessellate(
@@ -128,11 +129,7 @@ impl Tessellator for LyonTessellator {
 
                 if let Some(ref stroke) = p.stroke {
                     let (stroke_color, stroke_opts) = convert_stroke(stroke);
-                    primitives.push(GpuPrimitive::new(
-                        transform_idx,
-                        stroke_color,
-                        stroke.opacity.value() as f32,
-                    ));
+                    primitives.push(GpuPrimitive::new(transform_idx, stroke_color));
                     let _ = stroke_tess.tessellate(
                         convert_path(p),
                         &stroke_opts.with_tolerance(TOLERANCE),
@@ -295,9 +292,14 @@ pub fn convert_path(p: &usvg::Path) -> PathConvIter {
     }
 }
 
-pub fn convert_stroke(s: &usvg::Stroke) -> (usvg::Color, StrokeOptions) {
+pub fn convert_stroke(s: &usvg::Stroke) -> (GpuColor, StrokeOptions) {
     let color = match s.paint {
-        usvg::Paint::Color(c) => c,
+        usvg::Paint::Color(c) => GpuColor {
+            red: c.red,
+            green: c.green,
+            blue: c.blue,
+            alpha: (s.opacity.value() * 255_f64) as u8,
+        },
         _ => FALLBACK_COLOR,
     };
     let linecap = match s.linecap {
