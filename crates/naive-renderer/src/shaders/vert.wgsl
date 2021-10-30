@@ -38,18 +38,18 @@ struct VertexOutput {
 
 [[stage(vertex)]]
 fn main([[location(0)]] a_position: vec2<f32>, [[location(1)]] a_prim_id: u32) -> VertexOutput {
-    var prim: Primitive = u_primitives.primitives[a_prim_id];
+    var prim = u_primitives.primitives[a_prim_id];
     
-    var t: Transform = u_transforms.transforms[prim.transform];
-    var transform: mat3x3<f32> = mat3x3<f32>(
+    var t = u_transforms.transforms[prim.transform];
+    var transform = mat3x3<f32>(
         vec3<f32>(t.data0.x, t.data0.y, 0.0), 
         vec3<f32>(t.data0.z, t.data0.w, 0.0), 
         vec3<f32>(t.data1.x, t.data1.y, 1.0)
     );
     
-    var invert_y: vec2<f32> = vec2<f32>(1.0, -1.0);
+    var invert_y = vec2<f32>(1.0, -1.0);
 
-    var pos: vec2<f32> = (transform * vec3<f32>(a_position, 1.0)).xy;
+    var pos = (transform * vec3<f32>(a_position, 1.0)).xy;
     var position = vec4<f32>((((pos.xy + global.u_pan) * global.u_zoom) * invert_y), 0.0, 1.0);
     position.x = (position.x / global.u_aspect_ratio);
 
