@@ -34,7 +34,7 @@ members = [
 
 [dependencies]
 renderer = { package = "renderer", path = "crates/renderer" }
-tess = { package = "tess-lib", path = "crates/tess-lib" }
+tessellation = { package = "tess-lib", path = "crates/tess-lib" }
 rendering = { package = "render-lib", path = "crates/render-lib" }
 naive-renderer = { package = "naive-renderer", path = "crates/naive-renderer" }
 svg-gen = { package = "svg-generator", path = "crates/svg-generator" }

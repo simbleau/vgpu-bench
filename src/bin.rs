@@ -1,7 +1,7 @@
 extern crate mylib;
 use const_format::concatcp;
-use mylib::rendering::{write_frametimes_primitives, write_frametimes_svgs};
-use mylib::tessellation::{write_primitive_tessellation_times, write_svg_profiles};
+use mylib::rendering;
+use mylib::tessellation;
 use naive_renderer::NaiveRenderer;
 use std::io::Write;
 use svg_gen::Primitive;
@@ -34,27 +34,47 @@ pub fn main() {
     // Profile SVG examples
     let path = concatcp![EXAMPLES_OUTPUT_DIR, "profiles.csv"];
     perform("SVG example profiling", path, || {
-        write_svg_profiles(EXAMPLES_ASSETS_DIR, path).unwrap();
+        tessellation::benching::profiling::write_svg_profiles(EXAMPLES_ASSETS_DIR, path).unwrap();
     });
 
     // Time primitive tessellation
     let path = concatcp![PRIMITIVES_OUTPUT_DIR, "tessellation.csv"];
     perform("primitive tessellation timing", path, || {
-        write_primitive_tessellation_times(&primitives, 10000, 1000, 5, path).unwrap();
+        tessellation::benching::tessellating::write_primitive_tessellation_times(
+            &primitives,
+            path,
+            10000,
+            1000,
+            5,
+        )
+        .unwrap();
     });
 
     // Time naive rendering SVG examples
     let path = concatcp![EXAMPLES_OUTPUT_DIR, "naive_frametimes.csv"];
     perform("SVG example flat render timing", path, || {
         let mut renderer = NaiveRenderer::new();
-        write_frametimes_svgs(&mut renderer, EXAMPLES_ASSETS_DIR, path, 100).unwrap();
+        rendering::benching::rendering::write_frametimes_svgs(
+            &mut renderer,
+            EXAMPLES_ASSETS_DIR,
+            path,
+            100,
+        )
+        .unwrap();
     });
 
     // Time naive rendering primitives
     let path = concatcp![PRIMITIVES_OUTPUT_DIR, "naive_frametimes.csv"];
     perform("primitive flat render timing", path, || {
         let mut renderer = NaiveRenderer::new();
-        write_frametimes_primitives(&mut renderer, &primitives, 1, path, 100).unwrap();
+        rendering::benching::rendering::write_frametimes_primitives(
+            &mut renderer,
+            &primitives,
+            1,
+            path,
+            100,
+        )
+        .unwrap();
     });
 }
 

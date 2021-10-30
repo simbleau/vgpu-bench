@@ -8,7 +8,7 @@ use crate::{
 };
 use std::{fs::File, path::PathBuf};
 
-pub fn profile_svgs<P>(svg_dir: P, output: P) -> Result<()>
+pub fn write_svg_profiles<P>(svg_dir: P, output: P) -> Result<()>
 where
     P: Into<PathBuf>,
 {

@@ -8,7 +8,7 @@ use renderer::targets::SVGDocument;
 use std::{fs::File, path::PathBuf};
 use svg_gen::Primitive;
 
-pub fn time_primitives<P>(
+pub fn write_primitive_tessellation_times<P>(
     primitives: &Vec<(String, Primitive)>,
     output: P,
     max_prims: u32,
