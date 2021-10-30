@@ -130,9 +130,9 @@ impl State {
     }
 
     pub fn render(&mut self) -> Result<(), wgpu::SurfaceError> {
-        let output = self.surface.get_current_texture()?;
+        let frame = self.surface.get_current_texture()?;
         // The view texture
-        let view = output
+        let view = frame
             .texture
             .create_view(&wgpu::TextureViewDescriptor::default());
         // Encoder sends commands to the GPU
@@ -180,6 +180,8 @@ impl State {
 
         // submit will accept anything that implements IntoIter
         self.queue.submit(std::iter::once(encoder.finish()));
+        // Tell buffering strategy to present the frame
+        frame.present();
 
         Ok(())
     }
