@@ -19,12 +19,12 @@ struct Transform {
 
 [[block]]
 struct Primitives {
-    primitives: [[stride(16)]] array<Primitive,{primitives}>;
+    primitives: [[stride(16)]] array<Primitive>;
 };
 
 [[block]]
 struct Transforms {
-    transforms: [[stride(32)]] array<Transform,{transforms}>;
+    transforms: [[stride(32)]] array<Transform>;
 };
 
 [[group(0), binding(0)]] var<uniform> global: Globals;

@@ -70,12 +70,12 @@ impl State {
         let render_pipeline = util::build_pipeline(&device, &buffers, false);
 
         queue.write_buffer(
-            &buffers.transforms_ubo,
+            &buffers.transforms_ssbo,
             0,
             bytemuck::cast_slice(&data.transforms),
         );
         queue.write_buffer(
-            &buffers.prims_ubo,
+            &buffers.prims_ssbo,
             0,
             bytemuck::cast_slice(&data.primitives),
         );

@@ -39,15 +39,8 @@ pub fn build_pipeline(
     buffers: &BufferState,
     wireframe: bool,
 ) -> RenderPipeline {
-    // Get vertex shader
-    let vert_source = include_str!("shaders/vert.wgsl.template")
-        .replace("{primitives}", &buffers.primitives.to_string())
-        .replace("{transforms}", &buffers.transforms.to_string());
-    let vert_module = device.create_shader_module(&wgpu::ShaderModuleDescriptor {
-        label: Some("Vertex Shader"),
-        source: wgpu::ShaderSource::Wgsl(vert_source.into()),
-    });
-    // Get fragment shader
+    // Get shaders
+    let vert_module = device.create_shader_module(&include_wgsl!("shaders/vert.wgsl"));
     let frag_module = device.create_shader_module(&include_wgsl!("shaders/frag.wgsl"));
 
     // Make pipeline layout
@@ -128,8 +121,8 @@ pub fn build_buffers(device: &wgpu::Device, data: &TessellationData) -> BufferSt
         (data.transforms.len() * std::mem::size_of::<GpuTransform>()) as u64;
     let globals_buffer_byte_size = std::mem::size_of::<GpuGlobals>() as u64;
 
-    let prims_ubo = device.create_buffer(&wgpu::BufferDescriptor {
-        label: Some("Prims ubo"),
+    let prims_ssbo = device.create_buffer(&wgpu::BufferDescriptor {
+        label: Some("Prims ssbo"),
         size: prim_buffer_byte_size,
         usage: wgpu::BufferUsages::VERTEX
             | wgpu::BufferUsages::STORAGE
@@ -137,8 +130,8 @@ pub fn build_buffers(device: &wgpu::Device, data: &TessellationData) -> BufferSt
         mapped_at_creation: false,
     });
 
-    let transforms_ubo = device.create_buffer(&wgpu::BufferDescriptor {
-        label: Some("Transforms ubo"),
+    let transforms_ssbo = device.create_buffer(&wgpu::BufferDescriptor {
+        label: Some("Transforms ssbo"),
         size: transform_buffer_byte_size,
         usage: wgpu::BufferUsages::VERTEX
             | wgpu::BufferUsages::STORAGE
@@ -198,11 +191,11 @@ pub fn build_buffers(device: &wgpu::Device, data: &TessellationData) -> BufferSt
             },
             wgpu::BindGroupEntry {
                 binding: 1,
-                resource: wgpu::BindingResource::Buffer(prims_ubo.as_entire_buffer_binding()),
+                resource: wgpu::BindingResource::Buffer(prims_ssbo.as_entire_buffer_binding()),
             },
             wgpu::BindGroupEntry {
                 binding: 2,
-                resource: wgpu::BindingResource::Buffer(transforms_ubo.as_entire_buffer_binding()),
+                resource: wgpu::BindingResource::Buffer(transforms_ssbo.as_entire_buffer_binding()),
             },
         ],
     });
@@ -212,8 +205,8 @@ pub fn build_buffers(device: &wgpu::Device, data: &TessellationData) -> BufferSt
         transforms: data.transforms.len() as u64,
         ibo,
         vbo,
-        prims_ubo,
-        transforms_ubo,
+        prims_ssbo,
+        transforms_ssbo,
         globals_ubo,
         bind_group_layout,
         bind_group,
