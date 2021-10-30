@@ -1,7 +1,6 @@
 pub mod error;
 pub mod io;
 pub mod output;
-pub mod rendering;
 pub mod timing;
 
 // TODO: Render time of flattened primitives
