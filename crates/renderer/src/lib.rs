@@ -1,7 +1,10 @@
+extern crate cc;
+
 use artifacts::RenderTimeResult;
 use targets::SVGDocument;
 
 pub mod artifacts;
+pub mod c_lib;
 pub mod targets;
 
 type AnyError = Box<dyn std::error::Error>;
