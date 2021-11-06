@@ -1,4 +1,4 @@
-#include "../../../../cpp-interface/renderer.h"
+#include "../../renderer.h"
 
 extern "C"
 {

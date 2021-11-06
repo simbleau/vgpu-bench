@@ -1,0 +1,3 @@
+# Ignore library objects
+*/*.so
+*/*.o
