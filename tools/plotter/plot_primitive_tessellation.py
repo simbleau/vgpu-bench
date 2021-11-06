@@ -4,7 +4,7 @@ import pandas as pd
 import helper_methods
 
 INPUT_CSV = "../../output/data/svg/primitives/tessellation.csv"
-OUTPUT_DIR = "../../output/figs/svg/primitives/"
+OUTPUT_DIR = "../../output/figs/svg/primitives/tessellation/"
 OUTPUT_PREFIX = "tessellation_"
 OUTPUT_TYPE = "png"
 
