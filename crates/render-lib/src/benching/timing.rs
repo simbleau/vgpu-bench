@@ -30,10 +30,12 @@ where
         // Retrieve the profile from files and record the results
         for file in &files {
             let svg_file = SVGFile::from(file);
-            let svg_doc = &mut SVGDocument::from(svg_file);
+            let mut svg_doc = SVGDocument::from(svg_file);
+            let svg_target = SVGTarget::from(svg_doc.clone());
 
+            backend.init(&svg_target);
             let profile = backend.tessellate()?;
-            let result = timing::time_svg(renderer, svg_doc, frames)?;
+            let result = timing::time_svg(renderer, &mut svg_doc, frames)?;
 
             let filename = file
                 .file_name()
