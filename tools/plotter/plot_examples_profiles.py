@@ -14,9 +14,6 @@ OUTPUT_TYPE = "png"
 
 # Get Data
 data = pd.read_csv(INPUT_CSV)
-# Add total triangles column
-data["triangles"] = data["indices"].floordiv(3)  # 1 triangle = 3 indices
-
 
 # Sort by total triangles in order
 data = data.sort_values(by=["triangles"], ascending=True)

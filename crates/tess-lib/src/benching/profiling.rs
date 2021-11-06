@@ -38,6 +38,7 @@ where
                 filename,
                 vertices: profile_result.vertices,
                 indices: profile_result.indices,
+                triangles: profile_result.triangles,
             };
             csv_wtr.serialize(result)?;
         }
