@@ -10,11 +10,11 @@ use svg_gen::Primitive;
 use tess_lib::targets::{SVGTarget, TessellationTarget};
 use tess_lib::{backends, backends::Tessellator};
 
-pub fn write_frametimes_svgs<P>(
+pub fn write_flat_frametimes_svgs<P>(
     renderer: &mut dyn Renderer,
     svg_dir: P,
     output: P,
-    frames: u64,
+    frames: usize,
 ) -> Result<()>
 where
     P: Into<PathBuf>,
@@ -31,6 +31,8 @@ where
         for file in &files {
             let svg_file = SVGFile::from(file);
             let svg_doc = &mut SVGDocument::from(svg_file);
+
+            let profile = backend.tessellate()?;
             let result = timing::time_svg(renderer, svg_doc, frames)?;
 
             let filename = file
@@ -44,7 +46,7 @@ where
                 let csv_entry = SVGFlatRenderTime {
                     tessellator: backend.name().to_owned(),
                     filename: filename.to_owned(),
-                    triangles: result.triangles,
+                    triangles: profile.triangles,
                     frame: (frame + 1) as u32,
                     frame_time,
                 };
@@ -57,12 +59,12 @@ where
     Ok(())
 }
 
-pub fn write_frametimes_primitives<P>(
+pub fn write_flat_frametimes_primitives<P>(
     renderer: &mut dyn Renderer,
     primitives: &Vec<(String, Primitive)>,
     count: u32,
     output: P,
-    frames: u64,
+    frames: usize,
 ) -> Result<()>
 where
     P: Into<PathBuf>,
@@ -103,7 +105,7 @@ where
 pub fn time_svg(
     renderer: &mut dyn Renderer,
     svg: &mut SVGDocument,
-    frames: u64,
+    frames: usize,
 ) -> Result<RenderTimeResult> {
     renderer.init()?;
     renderer.stage(svg)?;

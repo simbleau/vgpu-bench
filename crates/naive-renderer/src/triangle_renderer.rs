@@ -1,4 +1,4 @@
-use super::error::{RendererError, Result};
+use super::error::{NaiveRendererError, Result};
 use super::state::State;
 use super::types::SceneGlobals;
 use renderer::artifacts::RenderTimeResult;
@@ -64,7 +64,7 @@ impl TriangleRenderer {
         if let Some(state) = self.state.as_mut() {
             state.toggle_wireframe();
         } else {
-            return Err(RendererError::RendererNotInitialized);
+            return Err(NaiveRendererError::RendererNotInitialized);
         }
 
         Ok(())
@@ -108,13 +108,13 @@ impl TriangleRenderer {
                 _ => {}
             });
         } else {
-            return Err(RendererError::RendererNotInitialized);
+            return Err(NaiveRendererError::RendererNotInitialized);
         }
 
         Ok(())
     }
 
-    pub fn time(&mut self, frames: u64) -> Result<RenderTimeResult> {
+    pub fn time(&mut self, frames: usize) -> Result<RenderTimeResult> {
         let state = self.state.as_mut().unwrap();
         let window = self.window.as_mut().unwrap();
         let event_loop = self.event_loop.as_mut().unwrap();
@@ -163,15 +163,11 @@ impl TriangleRenderer {
         let frame_times = Mutex::into_inner(Arc::try_unwrap(frame_times).unwrap()).unwrap();
 
         // Ensure all frames were rendered.
-        if frame_times.len() as u64 != frames {
-            return Err(RendererError::FatalRenderingError);
+        if frame_times.len() != frames {
+            return Err(NaiveRendererError::FatalRenderingError);
         }
 
         // Collect results
-        let triangles = (&self.state.as_ref().unwrap().data.indices.len() / 3) as u32;
-        Ok(RenderTimeResult {
-            triangles,
-            frame_times,
-        })
+        Ok(RenderTimeResult { frame_times })
     }
 }

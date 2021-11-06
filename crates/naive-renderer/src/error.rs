@@ -2,33 +2,33 @@ use std::fmt::Display;
 
 use winit::error::OsError;
 
-pub type Result<T> = std::result::Result<T, RendererError>;
+pub type Result<T> = std::result::Result<T, NaiveRendererError>;
 
 #[derive(Debug)]
-pub enum RendererError {
+pub enum NaiveRendererError {
     RendererNotInitialized,
     FatalRenderingError,
     OsError(OsError),
 }
 
-impl Display for RendererError {
+impl Display for NaiveRendererError {
     fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
         match self {
-            RendererError::RendererNotInitialized => {
+            NaiveRendererError::RendererNotInitialized => {
                 write!(f, "{}", "The renderer was not initialized.")
             }
-            RendererError::FatalRenderingError => {
+            NaiveRendererError::FatalRenderingError => {
                 write!(f, "{}", "An unknown fatal error ocurred.")
             }
-            RendererError::OsError(oserr) => write!(f, "{}", oserr),
+            NaiveRendererError::OsError(oserr) => write!(f, "{}", oserr),
         }
     }
 }
 
-impl From<OsError> for RendererError {
+impl From<OsError> for NaiveRendererError {
     fn from(item: OsError) -> Self {
-        RendererError::OsError(item)
+        NaiveRendererError::OsError(item)
     }
 }
 
-impl std::error::Error for RendererError {}
+impl std::error::Error for NaiveRendererError {}

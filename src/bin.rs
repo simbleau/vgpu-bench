@@ -37,6 +37,12 @@ pub fn main() {
         tessellation::benching::profiling::write_svg_profiles(EXAMPLES_ASSETS_DIR, path).unwrap();
     });
 
+    // Profile primitive examples
+    let path = concatcp![PRIMITIVES_OUTPUT_DIR, "profiles.csv"];
+    perform("primitive profiling", path, || {
+        tessellation::benching::profiling::write_svg_profiles(PRIMITIVES_ASSETS_DIR, path).unwrap();
+    });
+
     // Time primitive tessellation
     let path = concatcp![PRIMITIVES_OUTPUT_DIR, "tessellation.csv"];
     perform("primitive tessellation timing", path, || {
@@ -54,7 +60,7 @@ pub fn main() {
     let path = concatcp![EXAMPLES_OUTPUT_DIR, "naive_frametimes.csv"];
     perform("SVG example flat render timing", path, || {
         let mut renderer = NaiveRenderer::new();
-        rendering::benching::timing::write_frametimes_svgs(
+        rendering::benching::timing::write_flat_frametimes_svgs(
             &mut renderer,
             EXAMPLES_ASSETS_DIR,
             path,
@@ -67,7 +73,7 @@ pub fn main() {
     let path = concatcp![PRIMITIVES_OUTPUT_DIR, "naive_frametimes.csv"];
     perform("primitive flat render timing", path, || {
         let mut renderer = NaiveRenderer::new();
-        rendering::benching::timing::write_frametimes_primitives(
+        rendering::benching::timing::write_flat_frametimes_primitives(
             &mut renderer,
             &primitives,
             1,
