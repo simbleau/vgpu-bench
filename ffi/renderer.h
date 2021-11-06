@@ -9,9 +9,9 @@ extern "C"
 {
 #endif
 
-    int32_t renderer_init();
-    int32_t renderer_stage(const char *input);
-    int32_t renderer_render(const uint64_t *frame_times, size_t frames);
+    int32_t init();
+    int32_t stage(const char *input);
+    int32_t render(uint64_t *frame_times, size_t frames);
 
 #ifdef __cplusplus
 } // extern "C"
