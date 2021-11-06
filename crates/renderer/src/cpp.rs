@@ -1,8 +1,8 @@
 use crate::artifacts::RenderTimeResult;
 use crate::error::CppRendererError::{Compilation, Initialization, Rendering, Runtime, Staging};
 use crate::error::Result;
+use crate::rust::Renderer;
 use crate::targets::SVGDocument;
-use crate::Renderer;
 use libloading::{Library, Symbol};
 use std::path::PathBuf;
 use std::time::Duration;
@@ -19,9 +19,11 @@ pub struct CppRenderer {
 }
 
 impl CppRenderer {
-    pub unsafe fn from(lib_path: PathBuf) -> Result<Self> {
-        let library = Library::new(lib_path).map_err(|err| Compilation(err))?;
-        Ok(Self { library })
+    pub fn from(lib_path: PathBuf) -> Result<Self> {
+        unsafe {
+            let library = Library::new(lib_path).map_err(|err| Compilation(err))?;
+            Ok(Self { library })
+        }
     }
 }
 
