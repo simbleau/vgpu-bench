@@ -1,7 +1,7 @@
 extern crate mylib;
+use ::rendering;
+use ::tessellation;
 use const_format::concatcp;
-use mylib::rendering;
-use mylib::tessellation;
 use naive_renderer::NaiveRenderer;
 use std::io::Write;
 use svg_gen::Primitive;
