@@ -3,8 +3,8 @@ pub struct RunOptions {
 }
 impl RunOptions {
     // This method will help users to discover the builder
-    pub fn builder() -> RunBuilder {
-        RunBuilder::default()
+    pub fn builder() -> RunOptionsBuilder {
+        RunOptionsBuilder::default()
     }
 
     pub fn functions(&self) -> &Vec<Box<dyn Fn()>> {
@@ -12,10 +12,10 @@ impl RunOptions {
     }
 }
 
-pub struct RunBuilder {
+pub struct RunOptionsBuilder {
     functions: Vec<Box<dyn Fn()>>,
 }
-impl Default for RunBuilder {
+impl Default for RunOptionsBuilder {
     fn default() -> Self {
         Self {
             functions: Vec::new(),
@@ -23,7 +23,7 @@ impl Default for RunBuilder {
     }
 }
 
-impl RunBuilder {
+impl RunOptionsBuilder {
     pub fn add<F: Fn() + 'static>(mut self, f: F) -> Self {
         self.functions.push(Box::new(f));
         self

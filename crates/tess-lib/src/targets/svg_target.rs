@@ -23,11 +23,10 @@ where
 impl TessellationTarget for SVGTarget {
     fn get_data(
         &self,
-        t: &mut dyn Tessellator,
+        tessellator: &mut dyn Tessellator,
     ) -> Result<TessellationProfile, Box<dyn std::error::Error>> {
-        t.init(&self);
-
-        Ok(t.tessellate()?)
+        tessellator.init(&self);
+        Ok(tessellator.tessellate()?)
     }
 
     fn time(

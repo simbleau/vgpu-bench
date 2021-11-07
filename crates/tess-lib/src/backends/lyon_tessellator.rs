@@ -26,7 +26,6 @@ pub struct LyonState {
     rtree: Tree,
     #[allow(dead_code)]
     view_box: ViewBox,
-    prev_transform: usvg::Transform,
 }
 pub struct LyonTessellator {
     state: Option<LyonState>,
@@ -50,24 +49,11 @@ impl Tessellator for LyonTessellator {
         let rtree = usvg::Tree::from_data(&file_data, &opt.to_ref()).unwrap();
         let view_box = rtree.svg_node().view_box;
 
-        let prev_transform = usvg::Transform {
-            a: NAN,
-            b: NAN,
-            c: NAN,
-            d: NAN,
-            e: NAN,
-            f: NAN,
-        };
-
-        let state = LyonState {
-            rtree,
-            view_box,
-            prev_transform,
-        };
+        let state = LyonState { rtree, view_box };
         self.state = Some(state);
     }
 
-    fn tessellate(&mut self) -> Result<TessellationProfile, Box<dyn Error>> {
+    fn tessellate(&self) -> Result<TessellationProfile, Box<dyn Error>> {
         let data = self.get_tessellate_data()?;
         Ok(TessellationProfile {
             vertices: data.vertices.len() as u32,
@@ -76,7 +62,7 @@ impl Tessellator for LyonTessellator {
         })
     }
 
-    fn get_tessellate_data(&mut self) -> Result<Box<TessellationData>, Box<dyn Error>> {
+    fn get_tessellate_data(&self) -> Result<Box<TessellationData>, Box<dyn Error>> {
         // Create vertex buffer
         let mut fill_tess = FillTessellator::new();
         let mut stroke_tess = StrokeTessellator::new();
@@ -85,16 +71,25 @@ impl Tessellator for LyonTessellator {
         let mut transforms = Vec::new();
         let mut primitives = Vec::new();
 
+        let mut prev_transform = usvg::Transform {
+            a: NAN,
+            b: NAN,
+            c: NAN,
+            d: NAN,
+            e: NAN,
+            f: NAN,
+        };
+
         for node in self.state.as_ref().unwrap().rtree.root().descendants() {
             if let usvg::NodeKind::Path(ref p) = *node.borrow() {
                 let t = node.transform();
-                if t != self.state.as_ref().unwrap().prev_transform {
+                if t != prev_transform {
                     transforms.push(GpuTransform {
                         data0: [t.a as f32, t.b as f32, t.c as f32, t.d as f32],
                         data1: [t.e as f32, t.f as f32, 0.0, 0.0],
                     });
                 }
-                self.state.as_mut().unwrap().prev_transform = t;
+                prev_transform = t;
 
                 let transform_idx = transforms.len() as u32 - 1;
 
