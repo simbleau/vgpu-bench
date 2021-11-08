@@ -16,11 +16,11 @@ exclude = [
 
 
 [lib]
-name = "vgpu-bench"
+name = "vgpu_bench"
 path = "src/lib.rs"
 
 [[bin]]
-name = "vgpu-bench"
+name = "vgpu_bench"
 path = "src/bin/main.rs"
 
 [workspace]

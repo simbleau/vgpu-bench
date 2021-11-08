@@ -3,12 +3,12 @@ use ::svg_generator;
 use ::tessellation;
 
 use const_format::concatcp;
-use mylib::{
+use naive_renderer::NaiveRenderer;
+use std::{fs::File, io::Write, path::PathBuf};
+use vgpu_bench::{
     benchmarks::tessellation::profile::SVGProfiler,
     driver::{Driver, RunOptions},
 };
-use naive_renderer::NaiveRenderer;
-use std::{fs::File, io::Write, path::PathBuf};
 
 const OUTPUT_DIR: &'static str = "output/data/";
 const SVG_OUTPUT_DIR: &'static str = concatcp![OUTPUT_DIR, "svg/"];
@@ -21,41 +21,42 @@ const PRIMITIVES_ASSETS_DIR: &'static str = concatcp![SVG_ASSETS_DIR, "primitive
 const EXAMPLES_ASSETS_DIR: &'static str = concatcp![SVG_ASSETS_DIR, "examples/"];
 
 pub fn main() {
-    // Declare primitives being used...
-    let mut primitives = svg_generator::primitives();
-
-    // TODO : Use an options builder pattern... For now this is decent enough.
-    let run_opts = RunOptions::builder()
-        .add(|| {
-            // Profile SVG Examples
-            print!("Performing {}...", "SVG example tessellation profiling");
-            std::io::stdout().flush().expect("Couldn't flush stdout");
-            // Options
-            let output_path = concatcp![EXAMPLES_OUTPUT_DIR, "profiles.csv"];
-            let profiler = SVGProfiler::new()
-                .writer(csv::Writer::from_path(output_path).unwrap())
-                .assets(EXAMPLES_ASSETS_DIR.into(), false)
-                .backend(tessellation::backends::default());
-            // Run
-            mylib::benchmarks::tessellation::profile::profile(profiler).unwrap();
-            println!("Complete. Output to {}", output_path);
-        })
-        .add(|| {
-            // Profile SVG Primitive Examples
-            print!("Performing {}...", "SVG primitive tessellation profiling");
-            std::io::stdout().flush().expect("Couldn't flush stdout");
-            // Options
-            let output_path = concatcp![PRIMITIVES_OUTPUT_DIR, "profiles.csv"];
-            let profiler = SVGProfiler::new()
-                .writer(csv::Writer::from_path(output_path).unwrap())
-                .assets(PRIMITIVES_ASSETS_DIR.into(), false)
-                .backend(tessellation::backends::default());
-            // Run
-            mylib::benchmarks::tessellation::profile::profile(profiler).unwrap();
-            println!("Complete. Output to {}", output_path);
-        });
+    Driver::from(
+        RunOptions::builder()
+            .add(|| {
+                // Profile SVG Examples
+                print!("Performing {}...", "SVG example tessellation profiling");
+                std::io::stdout().flush().expect("Couldn't flush stdout");
+                // Options
+                let output_path = concatcp![EXAMPLES_OUTPUT_DIR, "profiles.csv"];
+                let profiler = SVGProfiler::new()
+                    .writer(csv::Writer::from_path(output_path).unwrap())
+                    .assets(EXAMPLES_ASSETS_DIR.into(), false)
+                    .backend(tessellation::backends::default());
+                // Run
+                vgpu_bench::benchmarks::tessellation::profile::profile(profiler).unwrap();
+                println!("Complete. Output to {}", output_path);
+            })
+            .add(|| {
+                // Profile SVG Primitive Examples
+                print!("Performing {}...", "SVG primitive tessellation profiling");
+                std::io::stdout().flush().expect("Couldn't flush stdout");
+                // Options
+                let output_path = concatcp![PRIMITIVES_OUTPUT_DIR, "profiles.csv"];
+                let profiler = SVGProfiler::new()
+                    .writer(csv::Writer::from_path(output_path).unwrap())
+                    .assets(PRIMITIVES_ASSETS_DIR.into(), false)
+                    .backend(tessellation::backends::default());
+                // Run
+                vgpu_bench::benchmarks::tessellation::profile::profile(profiler).unwrap();
+                println!("Complete. Output to {}", output_path);
+            })
+            .build(),
+    )
+    .run();
 
     /*
+    let mut primitives = svg_generator::primitives();
 
     TODO convert to builder
     // Time primitive tessellation
@@ -100,7 +101,4 @@ pub fn main() {
         .unwrap();
     });
     */
-
-    let d = Driver::from(run_opts.build());
-    d.run();
 }
