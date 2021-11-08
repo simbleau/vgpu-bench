@@ -1,8 +1,7 @@
 #![feature(fn_traits)]
-#![feature(type_alias_impl_trait)]
-#![feature(trait_alias)]
 
 extern crate rendering;
+extern crate svg_generator;
 extern crate tessellation;
 
 pub mod benchmarks;

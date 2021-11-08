@@ -16,12 +16,12 @@ exclude = [
 
 
 [lib]
-name = "mylib"
+name = "vgpu-bench"
 path = "src/lib.rs"
 
 [[bin]]
-name = "mybin"
-path = "src/bin.rs"
+name = "vgpu-bench"
+path = "src/bin/main.rs"
 
 [workspace]
 members = [
@@ -37,7 +37,7 @@ renderer = { package = "renderer", path = "crates/renderer" }
 tessellation = { package = "tess-lib", path = "crates/tess-lib" }
 rendering = { package = "render-lib", path = "crates/render-lib" }
 naive-renderer = { package = "naive-renderer", path = "crates/naive-renderer" }
-svg-gen = { package = "svg-generator", path = "crates/svg-generator" }
+svg-generator = { package = "svg-generator", path = "crates/svg-generator" }
 
 const_format = "0.2.21"
 lyon = { version ="0.17.5", features = ["extra"] }
