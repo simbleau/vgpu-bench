@@ -11,7 +11,9 @@ keywords = ["gpu", "vector", "graphics"]
 exclude = [
     "assets/",
     "examples/",
+    "ffi/",
     "tests/",
+    "tools/",
 ]
 
 
