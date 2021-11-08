@@ -2,8 +2,8 @@ extern crate clap;
 extern crate dynfmt;
 
 mod primitives;
-mod writer;
 pub use primitives::Primitive;
+mod writer;
 use std::{fs::File, io::Write, path::Path};
 use writer::Writer;
 

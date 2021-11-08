@@ -9,6 +9,10 @@ license = "MIT OR Apache-2.0"
 repository = "https://github.com/simbleau/vgpu-bench"
 readme = "README.md"
 workspace = "../.."
+exclude = [
+    "examples/",
+]
+
 
 [lib]
 name = "svg_generator"
