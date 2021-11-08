@@ -10,20 +10,6 @@ pub const QUADRATIC_CURVE_TO: &str = "Q";
 pub const ELLIPTICAL_ARC_TO: &str = "A";
 pub const CLOSE_PATH: &str = "Z";
 
-pub fn all() -> Vec<(String, Primitive)> {
-    let mut primitives: Vec<(String, Primitive)> = Vec::new();
-    primitives.push((String::from("triangle"), Primitive::Triangle));
-    primitives.push((
-        String::from("quadratic_bezier_curve"),
-        Primitive::BezierCurve,
-    ));
-    primitives.push((
-        String::from("cubic_bezier_curve"),
-        Primitive::CubicBezierCurve,
-    ));
-    primitives
-}
-
 #[derive(Debug, Clone, Copy)]
 pub enum Primitive {
     Line,

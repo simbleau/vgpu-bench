@@ -3,11 +3,23 @@ extern crate dynfmt;
 
 mod primitives;
 mod writer;
-
 pub use primitives::Primitive;
+use std::{fs::File, io::Write, path::Path};
 use writer::Writer;
 
-use std::{fs::File, io::Write, path::Path};
+pub fn primitives() -> Vec<(String, Primitive)> {
+    let mut primitives: Vec<(String, Primitive)> = Vec::new();
+    primitives.push((String::from("triangle"), Primitive::Triangle));
+    primitives.push((
+        String::from("quadratic_bezier_curve"),
+        Primitive::BezierCurve,
+    ));
+    primitives.push((
+        String::from("cubic_bezier_curve"),
+        Primitive::CubicBezierCurve,
+    ));
+    primitives
+}
 
 pub fn generate_svg(primitive: Primitive, count: u32, rotate: bool) -> String {
     let mut writer = Writer::default();
