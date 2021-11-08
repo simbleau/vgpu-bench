@@ -24,32 +24,26 @@ pub fn main() {
     Driver::from(
         RunOptions::builder()
             .add(|| {
-                // Profile SVG Examples
-                print!("Performing {}...", "SVG example tessellation profiling");
-                std::io::stdout().flush().expect("Couldn't flush stdout");
-                // Options
+                let input_dir_path = EXAMPLES_ASSETS_DIR;
                 let output_path = concatcp![EXAMPLES_OUTPUT_DIR, "profiles.csv"];
-                let profiler = SVGProfiler::new()
-                    .writer(csv::Writer::from_path(output_path).unwrap())
-                    .assets(EXAMPLES_ASSETS_DIR.into(), false)
-                    .backend(tessellation::backends::default());
-                // Run
-                vgpu_bench::benchmarks::tessellation::profile::profile(profiler).unwrap();
-                println!("Complete. Output to {}", output_path);
+                perform("SVG example profiling", output_path, || {
+                    vgpu_bench::benchmarks::tessellation::profile_dir_with_output(
+                        input_dir_path,
+                        output_path,
+                    )
+                    .unwrap();
+                });
             })
             .add(|| {
-                // Profile SVG Primitive Examples
-                print!("Performing {}...", "SVG primitive tessellation profiling");
-                std::io::stdout().flush().expect("Couldn't flush stdout");
-                // Options
+                let input_dir_path = PRIMITIVES_ASSETS_DIR;
                 let output_path = concatcp![PRIMITIVES_OUTPUT_DIR, "profiles.csv"];
-                let profiler = SVGProfiler::new()
-                    .writer(csv::Writer::from_path(output_path).unwrap())
-                    .assets(PRIMITIVES_ASSETS_DIR.into(), false)
-                    .backend(tessellation::backends::default());
-                // Run
-                vgpu_bench::benchmarks::tessellation::profile::profile(profiler).unwrap();
-                println!("Complete. Output to {}", output_path);
+                perform("SVG primitive profiling", output_path, || {
+                    vgpu_bench::benchmarks::tessellation::profile_dir_with_output(
+                        input_dir_path,
+                        output_path,
+                    )
+                    .unwrap();
+                });
             })
             .build(),
     )
@@ -101,4 +95,11 @@ pub fn main() {
         .unwrap();
     });
     */
+}
+
+fn perform(action_message: &'static str, path: &'static str, action: impl Fn() -> ()) {
+    print!("Performing {}...", action_message);
+    std::io::stdout().flush().expect("Couldn't flush stdout");
+    action();
+    println!("Complete. Output to {}", path);
 }
