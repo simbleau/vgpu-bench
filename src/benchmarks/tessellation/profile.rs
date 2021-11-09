@@ -31,15 +31,21 @@ where
         self
     }
 
-    pub fn asset(mut self, path: PathBuf) -> Self {
-        self.assets.push(path);
+    pub fn asset<P>(mut self, path: P) -> Self
+    where
+        P: Into<PathBuf>,
+    {
+        self.assets.push(path.into());
         self
     }
-    pub fn assets(mut self, path: PathBuf, recurisve: bool) -> Self {
-        // TODO change io here to local method and remove unwrap
-        let paths = tessellation::benching::io::get_files(path, recurisve).unwrap();
-        for path in paths {
-            self.assets.push(path);
+
+    pub fn assets<I>(mut self, assets: I) -> Self
+    where
+        I: IntoIterator,
+        I::Item: Into<PathBuf>,
+    {
+        for asset in assets {
+            self.assets.push(asset.into());
         }
         self
     }
