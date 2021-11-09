@@ -1,6 +1,6 @@
 use csv::Writer;
 use std::path::PathBuf;
-use tessellation::{
+use tessellation_util::{
     backends::Tessellator,
     benching::{error::Result, output::SVGProfile},
 };
@@ -65,8 +65,9 @@ where
     for mut backend in profiler.backends {
         let backend: &mut dyn Tessellator = backend.as_mut(); // Coerce & shadow
         for file_path in &profiler.assets {
-            let x = tessellation::benching::profiling::get_profile(backend, file_path)?;
-            results.push(x);
+            results.push(tessellation_util::benching::profiling::get_profile(
+                backend, file_path,
+            )?);
         }
     }
 

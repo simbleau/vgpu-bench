@@ -1,8 +1,8 @@
 #![feature(fn_traits)]
 
-extern crate rendering;
+extern crate rendering_util;
 extern crate svg_generator;
-extern crate tessellation;
+extern crate tessellation_util;
 
 mod error;
 pub use error::Result;

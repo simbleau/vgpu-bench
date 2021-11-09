@@ -3,9 +3,9 @@
 mod dictionary;
 mod tessellation_benchmarks;
 
-use ::rendering;
+use ::rendering_util;
 use ::svg_generator;
-use ::tessellation;
+use ::tessellation_util;
 use log::LevelFilter;
 
 use const_format::concatcp;

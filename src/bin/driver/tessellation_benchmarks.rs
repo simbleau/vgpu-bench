@@ -11,7 +11,7 @@ pub fn profile_svg_examples() {
     let input_files = util::get_files_with_extension(input_dir_path, false, "svg");
     let output_file = util::create_file(output_path).expect("Could not create output file");
     let writer = csv::Writer::from_writer(output_file);
-    let backend = tessellation::backends::default();
+    let backend = tessellation_util::backends::default();
 
     let num_input_files = input_files.len();
     let backend_name = backend.name();
@@ -44,7 +44,7 @@ pub fn profile_svg_primitives() {
     let input_files = util::get_files_with_extension(input_dir_path, false, "svg");
     let output_file = util::create_file(output_path).expect("Could not create output file");
     let writer = csv::Writer::from_writer(output_file);
-    let backend = tessellation::backends::default();
+    let backend = tessellation_util::backends::default();
 
     let num_input_files = input_files.len();
     let backend_name = backend.name();
