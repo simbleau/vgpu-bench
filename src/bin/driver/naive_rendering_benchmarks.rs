@@ -8,8 +8,8 @@ use vgpu_bench::{benchmarks, util};
 
 pub fn frametimes_svg_examples() {
     let input_dir_path = EXAMPLES_ASSETS_DIR;
-    let output_path = concatcp![EXAMPLES_OUTPUT_DIR, "naive_frametimes.csv"];
     let input_files = util::get_files_with_extension(input_dir_path, false, "svg");
+    let output_path = concatcp![EXAMPLES_OUTPUT_DIR, "naive_frametimes.csv"];
     let writer = util::csv_writer(output_path).expect("Could not create output file");
     let backend = tessellation_util::backends::default();
     let frames = 500;
