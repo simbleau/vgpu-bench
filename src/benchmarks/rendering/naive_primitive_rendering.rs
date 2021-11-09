@@ -47,10 +47,7 @@ where
         self
     }
 
-    pub fn primitive<P>(mut self, primitive: Primitive) -> Self
-    where
-        P: Into<PathBuf>,
-    {
+    pub fn primitive(mut self, primitive: Primitive) -> Self {
         self.primitives.push(primitive);
         self
     }
