@@ -78,6 +78,7 @@ pub fn write_frametimes<W>(options: SVGNaiveRenderingOptions<W>) -> Result<()>
 where
     W: std::io::Write,
 {
+    // TODO remove this bandaid
     // Bandaid fix: wgpu uses the same logger - Disable logging temporarily
     let prev_level = log::max_level();
     log::set_max_level(log::LevelFilter::Off);
