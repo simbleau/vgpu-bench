@@ -22,8 +22,8 @@ name = "vgpu_bench"
 path = "src/lib.rs"
 
 [[bin]]
-name = "vgpu_bench"
-path = "src/bin/main.rs"
+name = "vgpu_bench_driver"
+path = "src/bin/driver/main.rs"
 
 [workspace]
 members = [
