@@ -1,4 +1,3 @@
-use std::ffi::OsStr;
 use std::path::PathBuf;
 
 use renderer::targets::{SVGDocument, SVGFile};

@@ -60,30 +60,3 @@ pub fn frametimes_svg_primitives() {
         Err(err) => error!("{:?}", err),
     }
 }
-
-pub fn frametimes_svg_primitives_fast() {
-    let input_dir_path = PRIMITIVES_ASSETS_DIR;
-    let input_files = util::get_files_with_extension(input_dir_path, false, "svg");
-    let output_path = concatcp![PRIMITIVES_OUTPUT_DIR, "naive_frametimes.csv"];
-    let writer = util::csv_writer(output_path).expect("Could not create output file");
-    let backend = tessellation_util::backends::default();
-    let frames = 500;
-    let options = SVGNaiveRenderingOptions::new()
-        .writer(writer)
-        .assets(input_files)
-        .backend(backend)
-        .frames(frames);
-    debug!("Options: {:?}", options);
-
-    trace!("Commencing naive SVG primitive rendering for frametime capture (fast)");
-    match benchmarks::rendering::naive_svg_rendering::write_frametimes(options) {
-        Ok(_) => {
-            trace!("Completed naive SVG primitive rendering for frametime capture (fast)");
-            info!(
-                "Completed naive SVG primitive rendering for frametime capture (fast). Output to '{}'",
-                output_path
-            );
-        }
-        Err(err) => error!("{:?}", err),
-    }
-}
