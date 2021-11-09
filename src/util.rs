@@ -1,7 +1,16 @@
+use csv::Writer;
 use walkdir::WalkDir;
 
 use crate::error::Result;
 use std::{ffi::OsStr, fs::File, path::PathBuf};
+
+pub fn csv_writer<P>(path: P) -> Result<Writer<File>>
+where
+    P: Into<PathBuf>,
+{
+    let output_file = create_file(path)?;
+    Ok(csv::Writer::from_writer(output_file))
+}
 
 pub fn create_file<P>(path: P) -> Result<File>
 where
