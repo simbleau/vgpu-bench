@@ -2,7 +2,7 @@ use crate::dictionary::{EXAMPLES_ASSETS_DIR, EXAMPLES_OUTPUT_DIR};
 use crate::dictionary::{PRIMITIVES_ASSETS_DIR, PRIMITIVES_OUTPUT_DIR};
 use const_format::concatcp;
 use log::{debug, error, info, trace};
-use vgpu_bench::benchmarks::rendering::naive_svg_renderer::SVGNaiveRenderingOptions;
+use vgpu_bench::benchmarks::rendering::naive_svg_rendering::SVGNaiveRenderingOptions;
 use vgpu_bench::{benchmarks, util};
 
 pub fn frametimes_svg_examples() {
@@ -21,7 +21,7 @@ pub fn frametimes_svg_examples() {
     debug!("Options: {:?}", options);
 
     trace!("Commencing SVG naive rendering for frametime capture");
-    match benchmarks::rendering::naive_svg_renderer::write_frametimes(options) {
+    match benchmarks::rendering::naive_svg_rendering::write_frametimes(options) {
         Ok(_) => {
             trace!("Completed SVG naive rendering for frametime capture");
             info!(
