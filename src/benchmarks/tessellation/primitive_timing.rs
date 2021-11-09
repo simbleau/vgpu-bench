@@ -5,7 +5,7 @@ use tessellation_util::{
     benching::{error::Result, output::PrimitiveTessellationTime},
 };
 
-pub struct PrimitiveProfileTimingOptions<W>
+pub struct PrimitiveTessellationTimingOptions<W>
 where
     W: std::io::Write,
 {
@@ -15,25 +15,25 @@ where
     trials: u32,
     writer: Option<Writer<W>>,
 }
-impl<W> std::fmt::Debug for PrimitiveProfileTimingOptions<W>
+impl<W> std::fmt::Debug for PrimitiveTessellationTimingOptions<W>
 where
     W: std::io::Write,
 {
     fn fmt(&self, fmt: &mut std::fmt::Formatter<'_>) -> std::result::Result<(), std::fmt::Error> {
         write!(
             fmt,
-            "PrimitiveProfileTimingOptions {{ backends: {:?}, primitives: {:?}, primitive_counts: {:?} }}",
-            self.backends, self.primitives, self.primitive_counts
+            "PrimitiveTessellationTimingOptions {{ backends: {:?}, primitives: {:?}, primitive_counts: {:?}, trials: {:?} }}",
+            self.backends, self.primitives, self.primitive_counts, self.trials,
         )
     }
 }
 
-impl<W> PrimitiveProfileTimingOptions<W>
+impl<W> PrimitiveTessellationTimingOptions<W>
 where
     W: std::io::Write + 'static,
 {
     pub fn new() -> Self {
-        PrimitiveProfileTimingOptions {
+        PrimitiveTessellationTimingOptions {
             backends: Vec::new(),
             primitives: Vec::new(),
             primitive_counts: Vec::new(),
@@ -84,7 +84,7 @@ where
     }
 }
 
-pub fn write_profile_times<W>(options: PrimitiveProfileTimingOptions<W>) -> Result<()>
+pub fn write_tessellation_times<W>(options: PrimitiveTessellationTimingOptions<W>) -> Result<()>
 where
     W: std::io::Write,
 {

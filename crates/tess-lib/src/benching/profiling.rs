@@ -1,6 +1,6 @@
 use crate::{
     backends::Tessellator,
-    benching::error::{BenchingError::Logic, Result},
+    benching::error::Result,
     benching::output::SVGProfile,
     targets::{SVGTarget, TessellationTarget},
 };
@@ -16,18 +16,11 @@ pub fn get_profile<P: Into<PathBuf>>(
     let svg_doc = SVGDocument::from(svg_file);
     let target = SVGTarget::from(svg_doc);
 
-    let tessellator_name = backend.name().to_owned();
-    let filename = path
-        .file_name()
-        .ok_or(Logic("File name unkown"))?
-        .to_string_lossy()
-        .to_string();
-
     let profile_result = target.get_data(backend)?;
 
     Ok(SVGProfile {
-        tessellator: tessellator_name,
-        filename,
+        tessellator: backend.name().to_owned(),
+        filename: path.display().to_string(),
         vertices: profile_result.vertices,
         indices: profile_result.indices,
         triangles: profile_result.triangles,

@@ -10,11 +10,18 @@ pub struct SVGProfile {
 }
 
 #[derive(Debug, Serialize)]
-pub struct SVGTessellationTime {
+pub struct SVGFileTessellationTime {
     pub tessellator: String,
     pub filename: String,
-    pub init_time: u32,
-    pub tess_time: u32,
+    pub init_time: u128,
+    pub tess_time: u128,
+}
+
+#[derive(Debug, Serialize)]
+pub struct SVGDocumentTessellationTime {
+    pub tessellator: String,
+    pub init_time: u128,
+    pub tess_time: u128,
 }
 
 #[derive(Debug, Serialize)]

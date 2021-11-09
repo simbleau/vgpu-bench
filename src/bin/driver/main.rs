@@ -11,6 +11,7 @@ pub fn main() {
     Driver::from(
         RunOptions::builder()
             .logging(LevelFilter::Trace)
+            .add(|| tessellation_benchmarks::bench_tessellation_primitives())
             .add(|| tessellation_benchmarks::profile_svg_examples())
             .add(|| tessellation_benchmarks::profile_svg_primitives())
             .add(|| naive_rendering_benchmarks::frametimes_svg_examples())
