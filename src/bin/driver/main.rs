@@ -36,20 +36,6 @@ pub fn main() {
     });
 
     TODO convert to builder
-    // Time naive rendering SVG examples
-    let path = concatcp![EXAMPLES_OUTPUT_DIR, "naive_frametimes.csv"];
-    perform("SVG example flat render timing", path, || {
-        let mut renderer = NaiveRenderer::new();
-        rendering::benching::timing::write_flat_frametimes_svgs(
-            &mut renderer,
-            EXAMPLES_ASSETS_DIR,
-            path,
-            100,
-        )
-        .unwrap();
-    });
-
-    TODO convert to builder
     // Time naive rendering primitives
     let path = concatcp![PRIMITIVES_OUTPUT_DIR, "naive_frametimes.csv"];
     perform("primitive flat render timing", path, || {
