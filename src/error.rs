@@ -1,4 +1,4 @@
-use crate::benchmarks::tessellation::error::TessellationError;
+use crate::benchmarks::tessellation::TessellationError;
 use crate::error::VgpuBenchError::Tessellation;
 
 pub type Result<T> = std::result::Result<T, VgpuBenchError>;

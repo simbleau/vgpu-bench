@@ -26,7 +26,7 @@ impl RunOptionsBuilder {
 }
 
 impl RunOptionsBuilder {
-    pub fn logging(mut self, level: LevelFilter) -> Self {
+    pub fn logging(self, level: LevelFilter) -> Self {
         env_logger::builder().filter_level(level).init();
         self
     }
