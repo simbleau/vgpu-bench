@@ -1,7 +1,6 @@
 use csv::Writer;
 use rendering_util::benching::output::PrimitiveNaiveRenderTime;
 use rendering_util::benching::Result;
-use std::path::PathBuf;
 use svg_generator::Primitive;
 use tessellation_util::backends::Tessellator;
 
