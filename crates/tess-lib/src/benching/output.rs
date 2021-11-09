@@ -18,7 +18,7 @@ pub struct SVGTessellationTime {
 }
 
 #[derive(Debug, Serialize)]
-pub struct PrimitiveTime {
+pub struct PrimitiveTessellationTime {
     pub tessellator: String,
     pub primitive: String,
     pub amount: u32,
