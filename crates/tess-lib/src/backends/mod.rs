@@ -12,6 +12,11 @@ pub trait Tessellator {
     fn tessellate(&self) -> Result<TessellationProfile, Box<dyn std::error::Error>>;
     fn get_tessellate_data(&self) -> Result<Box<TessellationData>, Box<dyn std::error::Error>>;
 }
+impl std::fmt::Debug for dyn Tessellator {
+    fn fmt(&self, fmt: &mut std::fmt::Formatter<'_>) -> Result<(), std::fmt::Error> {
+        write!(fmt, "Tessellator {{ name: {} }}", self.name())
+    }
+}
 
 pub fn default() -> Box<dyn Tessellator> {
     Box::new(LyonTessellator::new())
