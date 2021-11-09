@@ -8,6 +8,9 @@ use log::LevelFilter;
 use vgpu_bench::driver::{Driver, RunOptions};
 
 pub fn main() {
+    // TODO remove SVGTarget
+    // TODO change svg_generator::primitives() to svg_generator::primitives::all()/default()
+    // TODO add fast methods for primitives
     Driver::from(
         RunOptions::builder()
             .logging(LevelFilter::Trace)
