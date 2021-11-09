@@ -56,9 +56,7 @@ where
     where
         I: IntoIterator<Item = Primitive>,
     {
-        for primitive in primitives {
-            self.primitives.push(primitive);
-        }
+        self.primitives.extend(primitives);
         self
     }
 

@@ -57,9 +57,7 @@ where
         I: IntoIterator,
         I::Item: Into<PathBuf>,
     {
-        for asset in assets {
-            self.assets.push(asset.into());
-        }
+        self.assets.extend(assets.into_iter().map(|a| a.into()));
         self
     }
 
