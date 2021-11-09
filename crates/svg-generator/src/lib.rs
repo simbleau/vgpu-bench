@@ -7,17 +7,11 @@ mod writer;
 use std::{fs::File, io::Write, path::Path};
 use writer::Writer;
 
-pub fn primitives() -> Vec<(String, Primitive)> {
-    let mut primitives: Vec<(String, Primitive)> = Vec::new();
-    primitives.push((String::from("triangle"), Primitive::Triangle));
-    primitives.push((
-        String::from("quadratic_bezier_curve"),
-        Primitive::BezierCurve,
-    ));
-    primitives.push((
-        String::from("cubic_bezier_curve"),
-        Primitive::CubicBezierCurve,
-    ));
+pub fn primitives() -> Vec<Primitive> {
+    let mut primitives: Vec<Primitive> = Vec::new();
+    primitives.push(Primitive::Triangle);
+    primitives.push(Primitive::BezierCurve);
+    primitives.push(Primitive::CubicBezierCurve);
     primitives
 }
 

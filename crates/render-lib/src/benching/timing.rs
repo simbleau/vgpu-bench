@@ -55,16 +55,12 @@ where
     Ok(results)
 }
 
-pub fn time_naive_primitive<P>(
+pub fn time_naive_primitive(
     backend: &mut dyn Tessellator,
     primitive: Primitive,
-    primitive_name: String,
     primitive_count: u32,
     frames: usize,
-) -> Result<Vec<PrimitiveNaiveRenderTime>>
-where
-    P: Into<PathBuf>,
-{
+) -> Result<Vec<PrimitiveNaiveRenderTime>> {
     let mut renderer = NaiveRenderer::new();
 
     let mut svg_doc = SVGDocument::from(svg_gen::generate_svg(primitive, primitive_count, true));
@@ -78,7 +74,7 @@ where
     for (frame, dur) in render_time_result.frame_times.iter().enumerate() {
         let naive_rendertime = PrimitiveNaiveRenderTime {
             tessellator: backend.name().to_owned(),
-            primitive: primitive_name.clone(),
+            primitive: primitive.name().to_owned(),
             amount: primitive_count,
             triangles: profile.triangles,
             frame: (frame + 1) as u32,

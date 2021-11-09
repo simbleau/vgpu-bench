@@ -14,6 +14,7 @@ pub fn main() {
             .add(|| tessellation_benchmarks::profile_svg_examples())
             .add(|| tessellation_benchmarks::profile_svg_primitives())
             .add(|| naive_rendering_benchmarks::frametimes_svg_examples())
+            .add(|| naive_rendering_benchmarks::frametimes_svg_primitives())
             .build(),
     )
     .run();
@@ -31,21 +32,6 @@ pub fn main() {
             10000,
             1000,
             5,
-        )
-        .unwrap();
-    });
-
-    TODO convert to builder
-    // Time naive rendering primitives
-    let path = concatcp![PRIMITIVES_OUTPUT_DIR, "naive_frametimes.csv"];
-    perform("primitive flat render timing", path, || {
-        let mut renderer = NaiveRenderer::new();
-        rendering::benching::timing::write_flat_frametimes_primitives(
-            &mut renderer,
-            &primitives,
-            1,
-            path,
-            100,
         )
         .unwrap();
     });

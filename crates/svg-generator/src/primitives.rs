@@ -22,6 +22,23 @@ pub enum Primitive {
 }
 
 impl Primitive {
+    pub fn name(&self) -> &'static str {
+        match self {
+            // Traditional
+            Primitive::Line => "line",
+            Primitive::Triangle => "triangle",
+            Primitive::Polygon => "polygon",
+
+            // Quadratic Beziers
+            Primitive::BezierCurve => "quadratic_bezier_curve",
+            Primitive::Bezigon => "bezigon",
+
+            // Cubic Beziers
+            Primitive::CubicBezierCurve => "cubic_bezier_curve",
+            Primitive::CubicBezigon => "cubic_bezigon",
+        }
+    }
+
     pub fn vertices(&self) -> usize {
         match self {
             // Traditional
