@@ -1,20 +1,11 @@
 #![feature(format_args_capture)]
 
 mod dictionary;
+mod naive_rendering_benchmarks;
 mod tessellation_benchmarks;
 
-use ::rendering_util;
-use ::svg_generator;
-use ::tessellation_util;
 use log::LevelFilter;
-
-use const_format::concatcp;
-use naive_renderer::NaiveRenderer;
-use std::{fs::File, io::Write, path::PathBuf};
-use vgpu_bench::{
-    benchmarks::tessellation::profile::SVGProfiler,
-    driver::{Driver, RunOptions},
-};
+use vgpu_bench::driver::{Driver, RunOptions};
 
 pub fn main() {
     Driver::from(
@@ -22,6 +13,7 @@ pub fn main() {
             .logging(LevelFilter::Trace)
             .add(|| tessellation_benchmarks::profile_svg_examples())
             .add(|| tessellation_benchmarks::profile_svg_primitives())
+            .add(|| naive_rendering_benchmarks::frametimes_svg_examples())
             .build(),
     )
     .run();

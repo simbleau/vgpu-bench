@@ -1,108 +1,15 @@
-use super::error::{BenchingError::Logic, Result};
-use super::output::PrimitiveFlatRenderTime;
+use super::error::Result;
+use super::output::PrimitiveNaiveRenderTime;
 use super::timing;
-use crate::benching::output::SVGFlatRenderTime;
+use crate::benching::output::SVGNaiveRenderTime;
+use naive_renderer::NaiveRenderer;
 use renderer::artifacts::RenderTimeResult;
 use renderer::rust::Renderer;
 use renderer::targets::{SVGDocument, SVGFile};
-use std::{fs::File, path::PathBuf};
+use std::path::PathBuf;
 use svg_gen::Primitive;
-use tess_lib::targets::{SVGTarget, TessellationTarget};
-use tess_lib::{backends, backends::Tessellator};
-
-pub fn write_flat_frametimes_svgs<P>(
-    renderer: &mut dyn Renderer,
-    svg_dir: P,
-    output: P,
-    frames: usize,
-) -> Result<()>
-where
-    P: Into<PathBuf>,
-{
-    let files = super::io::get_files(svg_dir, false)?;
-    let output_file = File::create(output.into())?;
-    let mut csv_wtr = csv::Writer::from_writer(output_file);
-
-    // For each backend, retrieve the file profiles
-    for mut backend in backends::all() {
-        let backend: &mut dyn Tessellator = &mut *backend; // Unwrap & Shadow
-
-        // Retrieve the profile from files and record the results
-        for file in &files {
-            let svg_file = SVGFile::from(file);
-            let mut svg_doc = SVGDocument::from(svg_file);
-            let svg_target = SVGTarget::from(svg_doc.clone());
-
-            backend.init(&svg_target);
-            let profile = backend.tessellate()?;
-            let result = timing::time_svg(renderer, &mut svg_doc, frames)?;
-
-            let filename = file
-                .file_name()
-                .ok_or(Logic("File name unkown"))?
-                .to_string_lossy()
-                .to_string();
-
-            for frame in 0..result.frame_times.len() {
-                let frame_time = result.frame_times[frame].as_nanos();
-                let csv_entry = SVGFlatRenderTime {
-                    tessellator: backend.name().to_owned(),
-                    filename: filename.to_owned(),
-                    triangles: profile.triangles,
-                    frame: (frame + 1) as u32,
-                    frame_time,
-                };
-                csv_wtr.serialize(csv_entry)?;
-            }
-        }
-    }
-    csv_wtr.flush()?;
-
-    Ok(())
-}
-
-pub fn write_flat_frametimes_primitives<P>(
-    renderer: &mut dyn Renderer,
-    primitives: &Vec<(String, Primitive)>,
-    count: u32,
-    output: P,
-    frames: usize,
-) -> Result<()>
-where
-    P: Into<PathBuf>,
-{
-    let output_file = File::create(output.into())?;
-    let mut csv_wtr = csv::Writer::from_writer(output_file);
-
-    // For each backend, tessellate the files
-    for mut backend in backends::all() {
-        let backend: &mut dyn Tessellator = &mut *backend; // Unwrap & Shadow
-        for (prim_name, primitive) in primitives {
-            let mut svg_doc = SVGDocument::from(svg_gen::generate_svg(*primitive, count, true));
-            let target: SVGTarget = SVGTarget::from(svg_doc.clone());
-
-            let profile = target.get_data(backend)?;
-            let result = timing::time_svg(renderer, &mut svg_doc, frames)?;
-
-            for frame in 0..result.frame_times.len() {
-                let frame_time = result.frame_times[frame].as_nanos();
-                let result = PrimitiveFlatRenderTime {
-                    tessellator: backend.name().to_owned(),
-                    primitive: prim_name.to_owned(),
-                    amount: count,
-                    triangles: profile.triangles,
-                    frame: (frame + 1) as u32,
-                    frame_time,
-                };
-                csv_wtr.serialize(result)?;
-            }
-        }
-    }
-
-    csv_wtr.flush()?;
-
-    Ok(())
-}
+use tess_lib::backends::Tessellator;
+use tess_lib::targets::SVGTarget;
 
 pub fn time_svg(
     renderer: &mut dyn Renderer,
@@ -112,4 +19,73 @@ pub fn time_svg(
     renderer.init()?;
     renderer.stage(svg)?;
     Ok(renderer.render(frames)?)
+}
+
+pub fn time_naive_svg<P>(
+    backend: &mut dyn Tessellator,
+    svg_path: P,
+    frames: usize,
+) -> Result<Vec<SVGNaiveRenderTime>>
+where
+    P: Into<PathBuf>,
+{
+    let mut renderer = NaiveRenderer::new();
+
+    let svg_path: PathBuf = svg_path.into();
+    let svg_file = SVGFile::from(&svg_path);
+    let mut svg_doc = SVGDocument::from(svg_file);
+    let svg_target = SVGTarget::from(svg_doc.clone());
+
+    backend.init(&svg_target);
+    let profile = backend.tessellate()?;
+    let render_time_result = timing::time_svg(&mut renderer, &mut svg_doc, frames)?;
+
+    let mut results: Vec<SVGNaiveRenderTime> = Vec::new();
+    for (frame, dur) in render_time_result.frame_times.iter().enumerate() {
+        let naive_rendertime = SVGNaiveRenderTime {
+            tessellator: backend.name().to_owned(),
+            filename: svg_path.display().to_string(),
+            triangles: profile.triangles,
+            frame: (frame + 1) as u32,
+            frame_time: dur.as_nanos(),
+        };
+        results.push(naive_rendertime);
+    }
+
+    Ok(results)
+}
+
+pub fn time_naive_primitive<P>(
+    backend: &mut dyn Tessellator,
+    primitive: Primitive,
+    primitive_name: String,
+    primitive_count: u32,
+    frames: usize,
+) -> Result<Vec<PrimitiveNaiveRenderTime>>
+where
+    P: Into<PathBuf>,
+{
+    let mut renderer = NaiveRenderer::new();
+
+    let mut svg_doc = SVGDocument::from(svg_gen::generate_svg(primitive, primitive_count, true));
+    let svg_target: SVGTarget = SVGTarget::from(svg_doc.clone());
+
+    backend.init(&svg_target);
+    let profile = backend.tessellate()?;
+    let render_time_result = timing::time_svg(&mut renderer, &mut svg_doc, frames)?;
+
+    let mut results: Vec<PrimitiveNaiveRenderTime> = Vec::new();
+    for (frame, dur) in render_time_result.frame_times.iter().enumerate() {
+        let naive_rendertime = PrimitiveNaiveRenderTime {
+            tessellator: backend.name().to_owned(),
+            primitive: primitive_name.clone(),
+            amount: primitive_count,
+            triangles: profile.triangles,
+            frame: (frame + 1) as u32,
+            frame_time: dur.as_nanos(),
+        };
+        results.push(naive_rendertime);
+    }
+
+    Ok(results)
 }

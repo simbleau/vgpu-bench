@@ -1,39 +1,40 @@
 use csv::Writer;
+use rendering_util::benching::output::SVGNaiveRenderTime;
+use rendering_util::benching::Result;
 use std::path::PathBuf;
-use tessellation_util::{
-    backends::Tessellator,
-    benching::{error::Result, output::SVGProfile},
-};
+use tessellation_util::backends::Tessellator;
 
-pub struct SVGProfilingOptions<W>
+pub struct SVGNaiveRenderingOptions<W>
 where
     W: std::io::Write,
 {
     backends: Vec<Box<dyn Tessellator>>,
     assets: Vec<PathBuf>,
+    frames: usize,
     writer: Option<Writer<W>>,
 }
-impl<W> std::fmt::Debug for SVGProfilingOptions<W>
+impl<W> std::fmt::Debug for SVGNaiveRenderingOptions<W>
 where
     W: std::io::Write,
 {
     fn fmt(&self, fmt: &mut std::fmt::Formatter<'_>) -> std::result::Result<(), std::fmt::Error> {
         write!(
             fmt,
-            "SVGNaiveRenderingOptions {{ backends: {:?}, assets: {:?} }}",
-            self.backends, self.assets
+            "SVGNaiveRenderingOptions {{ backends: {:?}, assets: {:?}, frames: {:?} }}",
+            self.backends, self.assets, self.frames
         )
     }
 }
 
-impl<W> SVGProfilingOptions<W>
+impl<W> SVGNaiveRenderingOptions<W>
 where
     W: std::io::Write + 'static,
 {
     pub fn new() -> Self {
-        SVGProfilingOptions {
+        SVGNaiveRenderingOptions {
             backends: Vec::new(),
             assets: Vec::new(),
+            frames: 0,
             writer: None,
         }
     }
@@ -66,22 +67,34 @@ where
         self.writer = Some(writer);
         self
     }
+
+    pub fn frames(mut self, frames: usize) -> Self {
+        self.frames = frames;
+        self
+    }
 }
 
-pub fn write_profiles<W>(options: SVGProfilingOptions<W>) -> Result<()>
+pub fn write_frametimes<W>(options: SVGNaiveRenderingOptions<W>) -> Result<()>
 where
     W: std::io::Write,
 {
+    // Bandaid fix: wgpu uses the same logger - Disable logging temporarily
+    let prev_level = log::max_level();
+    log::set_max_level(log::LevelFilter::Off);
     // Collect results
-    let mut results: Vec<SVGProfile> = Vec::new();
+    let mut results: Vec<SVGNaiveRenderTime> = Vec::new();
     for mut backend in options.backends {
-        let backend: &mut dyn Tessellator = backend.as_mut(); // Coerce & shadow
+        let backend: &mut dyn Tessellator = backend.as_mut();
         for file_path in &options.assets {
-            results.push(tessellation_util::benching::profiling::get_profile(
-                backend, file_path,
+            results.extend(rendering_util::benching::timing::time_naive_svg(
+                backend,
+                file_path,
+                options.frames,
             )?);
         }
     }
+    // Bandaid removal
+    log::set_max_level(prev_level);
 
     // Write results
     if let Some(mut writer) = options.writer {
