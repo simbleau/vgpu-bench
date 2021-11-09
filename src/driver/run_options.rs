@@ -1,10 +1,12 @@
+use log::LevelFilter;
+
 pub struct RunOptions {
     functions: Vec<Box<dyn Fn()>>,
 }
 impl RunOptions {
     // This method will help users to discover the builder
     pub fn builder() -> RunOptionsBuilder {
-        RunOptionsBuilder::default()
+        RunOptionsBuilder::new()
     }
 
     pub fn functions(&self) -> &Vec<Box<dyn Fn()>> {
@@ -15,8 +17,8 @@ impl RunOptions {
 pub struct RunOptionsBuilder {
     functions: Vec<Box<dyn Fn()>>,
 }
-impl Default for RunOptionsBuilder {
-    fn default() -> Self {
+impl RunOptionsBuilder {
+    fn new() -> Self {
         Self {
             functions: Vec::new(),
         }
@@ -24,6 +26,11 @@ impl Default for RunOptionsBuilder {
 }
 
 impl RunOptionsBuilder {
+    pub fn logging(mut self, level: LevelFilter) -> Self {
+        env_logger::builder().filter_level(level).init();
+        self
+    }
+
     pub fn add<F: Fn() + 'static>(mut self, f: F) -> Self {
         self.functions.push(Box::new(f));
         self

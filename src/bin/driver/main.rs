@@ -1,9 +1,12 @@
+#![feature(format_args_capture)]
+
 mod dictionary;
 mod tessellation_benchmarks;
 
 use ::rendering;
 use ::svg_generator;
 use ::tessellation;
+use log::LevelFilter;
 
 use const_format::concatcp;
 use naive_renderer::NaiveRenderer;
@@ -16,6 +19,7 @@ use vgpu_bench::{
 pub fn main() {
     Driver::from(
         RunOptions::builder()
+            .logging(LevelFilter::Trace)
             .add(|| tessellation_benchmarks::profile_svg_examples())
             .add(|| tessellation_benchmarks::profile_svg_primitives())
             .build(),
