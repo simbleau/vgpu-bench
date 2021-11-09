@@ -19,22 +19,4 @@ pub fn main() {
             .build(),
     )
     .run();
-
-    /*
-    let mut primitives = svg_generator::primitives();
-
-    TODO convert to builder
-    // Time primitive tessellation
-    let path = concatcp![PRIMITIVES_OUTPUT_DIR, "tessellation.csv"];
-    perform("primitive tessellation timing", path, || {
-        tessellation::benching::tessellating::write_primitive_tessellation_times(
-            &primitives,
-            path,
-            10000,
-            1000,
-            5,
-        )
-        .unwrap();
-    });
-    */
 }
