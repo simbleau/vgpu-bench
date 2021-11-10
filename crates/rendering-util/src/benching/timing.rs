@@ -8,7 +8,7 @@ use renderer::rust::Renderer;
 use renderer::targets::{SVGDocument, SVGFile};
 use std::path::PathBuf;
 use svg_generator::Primitive;
-use tess_lib::backends::Tessellator;
+use tessellation_util::backends::Tessellator;
 
 pub fn time_svg(
     renderer: &mut dyn Renderer,

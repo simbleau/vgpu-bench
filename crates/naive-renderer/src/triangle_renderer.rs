@@ -7,8 +7,8 @@ use std::{
     sync::{Arc, Mutex},
     time::{Duration, Instant},
 };
-use tess_lib::artifacts::TessellationData;
-use tess_lib::backends::Tessellator;
+use tessellation_util::artifacts::TessellationData;
+use tessellation_util::backends::Tessellator;
 use winit::{
     event::{ElementState, Event, KeyboardInput, WindowEvent},
     event_loop::{ControlFlow, EventLoop},

@@ -3,7 +3,7 @@ use renderer::{
     artifacts::types::{GpuPrimitive, GpuTransform, GpuVertex},
     targets::SVGDocument,
 };
-use tess_lib::artifacts::TessellationData;
+use tessellation_util::artifacts::TessellationData;
 use wgpu::{include_wgsl, util::DeviceExt, RenderPipeline};
 use winit::dpi::PhysicalSize;
 

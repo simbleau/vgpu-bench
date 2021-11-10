@@ -29,15 +29,15 @@ path = "src/bin/driver/main.rs"
 members = [
     "crates/renderer",
     "crates/svg-generator",
-    "crates/tess-lib",
-    "crates/render-lib",
+    "crates/tessellation-util",
+    "crates/rendering-util",
     "crates/naive-renderer",
 ]
 
 [dependencies]
 renderer = { package = "renderer", path = "crates/renderer" }
-tessellation-util = { package = "tess-lib", path = "crates/tess-lib" }
-rendering-util = { package = "render-lib", path = "crates/render-lib" }
+tessellation-util = { package = "tessellation-util", path = "crates/tessellation-util" }
+rendering-util = { package = "rendering-util", path = "crates/rendering-util" }
 naive-renderer = { package = "naive-renderer", path = "crates/naive-renderer" }
 svg-generator = { package = "svg-generator", path = "crates/svg-generator" }
 

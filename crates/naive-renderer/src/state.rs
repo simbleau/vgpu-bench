@@ -2,7 +2,7 @@ use super::types::BufferState;
 use super::types::GpuGlobals;
 use super::types::SceneGlobals;
 use super::util;
-use tess_lib::artifacts::TessellationData;
+use tessellation_util::artifacts::TessellationData;
 use winit::event::VirtualKeyCode;
 use winit::window::Window;
 

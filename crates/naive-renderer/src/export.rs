@@ -1,6 +1,6 @@
 use renderer::RendererError::RustLibraryError;
 use renderer::{artifacts::RenderTimeResult, rust::Renderer, targets::SVGDocument, Result};
-use tess_lib::backends::{LyonTessellator, Tessellator};
+use tessellation_util::backends::{LyonTessellator, Tessellator};
 
 use crate::TriangleRenderer;
 

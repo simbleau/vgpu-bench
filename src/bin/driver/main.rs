@@ -13,11 +13,8 @@ use run_options::RunOptions;
 use log::LevelFilter;
 
 pub fn main() {
-    // TODO change svg_generator::primitives() to svg_generator::primitives::all()/default()
     // TODO add fast methods for primitives
     // TODO remove render-lib/io
-    // TODO rename render-lib to rendering_util
-    // TODO rename svg_gen to svg_generator
     Driver::from(
         RunOptions::builder()
             .logging(LevelFilter::Trace)

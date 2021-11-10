@@ -23,7 +23,7 @@ fn main() {
     let svg = SVGDocument::from(file);
 
     // Run demo
-    let mut tessellator = tess_lib::backends::default();
+    let mut tessellator = tessellation_util::backends::default();
     let mut renderer = TriangleRenderer::new();
     renderer.init_with_svg(tessellator.as_mut(), &svg).unwrap();
     renderer.run().unwrap();

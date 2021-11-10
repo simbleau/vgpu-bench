@@ -18,7 +18,7 @@ path = "src/main.rs"
 
 [dependencies]
 svg-gen = { package = "svg-generator", path = "../svg-generator" }
-tess-lib = { package = "tess-lib", path = "../tess-lib" }
+tessellation-util = { package = "tessellation-util", path = "../tessellation-util" }
 renderer = { package = "renderer", path = "../renderer" }
 
 clap = "2.33.3"
