@@ -68,7 +68,7 @@ pub fn bench_tessellation_primitives() {
         .primitives(primitives)
         .primitive_count(1)
         .primitive_count(100)
-        .primitives_counts((1000..=10000).step_by(1000 as usize))
+        .primitives_counts((1000..=5000).step_by(1000 as usize))
         .trials(trials);
     debug!("Options: {:?}", options);
 
