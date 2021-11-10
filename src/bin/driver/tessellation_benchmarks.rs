@@ -32,6 +32,7 @@ pub fn profile_svg_examples() {
 }
 
 pub fn profile_svg_primitives() {
+    // TODO generate these Primitives -> SVGs instead of using directory
     let input_dir_path = PRIMITIVES_ASSETS_DIR;
     let input_files = util::get_files_with_extension(input_dir_path, false, "svg");
     let output_path = concatcp![PRIMITIVES_OUTPUT_DIR, "profiles.csv"];
