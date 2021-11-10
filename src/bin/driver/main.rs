@@ -13,7 +13,6 @@ use run_options::RunOptions;
 use log::LevelFilter;
 
 pub fn main() {
-    // TODO add fast methods for primitives
     Driver::from(
         RunOptions::builder()
             .logging(LevelFilter::Trace)
