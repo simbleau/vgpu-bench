@@ -37,7 +37,7 @@ pub fn frametimes_svg_primitives() {
     let output_path = concatcp![PRIMITIVES_OUTPUT_DIR, "naive_frametimes.csv"];
     let writer = util::csv_writer(output_path).expect("Could not create output file");
     let backend = tessellation_util::backends::default();
-    let primitives = svg_generator::primitives();
+    let primitives = svg_generator::primitives::default();
     let primitive_count = 1;
     let frames = 500;
     let options = PrimitiveNaiveRenderingOptions::new()

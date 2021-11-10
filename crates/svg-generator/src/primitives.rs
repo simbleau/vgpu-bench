@@ -202,3 +202,23 @@ impl Primitive {
         r
     }
 }
+
+pub fn all() -> Vec<Primitive> {
+    let mut primitives: Vec<Primitive> = Vec::new();
+    primitives.push(Primitive::Line);
+    primitives.push(Primitive::Triangle);
+    primitives.push(Primitive::Polygon);
+    primitives.push(Primitive::BezierCurve);
+    primitives.push(Primitive::Bezigon);
+    primitives.push(Primitive::CubicBezierCurve);
+    primitives.push(Primitive::CubicBezigon);
+    primitives
+}
+
+pub fn default() -> Vec<Primitive> {
+    let mut primitives: Vec<Primitive> = Vec::new();
+    primitives.push(Primitive::Triangle);
+    primitives.push(Primitive::BezierCurve);
+    primitives.push(Primitive::CubicBezierCurve);
+    primitives
+}

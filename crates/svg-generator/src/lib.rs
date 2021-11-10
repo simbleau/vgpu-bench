@@ -1,19 +1,11 @@
 extern crate clap;
 extern crate dynfmt;
 
-mod primitives;
+pub mod primitives;
 pub use primitives::Primitive;
 mod writer;
 use std::{fs::File, io::Write, path::Path};
 use writer::Writer;
-
-pub fn primitives() -> Vec<Primitive> {
-    let mut primitives: Vec<Primitive> = Vec::new();
-    primitives.push(Primitive::Triangle);
-    primitives.push(Primitive::BezierCurve);
-    primitives.push(Primitive::CubicBezierCurve);
-    primitives
-}
 
 pub fn generate_svg(primitive: Primitive, count: u32, rotate: bool) -> String {
     let mut writer = Writer::default();
