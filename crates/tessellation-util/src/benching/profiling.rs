@@ -21,15 +21,3 @@ pub fn get_profile<P: Into<PathBuf>>(
         triangles: profile.triangles,
     })
 }
-
-pub fn get_profiles<P: Into<PathBuf>>(
-    mut backend: Box<dyn Tessellator>,
-    dir_path: P,
-) -> Result<Vec<SVGProfile>> {
-    let files = super::io::get_files(dir_path, false)?;
-    let results: Result<Vec<SVGProfile>> = files
-        .iter()
-        .map(|file| get_profile(backend.as_mut(), file))
-        .collect();
-    Ok(results?)
-}
