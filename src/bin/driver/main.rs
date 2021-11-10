@@ -14,7 +14,6 @@ use log::LevelFilter;
 
 pub fn main() {
     // TODO add fast methods for primitives
-    // TODO remove render-lib/io
     Driver::from(
         RunOptions::builder()
             .logging(LevelFilter::Trace)
