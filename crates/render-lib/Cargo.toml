@@ -15,7 +15,7 @@ path = "src/lib.rs"
 [dependencies]
 naive-renderer = { package = "naive-renderer", path = "../naive-renderer" }
 renderer = { package = "renderer", path = "../renderer" }
-svg-gen = { package = "svg-generator", path = "../svg-generator" }
+svg-generator = { package = "svg-generator", path = "../svg-generator" }
 tess-lib = { package = "tess-lib", path = "../tess-lib" }
 
 clap = "2.33.3"
