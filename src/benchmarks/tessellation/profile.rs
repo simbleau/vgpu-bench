@@ -2,7 +2,7 @@ use csv::Writer;
 use std::path::PathBuf;
 use tessellation_util::{
     backends::Tessellator,
-    benching::{error::Result, output::SVGProfile},
+    benching::{output::SVGProfile, Result},
 };
 
 pub struct SVGProfilingOptions<W>

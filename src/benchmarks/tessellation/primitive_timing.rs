@@ -2,7 +2,7 @@ use csv::Writer;
 use svg_generator::Primitive;
 use tessellation_util::{
     backends::Tessellator,
-    benching::{error::Result, output::PrimitiveTessellationTime},
+    benching::{output::PrimitiveTessellationTime, Result},
 };
 
 pub struct PrimitiveTessellationTimingOptions<W>
