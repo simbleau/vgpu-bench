@@ -1,6 +1,5 @@
 use crate::artifacts::{TessellationData, TessellationProfile};
 use crate::backends::Tessellator;
-use crate::targets::SVGTarget;
 use lyon::lyon_tessellation::{
     BuffersBuilder, FillVertexConstructor, StrokeVertexConstructor, VertexBuffers,
 };
@@ -8,6 +7,7 @@ use lyon::math::Point;
 use lyon::path::PathEvent;
 use lyon::tessellation::{self, FillOptions, FillTessellator, StrokeOptions, StrokeTessellator};
 use renderer::artifacts::types::{GpuColor, GpuPrimitive, GpuTransform, GpuVertex};
+use renderer::targets::SVGDocument;
 use std::error::Error;
 use std::f64::NAN;
 use usvg::{NodeExt, Tree, ViewBox};
@@ -42,7 +42,7 @@ impl Tessellator for LyonTessellator {
         "Lyon"
     }
 
-    fn init(&mut self, t: &SVGTarget) {
+    fn init(&mut self, t: &SVGDocument) {
         let opt = usvg::Options::default();
         let file_data = t.content().as_bytes();
 
@@ -53,8 +53,8 @@ impl Tessellator for LyonTessellator {
         self.state = Some(state);
     }
 
-    fn tessellate(&self) -> Result<TessellationProfile, Box<dyn Error>> {
-        let data = self.get_tessellate_data()?;
+    fn get_tessellation_profile(&self) -> Result<TessellationProfile, Box<dyn Error>> {
+        let data = self.get_tessellation_data()?;
         Ok(TessellationProfile {
             vertices: data.vertices.len() as u32,
             indices: data.indices.len() as u32,
@@ -62,7 +62,7 @@ impl Tessellator for LyonTessellator {
         })
     }
 
-    fn get_tessellate_data(&self) -> Result<Box<TessellationData>, Box<dyn Error>> {
+    fn get_tessellation_data(&self) -> Result<TessellationData, Box<dyn Error>> {
         // Create vertex buffer
         let mut fill_tess = FillTessellator::new();
         let mut stroke_tess = StrokeTessellator::new();
@@ -147,7 +147,7 @@ impl Tessellator for LyonTessellator {
         };
 
         // Return result
-        Ok(Box::new(data))
+        Ok(data)
     }
 }
 

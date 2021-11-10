@@ -1,12 +1,15 @@
 use super::types::{BufferState, GpuGlobals, SceneGlobals};
-use renderer::artifacts::types::{GpuPrimitive, GpuTransform, GpuVertex};
-use tess_lib::{artifacts::TessellationData, targets::SVGTarget};
+use renderer::{
+    artifacts::types::{GpuPrimitive, GpuTransform, GpuVertex},
+    targets::SVGDocument,
+};
+use tess_lib::artifacts::TessellationData;
 use wgpu::{include_wgsl, util::DeviceExt, RenderPipeline};
 use winit::dpi::PhysicalSize;
 
 const WINDOW_SIZE: f32 = 800.0;
 // These mush match the uniform buffer sizes in the vertex shader.
-pub fn get_globals(file_data: &SVGTarget) -> SceneGlobals {
+pub fn get_globals(file_data: &SVGDocument) -> SceneGlobals {
     let opt = usvg::Options::default();
     let content: &[u8] = file_data.content().as_bytes();
     let rtree = usvg::Tree::from_data(content, &opt.to_ref()).unwrap();

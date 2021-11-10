@@ -8,6 +8,7 @@ pub type Result<T> = std::result::Result<T, NaiveRendererError>;
 pub enum NaiveRendererError {
     RendererNotInitialized,
     FatalRenderingError,
+    FatalTessellationError(Box<dyn std::error::Error>),
     OsError(OsError),
 }
 
@@ -18,7 +19,14 @@ impl Display for NaiveRendererError {
                 write!(f, "{}", "The renderer was not initialized.")
             }
             NaiveRendererError::FatalRenderingError => {
-                write!(f, "{}", "An unknown fatal error ocurred.")
+                write!(f, "{}", "An unknown fatal error ocurred during rendering.")
+            }
+            NaiveRendererError::FatalTessellationError(err) => {
+                write!(
+                    f,
+                    "{}\n{}",
+                    "An unknown fatal error ocurred during tessellation.", err
+                )
             }
             NaiveRendererError::OsError(oserr) => write!(f, "{}", oserr),
         }

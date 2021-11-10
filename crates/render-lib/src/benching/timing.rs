@@ -9,11 +9,10 @@ use renderer::targets::{SVGDocument, SVGFile};
 use std::path::PathBuf;
 use svg_gen::Primitive;
 use tess_lib::backends::Tessellator;
-use tess_lib::targets::SVGTarget;
 
 pub fn time_svg(
     renderer: &mut dyn Renderer,
-    svg: &mut SVGDocument,
+    svg: &SVGDocument,
     frames: usize,
 ) -> Result<RenderTimeResult> {
     renderer.init()?;
@@ -33,12 +32,11 @@ where
 
     let svg_path: PathBuf = svg_path.into();
     let svg_file = SVGFile::from(&svg_path);
-    let mut svg_doc = SVGDocument::from(svg_file);
-    let svg_target = SVGTarget::from(svg_doc.clone());
+    let svg = SVGDocument::from(svg_file);
 
-    backend.init(&svg_target);
-    let profile = backend.tessellate()?;
-    let render_time_result = timing::time_svg(&mut renderer, &mut svg_doc, frames)?;
+    backend.init(&svg);
+    let profile = backend.get_tessellation_profile()?;
+    let render_time_result = timing::time_svg(&mut renderer, &svg, frames)?;
 
     let mut results: Vec<SVGNaiveRenderTime> = Vec::new();
     for (frame, dur) in render_time_result.frame_times.iter().enumerate() {
@@ -63,12 +61,12 @@ pub fn time_naive_primitive(
 ) -> Result<Vec<PrimitiveNaiveRenderTime>> {
     let mut renderer = NaiveRenderer::new();
 
-    let mut svg_doc = SVGDocument::from(svg_gen::generate_svg(primitive, primitive_count, true));
-    let svg_target: SVGTarget = SVGTarget::from(svg_doc.clone());
+    let svg_src = svg_gen::generate_svg(primitive, primitive_count, true);
+    let svg = SVGDocument::from(svg_src);
 
-    backend.init(&svg_target);
-    let profile = backend.tessellate()?;
-    let render_time_result = timing::time_svg(&mut renderer, &mut svg_doc, frames)?;
+    backend.init(&svg);
+    let profile = backend.get_tessellation_profile()?;
+    let render_time_result = timing::time_svg(&mut renderer, &svg, frames)?;
 
     let mut results: Vec<PrimitiveNaiveRenderTime> = Vec::new();
     for (frame, dur) in render_time_result.frame_times.iter().enumerate() {

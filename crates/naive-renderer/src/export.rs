@@ -1,9 +1,6 @@
 use renderer::error::RendererError::RustLibraryError;
 use renderer::{artifacts::RenderTimeResult, error::Result, rust::Renderer, targets::SVGDocument};
-use tess_lib::{
-    backends::{LyonTessellator, Tessellator},
-    targets::SVGTarget,
-};
+use tess_lib::backends::{LyonTessellator, Tessellator};
 
 use crate::TriangleRenderer;
 
@@ -28,13 +25,9 @@ impl Renderer for NaiveRenderer {
     }
 
     fn stage(&mut self, svg: &SVGDocument) -> Result<()> {
-        let tessellator = &mut *self.backend;
-        // Convert to target
-        let x = svg.clone();
-        let target = SVGTarget::from(x);
         Ok(self
             .renderer
-            .init_with_svg(tessellator, &target)
+            .init_with_svg(self.backend.as_mut(), svg)
             .map_err(|err| RustLibraryError(Box::new(err)))?)
     }
 

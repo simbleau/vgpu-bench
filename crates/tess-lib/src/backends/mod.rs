@@ -1,16 +1,13 @@
 mod lyon_tessellator;
-
-use crate::{
-    artifacts::{TessellationData, TessellationProfile},
-    targets::SVGTarget,
-};
+use crate::artifacts::{TessellationData, TessellationProfile};
 pub use lyon_tessellator::LyonTessellator;
+use renderer::targets::SVGDocument;
 
 pub trait Tessellator {
     fn name(&self) -> &'static str;
-    fn init(&mut self, t: &SVGTarget);
-    fn tessellate(&self) -> Result<TessellationProfile, Box<dyn std::error::Error>>;
-    fn get_tessellate_data(&self) -> Result<Box<TessellationData>, Box<dyn std::error::Error>>;
+    fn init(&mut self, t: &SVGDocument);
+    fn get_tessellation_profile(&self) -> Result<TessellationProfile, Box<dyn std::error::Error>>;
+    fn get_tessellation_data(&self) -> Result<TessellationData, Box<dyn std::error::Error>>;
 }
 impl std::fmt::Debug for dyn Tessellator {
     fn fmt(&self, fmt: &mut std::fmt::Formatter<'_>) -> Result<(), std::fmt::Error> {

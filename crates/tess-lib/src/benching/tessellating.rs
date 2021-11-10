@@ -1,18 +1,15 @@
-use std::path::PathBuf;
-
-use renderer::targets::{SVGDocument, SVGFile};
-use svg_gen::Primitive;
-
-use crate::targets::TessellationTarget;
-use crate::{backends::Tessellator, targets::SVGTarget};
-
 use super::error::Result;
 use super::output::{
     PrimitiveTessellationTime, SVGDocumentTessellationTime, SVGFileTessellationTime,
 };
+use crate::backends::Tessellator;
+use renderer::targets::{SVGDocument, SVGFile};
+use std::path::PathBuf;
+use std::time::Instant;
+use svg_gen::Primitive;
 
 pub fn time_svg_file<P: Into<PathBuf>>(
-    backend: &mut dyn Tessellator,
+    backend: Box<dyn Tessellator>,
     file_path: P,
     trials: u32,
 ) -> Result<Vec<SVGFileTessellationTime>> {
@@ -32,20 +29,29 @@ pub fn time_svg_file<P: Into<PathBuf>>(
 }
 
 pub fn time_svg_doc(
-    backend: &mut dyn Tessellator,
-    svg_doc: &mut SVGDocument,
+    mut backend: Box<dyn Tessellator>,
+    svg: &SVGDocument,
     trials: u32,
 ) -> Result<Vec<SVGDocumentTessellationTime>> {
-    let mut target = SVGTarget::from(svg_doc.clone());
     let mut results: Vec<SVGDocumentTessellationTime> = Vec::new();
 
     for _ in 0..trials {
-        let time_result = target.time(backend)?;
+        // Time initialization
+        let t1 = Instant::now();
+        backend.init(svg);
+        let t2 = Instant::now();
+        let dur1 = t2.duration_since(t1);
+
+        // Time the tessellation
+        let t1 = Instant::now();
+        backend.get_tessellation_profile()?;
+        let t2 = Instant::now();
+        let dur2 = t2.duration_since(t1);
 
         let result = SVGDocumentTessellationTime {
             tessellator: backend.name().to_owned(),
-            init_time: time_result.init_time.as_nanos(),
-            tess_time: time_result.tess_time.as_nanos(),
+            init_time: dur1.as_nanos(),
+            tess_time: dur2.as_nanos(),
         };
         results.push(result);
     }
@@ -59,19 +65,28 @@ pub fn time_primitive(
     trials: u32,
 ) -> Result<Vec<PrimitiveTessellationTime>> {
     let svg_src = svg_gen::generate_svg(primitive, primitive_count, true);
-    let svg_doc = SVGDocument::from(svg_src);
-    let mut target = SVGTarget::from(svg_doc);
+    let svg = SVGDocument::from(svg_src);
 
     let mut results: Vec<PrimitiveTessellationTime> = Vec::new();
     for _ in 0..trials {
-        let time_result = target.time(backend)?;
+        // Time initialization
+        let t1 = Instant::now();
+        backend.init(&svg);
+        let t2 = Instant::now();
+        let dur1 = t2.duration_since(t1);
+
+        // Time the tessellation
+        let t1 = Instant::now();
+        backend.get_tessellation_profile()?;
+        let t2 = Instant::now();
+        let dur2 = t2.duration_since(t1);
 
         let result = PrimitiveTessellationTime {
             tessellator: backend.name().to_owned(),
             primitive: primitive.name().to_owned(),
             amount: primitive_count,
-            init_time: time_result.init_time.as_nanos(),
-            tess_time: time_result.tess_time.as_nanos(),
+            init_time: dur1.as_nanos(),
+            tess_time: dur2.as_nanos(),
         };
         results.push(result);
     }
