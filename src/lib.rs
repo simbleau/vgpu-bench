@@ -7,4 +7,3 @@ pub use error::Result;
 
 pub mod benchmarks;
 pub mod util;
-// TODO: Option builder for analysis.
