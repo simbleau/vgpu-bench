@@ -13,7 +13,6 @@ use run_options::RunOptions;
 use log::LevelFilter;
 
 pub fn main() {
-    // TODO bubble up results
     // TODO change svg_generator::primitives() to svg_generator::primitives::all()/default()
     // TODO add fast methods for primitives
     // TODO remove render-lib/io
