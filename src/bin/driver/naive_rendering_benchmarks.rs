@@ -1,13 +1,17 @@
-use crate::dictionary::{EXAMPLES_ASSETS_DIR, EXAMPLES_OUTPUT_DIR};
-use crate::dictionary::{PRIMITIVES_ASSETS_DIR, PRIMITIVES_OUTPUT_DIR};
+use std::path::PathBuf;
+
+use crate::dictionary::EXAMPLES_OUTPUT_DIR;
+use crate::dictionary::PRIMITIVES_OUTPUT_DIR;
 use const_format::concatcp;
 use log::{debug, error, info, trace};
 use vgpu_bench::benchmarks::rendering::naive_primitive_rendering::PrimitiveNaiveRenderingOptions;
 use vgpu_bench::benchmarks::rendering::naive_svg_rendering::SVGNaiveRenderingOptions;
 use vgpu_bench::{benchmarks, util};
 
-pub fn frametimes_svg_examples() {
-    let input_dir_path = EXAMPLES_ASSETS_DIR;
+pub fn frametimes_svg_examples<P>(input_dir_path: P)
+where
+    P: Into<PathBuf>,
+{
     let input_files = util::get_files_with_extension(input_dir_path, false, "svg");
     let output_path = concatcp![EXAMPLES_OUTPUT_DIR, "naive_frametimes.csv"];
     let writer = util::csv_writer(output_path).expect("Could not create output file");

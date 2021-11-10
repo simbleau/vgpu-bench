@@ -1,4 +1,6 @@
-use crate::dictionary::{EXAMPLES_ASSETS_DIR, EXAMPLES_OUTPUT_DIR};
+use std::path::PathBuf;
+
+use crate::dictionary::EXAMPLES_OUTPUT_DIR;
 use crate::dictionary::{PRIMITIVES_ASSETS_DIR, PRIMITIVES_OUTPUT_DIR};
 use const_format::concatcp;
 use log::{debug, error, info, trace};
@@ -6,8 +8,10 @@ use vgpu_bench::benchmarks::tessellation::primitive_timing::PrimitiveTessellatio
 use vgpu_bench::benchmarks::tessellation::profile::SVGProfilingOptions;
 use vgpu_bench::{benchmarks, util};
 
-pub fn profile_svg_examples() {
-    let input_dir_path = EXAMPLES_ASSETS_DIR;
+pub fn profile_svg_examples<P>(input_dir_path: P)
+where
+    P: Into<PathBuf>,
+{
     let input_files = util::get_files_with_extension(input_dir_path, false, "svg");
     let output_path = concatcp![EXAMPLES_OUTPUT_DIR, "profiles.csv"];
     let writer = util::csv_writer(output_path).expect("Could not create output file");
@@ -32,7 +36,7 @@ pub fn profile_svg_examples() {
 }
 
 pub fn profile_svg_primitives() {
-    // TODO generate these Primitives -> SVGs instead of using directory
+    // TODO generate as Primitives -> SVGs instead of using a hardcoded (cached) directory
     let input_dir_path = PRIMITIVES_ASSETS_DIR;
     let input_files = util::get_files_with_extension(input_dir_path, false, "svg");
     let output_path = concatcp![PRIMITIVES_OUTPUT_DIR, "profiles.csv"];
