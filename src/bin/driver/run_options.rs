@@ -4,7 +4,6 @@ pub struct RunOptions {
     functions: Vec<Box<dyn Fn()>>,
 }
 impl RunOptions {
-    // This method will help users to discover the builder
     pub fn builder() -> RunOptionsBuilder {
         RunOptionsBuilder::new()
     }

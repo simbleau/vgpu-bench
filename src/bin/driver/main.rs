@@ -1,11 +1,16 @@
 #![feature(format_args_capture)]
+#![feature(fn_traits)]
 
 mod dictionary;
 mod naive_rendering_benchmarks;
 mod tessellation_benchmarks;
 
+mod driver;
+use driver::Driver;
+mod run_options;
+use run_options::RunOptions;
+
 use log::LevelFilter;
-use vgpu_bench::driver::{Driver, RunOptions};
 
 pub fn main() {
     // TODO remove SVGTarget
