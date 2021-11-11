@@ -48,10 +48,11 @@ for filename in filenames:
     ax.axhline(y=min_frametime, color='blue', linestyle='--')
 
     # Dress plot
+    basename = os.path.basename(filename)
     ax.set_xlabel("Frame")
     ax.set_ylabel("Total time (ms)")
     ax.set_title(
-        f"Continuous frame-times of {filename}, naive")
+        f"Continuous frame-times of {basename}, naive")
     ax.yaxis.grid()
     plt.tight_layout()
 
@@ -73,4 +74,4 @@ for filename in filenames:
     if not os.path.exists(OUTPUT_DIR):
         os.makedirs(OUTPUT_DIR)
     fig.savefig(
-        f"{OUTPUT_DIR}/{OUTPUT_PREFIX}{filename}.{OUTPUT_TYPE}", dpi=500)
+        f"{OUTPUT_DIR}/{OUTPUT_PREFIX}{basename}.{OUTPUT_TYPE}", dpi=500)

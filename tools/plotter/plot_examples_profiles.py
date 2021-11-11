@@ -6,7 +6,7 @@ import pandas as pd
 import cairosvg
 import os
 
-INPUT_DATA_DIR = "../../assets/svg/examples/"
+INPUT_DATA_DIR = "../.."
 INPUT_CSV = "../../output/data/svg/examples/profiles.csv"
 OUTPUT_DIR = "../../output/figs/svg/examples"
 OUTPUT_NAME = "profiles"
@@ -29,8 +29,9 @@ for backend in backends:
 
     # Plot data
     filenames = rows["filename"]
+    basenames = [os.path.basename(f) for f in filenames]
     triangles = rows["triangles"]
-    points = ax.scatter(filenames, triangles)
+    points = ax.scatter(basenames, triangles)
 
     # Draw icons
     for filename, num_triangles, (x, y) in zip(filenames, triangles, points.get_offsets().data):
@@ -52,7 +53,7 @@ for backend in backends:
         ax.autoscale()
 
     # Dress plot
-    plt.xticks(filenames, rotation='vertical')
+    plt.xticks(basenames, rotation='vertical')
     ax.set_xlabel("Files")
     ax.set_ylabel("Triangles")
     ax.set_title(
