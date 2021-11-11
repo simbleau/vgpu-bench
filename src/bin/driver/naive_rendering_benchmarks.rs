@@ -1,7 +1,6 @@
 use std::path::PathBuf;
 
-use crate::dictionary::EXAMPLES_OUTPUT_DIR;
-use crate::dictionary::PRIMITIVES_OUTPUT_DIR;
+use crate::dictionary::*;
 use const_format::concatcp;
 use log::{debug, error, info, trace};
 use vgpu_bench::benchmarks::rendering::naive_primitive_rendering::PrimitiveNaiveRenderingOptions;
@@ -13,7 +12,7 @@ where
     P: Into<PathBuf>,
 {
     let input_files = util::get_files_with_extension(input_dir_path, false, "svg");
-    let output_path = concatcp![EXAMPLES_OUTPUT_DIR, "naive_frametimes.csv"];
+    let output_path = concatcp![OUTPUT_DIR, DATA, EXAMPLES, SVG, "naive_frametimes.csv"];
     let writer = util::csv_writer(output_path).expect("Could not create output file");
     let backend = tessellation_util::backends::default();
     let frames = 500;
@@ -38,7 +37,7 @@ where
 }
 
 pub fn frametimes_svg_primitives() {
-    let output_path = concatcp![PRIMITIVES_OUTPUT_DIR, "naive_frametimes.csv"];
+    let output_path = concatcp![OUTPUT_DIR, DATA, PRIMITIVES, SVG, "naive_frametimes.csv"];
     let writer = util::csv_writer(output_path).expect("Could not create output file");
     let backend = tessellation_util::backends::default();
     let primitives = svg_generator::primitives::default();

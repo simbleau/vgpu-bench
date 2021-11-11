@@ -1,11 +1,12 @@
-use const_format::concatcp;
+use std::path::PathBuf;
 
-pub const OUTPUT_DIR: &'static str = "output/data/";
-pub const SVG_OUTPUT_DIR: &'static str = concatcp![OUTPUT_DIR, "svg/"];
-pub const PRIMITIVES_OUTPUT_DIR: &'static str = concatcp![SVG_OUTPUT_DIR, "primitives/"];
-pub const EXAMPLES_OUTPUT_DIR: &'static str = concatcp![SVG_OUTPUT_DIR, "examples/"];
-
+pub const OUTPUT_DIR: &'static str = "output/";
 pub const ASSETS_DIR: &'static str = "assets/";
-pub const SVG_ASSETS_DIR: &'static str = concatcp![ASSETS_DIR, "svg/"];
-pub const PRIMITIVES_ASSETS_DIR: &'static str = concatcp![SVG_ASSETS_DIR, "primitives/"];
-pub const EXAMPLES_ASSETS_DIR: &'static str = concatcp![SVG_ASSETS_DIR, "examples/"];
+
+pub const SVG: &'static str = "svg/";
+
+pub const DATA: &'static str = "data/";
+pub const FIGURES: &'static str = "figs/";
+
+pub const PRIMITIVES: &'static str = "primitives/";
+pub const EXAMPLES: &'static str = "examples/";

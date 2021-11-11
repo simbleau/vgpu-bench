@@ -1,3 +1,5 @@
+use std::path::PathBuf;
+
 use simplelog::CombinedLogger;
 
 use super::RunOptions;
@@ -17,7 +19,7 @@ impl Driver {
 
         // Run all benchmarks
         for func in self.options.functions {
-            func();
+            func(&self.options.output_dir);
         }
     }
 }

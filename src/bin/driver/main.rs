@@ -1,17 +1,20 @@
 #![feature(format_args_capture)]
 
 mod dictionary;
+mod driver;
 mod naive_rendering_benchmarks;
+mod run_options;
 mod tessellation_benchmarks;
 
-mod driver;
-use dictionary::EXAMPLES_ASSETS_DIR;
+use const_format::concatcp;
+use dictionary::*;
 use driver::Driver;
-mod run_options;
-
 use log::LevelFilter;
 use run_options::RunOptions;
 use simplelog::{ColorChoice, Config, TermLogger, TerminalMode, WriteLogger};
+
+const SVG_PRIMITIVES_PATH: &'static str = concatcp!(ASSETS_DIR, SVG, PRIMITIVES);
+const SVG_EXAMPLES_PATH: &'static str = concatcp!(ASSETS_DIR, SVG, EXAMPLES);
 
 pub fn main() {
     Driver::from(
@@ -28,11 +31,11 @@ pub fn main() {
                 ColorChoice::Auto,
             ))
             // TODO add bench_tessellation_examples()
-            .add(|| tessellation_benchmarks::bench_tessellation_primitives())
-            .add(|| tessellation_benchmarks::profile_svg_examples(EXAMPLES_ASSETS_DIR))
-            .add(|| tessellation_benchmarks::profile_svg_primitives())
-            .add(|| naive_rendering_benchmarks::frametimes_svg_examples(EXAMPLES_ASSETS_DIR))
-            .add(|| naive_rendering_benchmarks::frametimes_svg_primitives())
+            .add(|o| tessellation_benchmarks::bench_tessellation_primitives(o))
+            //.add(|x| tessellation_benchmarks::profile_svg_examples(SVG_EXAMPLES_PATH))
+            //.add(|x| tessellation_benchmarks::profile_svg_primitives())
+            //.add(|x| naive_rendering_benchmarks::frametimes_svg_examples(SVG_EXAMPLES_PATH))
+            //.add(|x| naive_rendering_benchmarks::frametimes_svg_primitives())
             .build(),
     )
     .run();

@@ -48,5 +48,7 @@ walkdir = "2"
 csv = "1.1"
 log = "0.4"
 simplelog = { version = "^0.10.0" }
+serde = "1.0.130"
+chrono = "0.4.19"
 
 [dev-dependencies]
