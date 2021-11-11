@@ -17,7 +17,7 @@ impl Driver {
 
         // Run all benchmarks
         for func in self.options.functions {
-            func.call(());
+            func();
         }
     }
 }

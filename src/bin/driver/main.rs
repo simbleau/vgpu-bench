@@ -1,5 +1,4 @@
 #![feature(format_args_capture)]
-#![feature(fn_traits)]
 
 mod dictionary;
 mod naive_rendering_benchmarks;
