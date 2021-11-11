@@ -19,7 +19,11 @@ pub struct State {
 }
 
 impl State {
-    pub async fn new(window: &Window, scene: SceneGlobals, data: TessellationData) -> Self {
+    pub async fn new(
+        window: &Window,
+        scene: SceneGlobals,
+        data: TessellationData,
+    ) -> Self {
         // The instance is a handle to our GPU
         // Backends::all() => Vulkan + Metal + DX12 + Browser WebGPU
         let instance = wgpu::Instance::new(wgpu::Backends::all());
@@ -41,7 +45,8 @@ impl State {
                 &wgpu::DeviceDescriptor {
                     // GPU Features - None needed for triangle rendering...
                     features: wgpu::Features::empty(),
-                    // Limits the resources we can create - Default for better cross-platform support
+                    // Limits the resources we can create - Default for better
+                    // cross-platform support
                     limits: wgpu::Limits::default(),
                     label: None,
                 },
@@ -136,11 +141,11 @@ impl State {
             .texture
             .create_view(&wgpu::TextureViewDescriptor::default());
         // Encoder sends commands to the GPU
-        let mut encoder = self
-            .device
-            .create_command_encoder(&wgpu::CommandEncoderDescriptor {
+        let mut encoder = self.device.create_command_encoder(
+            &wgpu::CommandEncoderDescriptor {
                 label: Some("Render Encoder"),
-            });
+            },
+        );
 
         self.queue.write_buffer(
             &self.buffers.globals_ubo,
@@ -154,25 +159,31 @@ impl State {
         );
 
         {
-            let mut pass = encoder.begin_render_pass(&wgpu::RenderPassDescriptor {
-                label: None,
-                color_attachments: &[wgpu::RenderPassColorAttachment {
-                    view: &view,
-                    ops: wgpu::Operations {
-                        load: wgpu::LoadOp::Clear(match self.scene.wireframe {
-                            true => wgpu::Color::BLACK,
-                            false => wgpu::Color::WHITE,
-                        }),
-                        store: true,
-                    },
-                    resolve_target: None,
-                }],
-                depth_stencil_attachment: None,
-            });
+            let mut pass =
+                encoder.begin_render_pass(&wgpu::RenderPassDescriptor {
+                    label: None,
+                    color_attachments: &[wgpu::RenderPassColorAttachment {
+                        view: &view,
+                        ops: wgpu::Operations {
+                            load: wgpu::LoadOp::Clear(
+                                match self.scene.wireframe {
+                                    true => wgpu::Color::BLACK,
+                                    false => wgpu::Color::WHITE,
+                                },
+                            ),
+                            store: true,
+                        },
+                        resolve_target: None,
+                    }],
+                    depth_stencil_attachment: None,
+                });
 
             pass.set_pipeline(&self.render_pipeline);
             pass.set_bind_group(0, &self.buffers.bind_group, &[]);
-            pass.set_index_buffer(self.buffers.ibo.slice(..), wgpu::IndexFormat::Uint32);
+            pass.set_index_buffer(
+                self.buffers.ibo.slice(..),
+                wgpu::IndexFormat::Uint32,
+            );
             pass.set_vertex_buffer(0, self.buffers.vbo.slice(..));
 
             pass.draw_indexed(0..(self.data.indices.len() as u32), 0, 0..1);
@@ -188,8 +199,11 @@ impl State {
 
     pub fn toggle_wireframe(&mut self) {
         self.scene.wireframe = !self.scene.wireframe;
-        let new_pipeline =
-            super::util::build_pipeline(&self.device, &self.buffers, self.scene.wireframe);
+        let new_pipeline = super::util::build_pipeline(
+            &self.device,
+            &self.buffers,
+            self.scene.wireframe,
+        );
         self.render_pipeline = new_pipeline;
     }
 }

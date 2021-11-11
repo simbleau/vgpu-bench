@@ -19,7 +19,10 @@ impl<W> std::fmt::Debug for PrimitiveTessellationTimingOptions<W>
 where
     W: std::io::Write,
 {
-    fn fmt(&self, fmt: &mut std::fmt::Formatter<'_>) -> std::result::Result<(), std::fmt::Error> {
+    fn fmt(
+        &self,
+        fmt: &mut std::fmt::Formatter<'_>,
+    ) -> std::result::Result<(), std::fmt::Error> {
         write!(
             fmt,
             "PrimitiveTessellationTimingOptions {{ backends: {:?}, primitives: {:?}, primitive_counts: {:?}, trials: {:?} }}",
@@ -84,7 +87,9 @@ where
     }
 }
 
-pub fn write_tessellation_times<W>(options: PrimitiveTessellationTimingOptions<W>) -> Result<()>
+pub fn write_tessellation_times<W>(
+    options: PrimitiveTessellationTimingOptions<W>,
+) -> Result<()>
 where
     W: std::io::Write,
 {
@@ -93,12 +98,13 @@ where
     for mut backend in options.backends {
         for primitive_count in &options.primitive_counts {
             for primitive in &options.primitives {
-                let result = tessellation_util::benching::tessellating::time_primitive(
-                    backend.as_mut(),
-                    primitive.clone(),
-                    primitive_count.clone(),
-                    options.trials,
-                );
+                let result =
+                    tessellation_util::benching::tessellating::time_primitive(
+                        backend.as_mut(),
+                        primitive.clone(),
+                        primitive_count.clone(),
+                        options.trials,
+                    );
                 results.extend(result?);
             }
         }

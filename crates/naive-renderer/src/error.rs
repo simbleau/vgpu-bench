@@ -19,7 +19,11 @@ impl Display for NaiveRendererError {
                 write!(f, "{}", "The renderer was not initialized.")
             }
             NaiveRendererError::FatalRenderingError => {
-                write!(f, "{}", "An unknown fatal error ocurred during rendering.")
+                write!(
+                    f,
+                    "{}",
+                    "An unknown fatal error ocurred during rendering."
+                )
             }
             NaiveRendererError::FatalTessellationError(err) => {
                 write!(

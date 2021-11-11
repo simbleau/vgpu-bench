@@ -43,15 +43,18 @@ pub fn build_pipeline(
     wireframe: bool,
 ) -> RenderPipeline {
     // Get shaders
-    let vert_module = device.create_shader_module(&include_wgsl!("shaders/vert.wgsl"));
-    let frag_module = device.create_shader_module(&include_wgsl!("shaders/frag.wgsl"));
+    let vert_module =
+        device.create_shader_module(&include_wgsl!("shaders/vert.wgsl"));
+    let frag_module =
+        device.create_shader_module(&include_wgsl!("shaders/frag.wgsl"));
 
     // Make pipeline layout
-    let pipeline_layout = device.create_pipeline_layout(&wgpu::PipelineLayoutDescriptor {
-        bind_group_layouts: &[&buffers.bind_group_layout],
-        push_constant_ranges: &[],
-        label: None,
-    });
+    let pipeline_layout =
+        device.create_pipeline_layout(&wgpu::PipelineLayoutDescriptor {
+            bind_group_layouts: &[&buffers.bind_group_layout],
+            push_constant_ranges: &[],
+            label: None,
+        });
 
     let render_pipeline_descriptor = wgpu::RenderPipelineDescriptor {
         label: None,
@@ -104,7 +107,10 @@ pub fn build_pipeline(
     device.create_render_pipeline(&render_pipeline_descriptor)
 }
 
-pub fn build_buffers(device: &wgpu::Device, data: &TessellationData) -> BufferState {
+pub fn build_buffers(
+    device: &wgpu::Device,
+    data: &TessellationData,
+) -> BufferState {
     // Create vertex buffer object
     let vbo = device.create_buffer_init(&wgpu::util::BufferInitDescriptor {
         label: None,
@@ -148,41 +154,52 @@ pub fn build_buffers(device: &wgpu::Device, data: &TessellationData) -> BufferSt
         usage: wgpu::BufferUsages::UNIFORM | wgpu::BufferUsages::COPY_DST,
         mapped_at_creation: false,
     });
-    let bind_group_layout = device.create_bind_group_layout(&wgpu::BindGroupLayoutDescriptor {
-        label: Some("Bind group layout"),
-        entries: &[
-            wgpu::BindGroupLayoutEntry {
-                binding: 0,
-                visibility: wgpu::ShaderStages::VERTEX,
-                ty: wgpu::BindingType::Buffer {
-                    ty: wgpu::BufferBindingType::Uniform,
-                    has_dynamic_offset: false,
-                    min_binding_size: wgpu::BufferSize::new(globals_buffer_byte_size),
+    let bind_group_layout =
+        device.create_bind_group_layout(&wgpu::BindGroupLayoutDescriptor {
+            label: Some("Bind group layout"),
+            entries: &[
+                wgpu::BindGroupLayoutEntry {
+                    binding: 0,
+                    visibility: wgpu::ShaderStages::VERTEX,
+                    ty: wgpu::BindingType::Buffer {
+                        ty: wgpu::BufferBindingType::Uniform,
+                        has_dynamic_offset: false,
+                        min_binding_size: wgpu::BufferSize::new(
+                            globals_buffer_byte_size,
+                        ),
+                    },
+                    count: None,
                 },
-                count: None,
-            },
-            wgpu::BindGroupLayoutEntry {
-                binding: 1,
-                visibility: wgpu::ShaderStages::VERTEX,
-                ty: wgpu::BindingType::Buffer {
-                    ty: wgpu::BufferBindingType::Storage { read_only: true },
-                    has_dynamic_offset: false,
-                    min_binding_size: wgpu::BufferSize::new(prim_buffer_byte_size),
+                wgpu::BindGroupLayoutEntry {
+                    binding: 1,
+                    visibility: wgpu::ShaderStages::VERTEX,
+                    ty: wgpu::BindingType::Buffer {
+                        ty: wgpu::BufferBindingType::Storage {
+                            read_only: true,
+                        },
+                        has_dynamic_offset: false,
+                        min_binding_size: wgpu::BufferSize::new(
+                            prim_buffer_byte_size,
+                        ),
+                    },
+                    count: None,
                 },
-                count: None,
-            },
-            wgpu::BindGroupLayoutEntry {
-                binding: 2,
-                visibility: wgpu::ShaderStages::VERTEX,
-                ty: wgpu::BindingType::Buffer {
-                    ty: wgpu::BufferBindingType::Storage { read_only: true },
-                    has_dynamic_offset: false,
-                    min_binding_size: wgpu::BufferSize::new(transform_buffer_byte_size),
+                wgpu::BindGroupLayoutEntry {
+                    binding: 2,
+                    visibility: wgpu::ShaderStages::VERTEX,
+                    ty: wgpu::BindingType::Buffer {
+                        ty: wgpu::BufferBindingType::Storage {
+                            read_only: true,
+                        },
+                        has_dynamic_offset: false,
+                        min_binding_size: wgpu::BufferSize::new(
+                            transform_buffer_byte_size,
+                        ),
+                    },
+                    count: None,
                 },
-                count: None,
-            },
-        ],
-    });
+            ],
+        });
 
     let bind_group = device.create_bind_group(&wgpu::BindGroupDescriptor {
         label: Some("Bind group"),
@@ -190,15 +207,21 @@ pub fn build_buffers(device: &wgpu::Device, data: &TessellationData) -> BufferSt
         entries: &[
             wgpu::BindGroupEntry {
                 binding: 0,
-                resource: wgpu::BindingResource::Buffer(globals_ubo.as_entire_buffer_binding()),
+                resource: wgpu::BindingResource::Buffer(
+                    globals_ubo.as_entire_buffer_binding(),
+                ),
             },
             wgpu::BindGroupEntry {
                 binding: 1,
-                resource: wgpu::BindingResource::Buffer(prims_ssbo.as_entire_buffer_binding()),
+                resource: wgpu::BindingResource::Buffer(
+                    prims_ssbo.as_entire_buffer_binding(),
+                ),
             },
             wgpu::BindGroupEntry {
                 binding: 2,
-                resource: wgpu::BindingResource::Buffer(transforms_ssbo.as_entire_buffer_binding()),
+                resource: wgpu::BindingResource::Buffer(
+                    transforms_ssbo.as_entire_buffer_binding(),
+                ),
             },
         ],
     });

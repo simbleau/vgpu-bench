@@ -48,7 +48,11 @@ impl TriangleRenderer {
         self.init(scene, data)
     }
 
-    pub fn init(&mut self, scene: SceneGlobals, data: TessellationData) -> Result<()> {
+    pub fn init(
+        &mut self,
+        scene: SceneGlobals,
+        data: TessellationData,
+    ) -> Result<()> {
         let event_loop_thread: EventLoop<()> =
             winit::platform::unix::EventLoopExtUnix::new_any_thread();
         let window = WindowBuilder::new().build(&event_loop_thread)?;
@@ -82,7 +86,9 @@ impl TriangleRenderer {
                 Event::RedrawRequested(_) => match state.render() {
                     Ok(_) => {}
                     Err(wgpu::SurfaceError::Lost) => state.resize(state.size),
-                    Err(wgpu::SurfaceError::OutOfMemory) => *control_flow = ControlFlow::Exit,
+                    Err(wgpu::SurfaceError::OutOfMemory) => {
+                        *control_flow = ControlFlow::Exit
+                    }
                     Err(e) => eprintln!("{:?}", e),
                 },
                 Event::MainEventsCleared => {
@@ -133,13 +139,18 @@ impl TriangleRenderer {
                             let t2 = Instant::now();
                             let dur = t2.duration_since(t1);
                             {
-                                let mut frame_times = frame_times_arc.lock().unwrap();
+                                let mut frame_times =
+                                    frame_times_arc.lock().unwrap();
                                 frame_times.push(dur);
                             }
                             frame_count += 1
                         }
-                        Err(wgpu::SurfaceError::Lost) => state.resize(state.size),
-                        Err(wgpu::SurfaceError::OutOfMemory) => *control_flow = ControlFlow::Exit,
+                        Err(wgpu::SurfaceError::Lost) => {
+                            state.resize(state.size)
+                        }
+                        Err(wgpu::SurfaceError::OutOfMemory) => {
+                            *control_flow = ControlFlow::Exit
+                        }
                         Err(e) => eprintln!("{:?}", e),
                     }
                 }
@@ -162,7 +173,8 @@ impl TriangleRenderer {
             }
         });
         // Unwrap
-        let frame_times = Mutex::into_inner(Arc::try_unwrap(frame_times).unwrap()).unwrap();
+        let frame_times =
+            Mutex::into_inner(Arc::try_unwrap(frame_times).unwrap()).unwrap();
 
         // Ensure all frames were rendered.
         if frame_times.len() != frames {

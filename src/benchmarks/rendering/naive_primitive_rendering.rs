@@ -18,7 +18,10 @@ impl<W> std::fmt::Debug for PrimitiveNaiveRenderingOptions<W>
 where
     W: std::io::Write,
 {
-    fn fmt(&self, fmt: &mut std::fmt::Formatter<'_>) -> std::result::Result<(), std::fmt::Error> {
+    fn fmt(
+        &self,
+        fmt: &mut std::fmt::Formatter<'_>,
+    ) -> std::result::Result<(), std::fmt::Error> {
         write!(
             fmt,
             "PrimitiveNaiveRenderingOptions {{ backends: {:?}, primitives: {:?}, primitive_count: {:?}, frames: {:?} }}",
@@ -75,7 +78,9 @@ where
     }
 }
 
-pub fn write_frametimes<W>(options: PrimitiveNaiveRenderingOptions<W>) -> Result<()>
+pub fn write_frametimes<W>(
+    options: PrimitiveNaiveRenderingOptions<W>,
+) -> Result<()>
 where
     W: std::io::Write,
 {
@@ -88,12 +93,14 @@ where
     for mut backend in options.backends {
         let backend: &mut dyn Tessellator = backend.as_mut();
         for primitive in &options.primitives {
-            results.extend(rendering_util::benching::timing::time_naive_primitive(
-                backend,
-                primitive.to_owned(),
-                options.primitive_count,
-                options.frames,
-            )?);
+            results.extend(
+                rendering_util::benching::timing::time_naive_primitive(
+                    backend,
+                    primitive.to_owned(),
+                    options.primitive_count,
+                    options.frames,
+                )?,
+            );
         }
     }
     // Bandaid removal

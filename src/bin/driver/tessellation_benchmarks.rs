@@ -1,7 +1,7 @@
-use std::path::PathBuf;
 use crate::dictionary::*;
 use crate::driver::DriverOptions;
 use log::{debug, error, info, trace};
+use std::path::PathBuf;
 use vgpu_bench::benchmarks::tessellation::primitive_timing::PrimitiveTessellationTimingOptions;
 use vgpu_bench::benchmarks::tessellation::profile::SVGProfilingOptions;
 use vgpu_bench::{benchmarks, util};
@@ -22,8 +22,10 @@ where
         .iter()
         .collect::<PathBuf>(),
     );
-    let input_files = util::get_files_with_extension(input_dir_path, false, "svg");
-    let writer = util::csv_writer(output_path.to_owned()).expect("Could not create output file");
+    let input_files =
+        util::get_files_with_extension(input_dir_path, false, "svg");
+    let writer = util::csv_writer(output_path.to_owned())
+        .expect("Could not create output file");
     let backend = tessellation_util::backends::default();
     let options = SVGProfilingOptions::new()
         .writer(writer)
@@ -43,7 +45,8 @@ where
     }
 }
 
-// TODO generate as Primitives -> SVGs instead of using a hardcoded (cached) directory
+// TODO generate as Primitives -> SVGs instead of using a hardcoded (cached)
+// directory
 pub fn profile_svg_primitives(options: &DriverOptions) {
     trace!("Commencing SVG primitive profiling");
 
@@ -60,8 +63,10 @@ pub fn profile_svg_primitives(options: &DriverOptions) {
     let input_dir_path = [ASSETS_DIR_NAME, SVG_DIR_NAME, PRIMITIVES_DIR_NAME]
         .iter()
         .collect::<PathBuf>();
-    let input_files = util::get_files_with_extension(input_dir_path, false, "svg");
-    let writer = util::csv_writer(output_path.to_owned()).expect("Could not create output file");
+    let input_files =
+        util::get_files_with_extension(input_dir_path, false, "svg");
+    let writer = util::csv_writer(output_path.to_owned())
+        .expect("Could not create output file");
     let backend = tessellation_util::backends::default();
     let options = SVGProfilingOptions::new()
         .writer(writer)
@@ -92,7 +97,8 @@ pub fn bench_tessellation_primitives(options: &DriverOptions) {
         .iter()
         .collect::<PathBuf>(),
     );
-    let writer = util::csv_writer(output_path.to_owned()).expect("Could not create output file");
+    let writer = util::csv_writer(output_path.to_owned())
+        .expect("Could not create output file");
     let backend = tessellation_util::backends::default();
     let primitives = svg_generator::primitives::default();
     let trials = 1;
@@ -106,7 +112,9 @@ pub fn bench_tessellation_primitives(options: &DriverOptions) {
     debug!("Options: {:?}", options);
 
     trace!("Commencing SVG primitive tessellation time capture");
-    match benchmarks::tessellation::primitive_timing::write_tessellation_times(options) {
+    match benchmarks::tessellation::primitive_timing::write_tessellation_times(
+        options,
+    ) {
         Ok(_) => {
             trace!("Completed SVG primitive tessellation time capture");
             info!(

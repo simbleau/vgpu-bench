@@ -1,4 +1,7 @@
-use crate::{backends::Tessellator, benching::error::Result, benching::output::SVGProfile};
+use crate::{
+    backends::Tessellator, benching::error::Result,
+    benching::output::SVGProfile,
+};
 use renderer::targets::{SVGDocument, SVGFile};
 use std::path::PathBuf;
 

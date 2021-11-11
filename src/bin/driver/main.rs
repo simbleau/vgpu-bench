@@ -12,8 +12,8 @@ use std::path::PathBuf;
 use vgpu_bench::util::create_file;
 
 pub fn main() {
-    let output_dir =
-        PathBuf::from("output/").join(Local::now().format("%d%mY_%H-%M-%S").to_string());
+    let output_dir = PathBuf::from("output/")
+        .join(Local::now().format("%d%mY_%H-%M-%S").to_string());
 
     Driver::builder()
         .output_dir(output_dir.as_path())
@@ -29,9 +29,19 @@ pub fn main() {
             create_file(output_dir.join("trace.log")).unwrap(),
         ))
         .add(tessellation_benchmarks::bench_tessellation_primitives)
-        .add(|opts| tessellation_benchmarks::profile_svg_files(opts, "assets/svg/examples/"))
+        .add(|opts| {
+            tessellation_benchmarks::profile_svg_files(
+                opts,
+                "assets/svg/examples/",
+            )
+        })
         .add(tessellation_benchmarks::profile_svg_primitives)
-        .add(|opts| naive_rendering_benchmarks::frametimes_svg_files(opts, "assets/svg/examples/"))
+        .add(|opts| {
+            naive_rendering_benchmarks::frametimes_svg_files(
+                opts,
+                "assets/svg/examples/",
+            )
+        })
         .add(naive_rendering_benchmarks::frametimes_svg_primitives)
         .build()
         .run();

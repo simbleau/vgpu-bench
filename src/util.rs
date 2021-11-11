@@ -42,7 +42,11 @@ where
     files
 }
 
-pub fn get_files_with_extension<P, S>(dir: P, recursive: bool, ext: &S) -> Vec<PathBuf>
+pub fn get_files_with_extension<P, S>(
+    dir: P,
+    recursive: bool,
+    ext: &S,
+) -> Vec<PathBuf>
 where
     P: Into<PathBuf>,
     S: AsRef<OsStr> + ?Sized,

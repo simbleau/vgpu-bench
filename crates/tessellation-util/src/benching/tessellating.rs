@@ -1,6 +1,7 @@
 use super::error::Result;
 use super::output::{
-    PrimitiveTessellationTime, SVGDocumentTessellationTime, SVGFileTessellationTime,
+    PrimitiveTessellationTime, SVGDocumentTessellationTime,
+    SVGFileTessellationTime,
 };
 use crate::backends::Tessellator;
 use renderer::targets::{SVGDocument, SVGFile};

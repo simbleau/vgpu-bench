@@ -1,12 +1,17 @@
 use crate::artifacts::{TessellationData, TessellationProfile};
 use crate::backends::Tessellator;
 use lyon::lyon_tessellation::{
-    BuffersBuilder, FillVertexConstructor, StrokeVertexConstructor, VertexBuffers,
+    BuffersBuilder, FillVertexConstructor, StrokeVertexConstructor,
+    VertexBuffers,
 };
 use lyon::math::Point;
 use lyon::path::PathEvent;
-use lyon::tessellation::{self, FillOptions, FillTessellator, StrokeOptions, StrokeTessellator};
-use renderer::artifacts::types::{GpuColor, GpuPrimitive, GpuTransform, GpuVertex};
+use lyon::tessellation::{
+    self, FillOptions, FillTessellator, StrokeOptions, StrokeTessellator,
+};
+use renderer::artifacts::types::{
+    GpuColor, GpuPrimitive, GpuTransform, GpuVertex,
+};
 use renderer::targets::SVGDocument;
 use std::error::Error;
 use std::f64::NAN;
@@ -53,7 +58,9 @@ impl Tessellator for LyonTessellator {
         self.state = Some(state);
     }
 
-    fn get_tessellation_profile(&self) -> Result<TessellationProfile, Box<dyn Error>> {
+    fn get_tessellation_profile(
+        &self,
+    ) -> Result<TessellationProfile, Box<dyn Error>> {
         let data = self.get_tessellation_data()?;
         Ok(TessellationProfile {
             vertices: data.vertices.len() as u32,
@@ -62,7 +69,9 @@ impl Tessellator for LyonTessellator {
         })
     }
 
-    fn get_tessellation_data(&self) -> Result<TessellationData, Box<dyn Error>> {
+    fn get_tessellation_data(
+        &self,
+    ) -> Result<TessellationData, Box<dyn Error>> {
         // Create vertex buffer
         let mut fill_tess = FillTessellator::new();
         let mut stroke_tess = StrokeTessellator::new();
@@ -124,7 +133,8 @@ impl Tessellator for LyonTessellator {
 
                 if let Some(ref stroke) = p.stroke {
                     let (stroke_color, stroke_opts) = convert_stroke(stroke);
-                    primitives.push(GpuPrimitive::new(transform_idx, stroke_color));
+                    primitives
+                        .push(GpuPrimitive::new(transform_idx, stroke_color));
                     let _ = stroke_tess.tessellate(
                         convert_path(p),
                         &stroke_opts.with_tolerance(TOLERANCE),

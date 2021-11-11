@@ -1,5 +1,7 @@
 use crate::artifacts::RenderTimeResult;
-use crate::error::CppRendererError::{Compilation, Initialization, Rendering, Runtime, Staging};
+use crate::error::CppRendererError::{
+    Compilation, Initialization, Rendering, Runtime, Staging,
+};
 use crate::error::Result;
 use crate::rust::Renderer;
 use crate::targets::SVGDocument;
@@ -21,7 +23,8 @@ pub struct CppRenderer {
 impl CppRenderer {
     pub fn from(lib_path: PathBuf) -> Result<Self> {
         unsafe {
-            let library = Library::new(lib_path).map_err(|err| Compilation(err))?;
+            let library =
+                Library::new(lib_path).map_err(|err| Compilation(err))?;
             Ok(Self { library })
         }
     }
@@ -45,7 +48,8 @@ impl Renderer for CppRenderer {
 
     fn stage(&mut self, svg: &SVGDocument) -> Result<()> {
         unsafe {
-            let stage: Symbol<Stage> = self.library.get(b"stage").map_err(|err| Staging(err))?;
+            let stage: Symbol<Stage> =
+                self.library.get(b"stage").map_err(|err| Staging(err))?;
 
             let input: std::ffi::CString = str_to_cstring(svg.content());
             let return_code = stage.call((input.as_ptr(),));

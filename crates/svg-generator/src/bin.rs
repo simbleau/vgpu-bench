@@ -105,11 +105,20 @@ fn main() {
         // Get output path
         let output = PathBuf::from(matches.value_of("output").unwrap());
         // Write file
-        svg_generator::output_svg(options.primitive, options.count, options.rotate, &output)
-            .unwrap();
+        svg_generator::output_svg(
+            options.primitive,
+            options.count,
+            options.rotate,
+            &output,
+        )
+        .unwrap();
     } else {
         // Write to stdout
-        let source = svg_generator::generate_svg(options.primitive, options.count, options.rotate);
+        let source = svg_generator::generate_svg(
+            options.primitive,
+            options.count,
+            options.rotate,
+        );
         println!("{}", source);
     }
 }

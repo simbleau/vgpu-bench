@@ -36,7 +36,12 @@ impl Writer {
         Writer { xml_writer: w }
     }
 
-    pub fn write_primitives(&mut self, primitive: Primitive, count: u32, rotate: bool) {
+    pub fn write_primitives(
+        &mut self,
+        primitive: Primitive,
+        count: u32,
+        rotate: bool,
+    ) {
         let size: i32 = (count as f32).sqrt() as i32;
         let square_size: f32 = (VIEW_MAX - VIEW_MIN) as f32 / size as f32;
         let padding: f32 = 0.1;
@@ -56,7 +61,8 @@ impl Writer {
                     if rotate {
                         // Pre-processing rotation values here
                         let index = row * size + col + 1;
-                        let theta = index as f32 / (size * size) as f32 * 3.14f32;
+                        let theta =
+                            index as f32 / (size * size) as f32 * 3.14f32;
                         let cos_theta = (theta as f32).cos();
                         let sin_theta = (theta as f32).sin();
                         // Rotate points
@@ -89,10 +95,12 @@ impl Writer {
                 let group_start: usize = (row * size + col) as usize;
 
                 // Get the vertices as formatting arguments
-                let artifacts = primitive.vertices() * 2; // 2D points have 2 parts
+                // 2D points have 2 parts
+                let artifacts = primitive.vertices() * 2;
                 let mut arg_buffer: Vec<f32> = vec![0f32; artifacts];
                 for i in 0..artifacts {
-                    *arg_buffer.get_mut(i).unwrap() = verts[group_start * artifacts + i];
+                    *arg_buffer.get_mut(i).unwrap() =
+                        verts[group_start * artifacts + i];
                 }
                 let args = arg_buffer.as_slice();
 
@@ -106,7 +114,8 @@ impl Writer {
                 // Specific rules for primitives
                 if let Primitive::Line = primitive {
                     self.xml_writer.write_attribute("stroke", "black");
-                    let line_thickness: f32 = (VIEW_MAX - VIEW_MIN) as f32 / size as f32 / 5.0f32;
+                    let line_thickness: f32 =
+                        (VIEW_MAX - VIEW_MIN) as f32 / size as f32 / 5.0f32;
                     self.xml_writer
                         .write_attribute("stroke-width", &line_thickness);
                 }
