@@ -1,32 +1,31 @@
-use log::LevelFilter;
+use simplelog::SharedLogger;
 
 pub struct RunOptions {
-    functions: Vec<Box<dyn Fn()>>,
+    pub loggers: Vec<Box<dyn SharedLogger>>,
+    pub functions: Vec<Box<dyn Fn()>>,
 }
 impl RunOptions {
     pub fn builder() -> RunOptionsBuilder {
         RunOptionsBuilder::new()
     }
-
-    pub fn functions(&self) -> &Vec<Box<dyn Fn()>> {
-        &self.functions
-    }
 }
 
 pub struct RunOptionsBuilder {
+    loggers: Vec<Box<dyn SharedLogger>>,
     functions: Vec<Box<dyn Fn()>>,
 }
 impl RunOptionsBuilder {
     fn new() -> Self {
         Self {
+            loggers: Vec::new(),
             functions: Vec::new(),
         }
     }
 }
 
 impl RunOptionsBuilder {
-    pub fn logging(self, level: LevelFilter) -> Self {
-        env_logger::builder().filter_level(level).init();
+    pub fn logger(mut self, logger: Box<dyn SharedLogger>) -> Self {
+        self.loggers.push(logger);
         self
     }
 
@@ -37,6 +36,7 @@ impl RunOptionsBuilder {
 
     pub fn build(self) -> RunOptions {
         RunOptions {
+            loggers: self.loggers,
             functions: self.functions,
         }
     }

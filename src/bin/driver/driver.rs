@@ -1,3 +1,5 @@
+use simplelog::{CombinedLogger, SharedLogger};
+
 use super::RunOptions;
 
 pub struct Driver {
@@ -10,7 +12,11 @@ impl Driver {
     }
 
     pub fn run(self) {
-        for func in self.options.functions() {
+        // Initialize logger
+        CombinedLogger::init(self.options.loggers).unwrap();
+
+        // Run all benchmarks
+        for func in self.options.functions {
             func.call(());
         }
     }

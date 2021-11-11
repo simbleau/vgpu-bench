@@ -9,14 +9,25 @@ mod driver;
 use dictionary::EXAMPLES_ASSETS_DIR;
 use driver::Driver;
 mod run_options;
-use run_options::RunOptions;
 
 use log::LevelFilter;
+use run_options::RunOptions;
+use simplelog::{ColorChoice, Config, TermLogger, TerminalMode, WriteLogger};
 
 pub fn main() {
     Driver::from(
         RunOptions::builder()
-            .logging(LevelFilter::Trace)
+            .logger(WriteLogger::new(
+                LevelFilter::Trace,
+                Config::default(),
+                std::fs::File::create("test.log").unwrap(),
+            ))
+            .logger(TermLogger::new(
+                LevelFilter::Trace,
+                Config::default(),
+                TerminalMode::Mixed,
+                ColorChoice::Auto,
+            ))
             // TODO add bench_tessellation_examples()
             .add(|| tessellation_benchmarks::bench_tessellation_primitives())
             .add(|| tessellation_benchmarks::profile_svg_examples(EXAMPLES_ASSETS_DIR))
