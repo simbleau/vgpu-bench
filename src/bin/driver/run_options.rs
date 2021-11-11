@@ -1,41 +1,36 @@
-use std::path::PathBuf;
+use std::path::Path;
 
-use chrono::Local;
 use simplelog::SharedLogger;
 
-pub struct RunOptions {
-    pub output_dir: PathBuf,
+pub struct RunOptions<'a> {
+    pub output_dir: &'a Path,
     pub loggers: Vec<Box<dyn SharedLogger>>,
-    pub functions: Vec<Box<dyn Fn(&PathBuf)>>,
+    pub functions: Vec<Box<dyn Fn(&'a Path)>>,
 }
-impl RunOptions {
-    pub fn builder() -> RunOptionsBuilder {
+impl<'a> RunOptions<'a> {
+    pub fn builder() -> RunOptionsBuilder<'a> {
         RunOptionsBuilder::new()
     }
 }
 
-pub struct RunOptionsBuilder {
-    output_dir: PathBuf,
+pub struct RunOptionsBuilder<'a> {
+    output_dir: &'a Path,
     loggers: Vec<Box<dyn SharedLogger>>,
-    functions: Vec<Box<dyn Fn(&PathBuf)>>,
+    functions: Vec<Box<dyn Fn(&'a Path)>>,
 }
-impl RunOptionsBuilder {
+impl<'a> RunOptionsBuilder<'a> {
     fn new() -> Self {
         Self {
-            output_dir: PathBuf::from(crate::dictionary::OUTPUT_DIR)
-                .join(Local::now().format("%d%m%Y_%H-%M-%S").to_string()),
+            output_dir: &Path::new("."),
             loggers: Vec::new(),
             functions: Vec::new(),
         }
     }
 }
 
-impl RunOptionsBuilder {
-    pub fn output_dir<P>(mut self, output_dir: P) -> Self
-    where
-        P: Into<PathBuf>,
-    {
-        self.output_dir = output_dir.into();
+impl<'a> RunOptionsBuilder<'a> {
+    pub fn output_dir(mut self, output_dir: &'a Path) -> Self {
+        self.output_dir = output_dir;
         self
     }
 
@@ -44,12 +39,13 @@ impl RunOptionsBuilder {
         self
     }
 
-    pub fn add<F: Fn(&PathBuf) + 'static>(mut self, f: F) -> Self {
+    pub fn add<F: Fn(&'a Path) + 'static>(mut self, f: F) -> Self {
         self.functions.push(Box::new(f));
         self
     }
 
-    pub fn build(self) -> RunOptions {
+    pub fn build(self) -> RunOptions<'a> {
+        // Build loggers
         RunOptions {
             output_dir: self.output_dir,
             loggers: self.loggers,

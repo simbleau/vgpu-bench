@@ -1,4 +1,4 @@
-use std::path::PathBuf;
+use std::path::{Path, PathBuf};
 
 use crate::dictionary::*;
 use const_format::concatcp;
@@ -7,13 +7,15 @@ use vgpu_bench::benchmarks::rendering::naive_primitive_rendering::PrimitiveNaive
 use vgpu_bench::benchmarks::rendering::naive_svg_rendering::SVGNaiveRenderingOptions;
 use vgpu_bench::{benchmarks, util};
 
-pub fn frametimes_svg_examples<P>(input_dir_path: P)
+pub fn frametimes_svg_files<P>(output_dir: &Path, input_dir: P)
 where
     P: Into<PathBuf>,
 {
-    let input_files = util::get_files_with_extension(input_dir_path, false, "svg");
-    let output_path = concatcp![OUTPUT_DIR, DATA, EXAMPLES, SVG, "naive_frametimes.csv"];
-    let writer = util::csv_writer(output_path).expect("Could not create output file");
+    trace!("Commencing naive SVG file rendering for frametime capture");
+
+    let output_path = output_dir.join(concatcp![DATA, EXAMPLES, SVG, "naive_frametimes.csv"]);
+    let input_files = util::get_files_with_extension(input_dir, false, "svg");
+    let writer = util::csv_writer(output_path.to_owned()).expect("Could not create output file");
     let backend = tessellation_util::backends::default();
     let frames = 500;
     let options = SVGNaiveRenderingOptions::new()
@@ -23,22 +25,23 @@ where
         .frames(frames);
     debug!("Options: {:?}", options);
 
-    trace!("Commencing naive SVG example rendering for frametime capture");
     match benchmarks::rendering::naive_svg_rendering::write_frametimes(options) {
         Ok(_) => {
-            trace!("Completed naive SVG example rendering for frametime capture");
+            trace!("Completed naive SVG file rendering for frametime capture");
             info!(
-                "Completed naive SVG example rendering for frametime capture. Output to '{}'",
-                output_path
+                "Completed naive SVG file rendering for frametime capture. Output to '{}'",
+                output_path.display()
             );
         }
         Err(err) => error!("{:?}", err),
     }
 }
 
-pub fn frametimes_svg_primitives() {
-    let output_path = concatcp![OUTPUT_DIR, DATA, PRIMITIVES, SVG, "naive_frametimes.csv"];
-    let writer = util::csv_writer(output_path).expect("Could not create output file");
+pub fn frametimes_svg_primitives(output_dir: &Path) {
+    trace!("Commencing naive SVG primitive rendering for frametime capture");
+
+    let output_path = output_dir.join(concatcp![DATA, PRIMITIVES, SVG, "naive_frametimes.csv"]);
+    let writer = util::csv_writer(output_path.to_owned()).expect("Could not create output file");
     let backend = tessellation_util::backends::default();
     let primitives = svg_generator::primitives::default();
     let primitive_count = 1;
@@ -51,13 +54,12 @@ pub fn frametimes_svg_primitives() {
         .frames(frames);
     debug!("Options: {:?}", options);
 
-    trace!("Commencing naive SVG primitive rendering for frametime capture");
     match benchmarks::rendering::naive_primitive_rendering::write_frametimes(options) {
         Ok(_) => {
             trace!("Completed naive SVG primitive rendering for frametime capture");
             info!(
                 "Completed naive SVG primitive rendering for frametime capture. Output to '{}'",
-                output_path
+                output_path.display()
             );
         }
         Err(err) => error!("{:?}", err),

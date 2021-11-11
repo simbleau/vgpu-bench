@@ -4,12 +4,12 @@ use simplelog::CombinedLogger;
 
 use super::RunOptions;
 
-pub struct Driver {
-    options: RunOptions,
+pub struct Driver<'a> {
+    options: RunOptions<'a>,
 }
 
-impl Driver {
-    pub fn from(options: RunOptions) -> Self {
+impl<'a> Driver<'a> {
+    pub fn from(options: RunOptions<'a>) -> Self {
         Driver { options }
     }
 
@@ -19,7 +19,7 @@ impl Driver {
 
         // Run all benchmarks
         for func in self.options.functions {
-            func(&self.options.output_dir);
+            func(self.options.output_dir);
         }
     }
 }
