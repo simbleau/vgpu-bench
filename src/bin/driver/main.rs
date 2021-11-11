@@ -6,15 +6,12 @@ mod naive_rendering_benchmarks;
 mod run_options;
 mod tessellation_benchmarks;
 
-use std::path::PathBuf;
-
 use chrono::Local;
-use const_format::concatcp;
-use dictionary::*;
 use driver::Driver;
 use log::LevelFilter;
 use run_options::RunOptions;
 use simplelog::{ColorChoice, Config, TermLogger, TerminalMode, WriteLogger};
+use std::path::PathBuf;
 use vgpu_bench::util::create_file;
 
 pub fn main() {
@@ -31,7 +28,7 @@ pub fn main() {
                 create_file(log_file_path).unwrap(),
             ))
             .logger(TermLogger::new(
-                LevelFilter::Trace,
+                LevelFilter::Info,
                 Config::default(),
                 TerminalMode::Mixed,
                 ColorChoice::Auto,

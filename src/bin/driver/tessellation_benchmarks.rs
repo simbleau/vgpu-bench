@@ -1,7 +1,6 @@
 use std::path::{Path, PathBuf};
 
 use crate::dictionary::*;
-use const_format::concatcp;
 use log::{debug, error, info, trace};
 use vgpu_bench::benchmarks::tessellation::primitive_timing::PrimitiveTessellationTimingOptions;
 use vgpu_bench::benchmarks::tessellation::profile::SVGProfilingOptions;
@@ -13,7 +12,16 @@ where
 {
     trace!("Commencing SVG file profiling");
 
-    let output_path = output_dir.join(concatcp![DATA, EXAMPLES, SVG, "profiles.csv"]);
+    let output_path = output_dir.join(
+        [
+            DATA_DIR_NAME,
+            EXAMPLES_DIR_NAME,
+            SVG_DIR_NAME,
+            "profiles.csv",
+        ]
+        .iter()
+        .collect::<PathBuf>(),
+    );
     let input_files = util::get_files_with_extension(input_dir_path, false, "svg");
     let writer = util::csv_writer(output_path.to_owned()).expect("Could not create output file");
     let backend = tessellation_util::backends::default();
@@ -39,8 +47,19 @@ where
 pub fn profile_svg_primitives(output_dir: &Path) {
     trace!("Commencing SVG primitive profiling");
 
-    let output_path = output_dir.join(concatcp![DATA, PRIMITIVES, SVG, "profiles.csv"]);
-    let input_dir_path = concatcp![ASSETS_DIR, SVG, PRIMITIVES];
+    let output_path = output_dir.join(
+        [
+            DATA_DIR_NAME,
+            PRIMITIVES_DIR_NAME,
+            SVG_DIR_NAME,
+            "profiles.csv",
+        ]
+        .iter()
+        .collect::<PathBuf>(),
+    );
+    let input_dir_path = [ASSETS_DIR_NAME, SVG_DIR_NAME, PRIMITIVES_DIR_NAME]
+        .iter()
+        .collect::<PathBuf>();
     let input_files = util::get_files_with_extension(input_dir_path, false, "svg");
     let writer = util::csv_writer(output_path.to_owned()).expect("Could not create output file");
     let backend = tessellation_util::backends::default();
@@ -63,7 +82,16 @@ pub fn profile_svg_primitives(output_dir: &Path) {
 }
 
 pub fn bench_tessellation_primitives(output_dir: &Path) {
-    let output_path = output_dir.join(concatcp![DATA, PRIMITIVES, SVG, "tessellation.csv"]);
+    let output_path = output_dir.join(
+        [
+            DATA_DIR_NAME,
+            PRIMITIVES_DIR_NAME,
+            SVG_DIR_NAME,
+            "tessellation.csv",
+        ]
+        .iter()
+        .collect::<PathBuf>(),
+    );
     let writer = util::csv_writer(output_path.to_owned()).expect("Could not create output file");
     let backend = tessellation_util::backends::default();
     let primitives = svg_generator::primitives::default();

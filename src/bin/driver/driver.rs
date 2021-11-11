@@ -1,8 +1,5 @@
-use std::path::PathBuf;
-
-use simplelog::CombinedLogger;
-
 use super::RunOptions;
+use simplelog::CombinedLogger;
 
 pub struct Driver<'a> {
     options: RunOptions<'a>,

@@ -2,6 +2,8 @@ use std::path::Path;
 
 use simplelog::SharedLogger;
 
+use crate::dictionary::OUTPUT_DIR_NAME;
+
 pub struct RunOptions<'a> {
     pub output_dir: &'a Path,
     pub loggers: Vec<Box<dyn SharedLogger>>,
@@ -21,7 +23,7 @@ pub struct RunOptionsBuilder<'a> {
 impl<'a> RunOptionsBuilder<'a> {
     fn new() -> Self {
         Self {
-            output_dir: &Path::new("."),
+            output_dir: &Path::new(OUTPUT_DIR_NAME),
             loggers: Vec::new(),
             functions: Vec::new(),
         }
