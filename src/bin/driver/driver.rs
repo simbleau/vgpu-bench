@@ -1,4 +1,4 @@
-use simplelog::{CombinedLogger, SharedLogger};
+use simplelog::CombinedLogger;
 
 use super::RunOptions;
 
