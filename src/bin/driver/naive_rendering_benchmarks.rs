@@ -1,17 +1,18 @@
 use crate::dictionary::*;
+use crate::driver::DriverOptions;
 use log::{debug, error, info, trace};
-use std::path::{Path, PathBuf};
+use std::path::PathBuf;
 use vgpu_bench::benchmarks::rendering::naive_primitive_rendering::PrimitiveNaiveRenderingOptions;
 use vgpu_bench::benchmarks::rendering::naive_svg_rendering::SVGNaiveRenderingOptions;
 use vgpu_bench::{benchmarks, util};
 
-pub fn frametimes_svg_files<P>(output_dir: &Path, input_dir: P)
+pub fn frametimes_svg_files<P>(options: &DriverOptions, input_dir: P)
 where
     P: Into<PathBuf>,
 {
     trace!("Commencing naive SVG file rendering for frametime capture");
 
-    let output_path: PathBuf = output_dir.join(
+    let output_path: PathBuf = options.output_dir.join(
         [
             DATA_DIR_NAME,
             EXAMPLES_DIR_NAME,
@@ -44,10 +45,10 @@ where
     }
 }
 
-pub fn frametimes_svg_primitives(output_dir: &Path) {
+pub fn frametimes_svg_primitives(options: &DriverOptions) {
     trace!("Commencing naive SVG primitive rendering for frametime capture");
 
-    let output_path = output_dir.join(
+    let output_path = options.output_dir.join(
         [
             DATA_DIR_NAME,
             PRIMITIVES_DIR_NAME,

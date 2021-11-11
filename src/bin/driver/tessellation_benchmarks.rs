@@ -1,18 +1,18 @@
-use std::path::{Path, PathBuf};
-
+use std::path::PathBuf;
 use crate::dictionary::*;
+use crate::driver::DriverOptions;
 use log::{debug, error, info, trace};
 use vgpu_bench::benchmarks::tessellation::primitive_timing::PrimitiveTessellationTimingOptions;
 use vgpu_bench::benchmarks::tessellation::profile::SVGProfilingOptions;
 use vgpu_bench::{benchmarks, util};
 
-pub fn profile_svg_files<P>(output_dir: &Path, input_dir_path: P)
+pub fn profile_svg_files<P>(options: &DriverOptions, input_dir_path: P)
 where
     P: Into<PathBuf>,
 {
     trace!("Commencing SVG file profiling");
 
-    let output_path = output_dir.join(
+    let output_path = options.output_dir.join(
         [
             DATA_DIR_NAME,
             EXAMPLES_DIR_NAME,
@@ -44,10 +44,10 @@ where
 }
 
 // TODO generate as Primitives -> SVGs instead of using a hardcoded (cached) directory
-pub fn profile_svg_primitives(output_dir: &Path) {
+pub fn profile_svg_primitives(options: &DriverOptions) {
     trace!("Commencing SVG primitive profiling");
 
-    let output_path = output_dir.join(
+    let output_path = options.output_dir.join(
         [
             DATA_DIR_NAME,
             PRIMITIVES_DIR_NAME,
@@ -81,8 +81,8 @@ pub fn profile_svg_primitives(output_dir: &Path) {
     }
 }
 
-pub fn bench_tessellation_primitives(output_dir: &Path) {
-    let output_path = output_dir.join(
+pub fn bench_tessellation_primitives(options: &DriverOptions) {
+    let output_path = options.output_dir.join(
         [
             DATA_DIR_NAME,
             PRIMITIVES_DIR_NAME,
