@@ -1,5 +1,6 @@
 #![feature(format_args_capture)]
 
+mod benchmark;
 mod dictionary;
 mod driver;
 mod naive_rendering_benchmarks;
@@ -28,7 +29,8 @@ pub fn main() {
             Config::default(),
             create_file(output_dir.join("trace.log")).unwrap(),
         ))
-        .add(tessellation_benchmarks::bench_tessellation_primitives)
+        .add(tessellation_benchmarks::X2)
+        /*
         .add(|opts| {
             tessellation_benchmarks::profile_svg_files(
                 opts,
@@ -43,6 +45,7 @@ pub fn main() {
             )
         })
         .add(naive_rendering_benchmarks::frametimes_svg_primitives)
+        */
         .build()
         .run();
 }

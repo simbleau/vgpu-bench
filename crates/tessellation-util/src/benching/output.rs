@@ -10,6 +10,7 @@ pub struct SVGProfile {
 }
 
 #[derive(Debug, Serialize)]
+
 pub struct SVGFileTessellationTime {
     pub tessellator: String,
     pub filename: String,

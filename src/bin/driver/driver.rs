@@ -1,4 +1,4 @@
-use crate::dictionary::OUTPUT_DIR_NAME;
+use crate::{benchmark::Benchmark, dictionary::OUTPUT_DIR_NAME};
 use simplelog::{CombinedLogger, SharedLogger};
 use std::path::Path;
 
@@ -19,7 +19,7 @@ impl Default for DriverOptions<'_> {
 pub struct Driver<'a> {
     options: DriverOptions<'a>,
     loggers: Vec<Box<dyn SharedLogger>>,
-    benchmarks: Vec<Box<dyn Fn(&DriverOptions)>>,
+    benchmarks: Vec<Benchmark>,
 }
 
 impl<'a> Driver<'a> {
@@ -32,8 +32,8 @@ impl<'a> Driver<'a> {
         CombinedLogger::init(self.loggers).unwrap();
 
         // Run all benchmarks
-        for func in self.benchmarks {
-            func(&self.options);
+        for benchmark in self.benchmarks {
+            benchmark.0(&self.options);
         }
     }
 }
@@ -42,7 +42,7 @@ impl<'a> Driver<'a> {
 pub struct DriverBuilder<'a> {
     pub options: DriverOptions<'a>,
     loggers: Vec<Box<dyn SharedLogger>>,
-    benchmarks: Vec<Box<dyn Fn(&DriverOptions)>>,
+    benchmarks: Vec<Benchmark>,
 }
 
 impl<'a> DriverBuilder<'a> {
@@ -64,8 +64,8 @@ impl<'a> DriverBuilder<'a> {
         self
     }
 
-    pub fn add<F: Fn(&DriverOptions) + 'static>(mut self, f: F) -> Self {
-        self.benchmarks.push(Box::new(f));
+    pub fn add(mut self, f: Benchmark) -> Self {
+        self.benchmarks.push(f);
         self
     }
 
