@@ -1,8 +1,12 @@
 use csv::Writer;
 use rendering_util::benching::output::SVGNaiveRenderTime;
 use rendering_util::benching::Result;
+use std::io::Write;
 use std::path::PathBuf;
 use tessellation_util::backends::Tessellator;
+
+use crate::benchmarks::Benchmark;
+use crate::driver::DriverOptions;
 
 pub struct SVGNaiveRenderingOptions<W>
 where
@@ -73,9 +77,18 @@ where
         self.frames = frames;
         self
     }
+
+    pub fn build(self) -> Benchmark {
+        let b = Benchmark::from(move |x| {
+            let x = &self;
+            Vec::new()
+        });
+
+        b
+    }
 }
 
-pub fn write_frametimes<W>(options: SVGNaiveRenderingOptions<W>) -> Result<()>
+pub fn frametimes<W>(options: SVGNaiveRenderingOptions<W>) -> Result<()>
 where
     W: std::io::Write,
 {

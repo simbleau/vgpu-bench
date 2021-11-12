@@ -1,4 +1,5 @@
-use crate::{benchmark::Benchmark, dictionary::OUTPUT_DIR_NAME};
+use super::dictionary::*;
+use crate::benchmarks::Benchmark;
 use simplelog::{CombinedLogger, SharedLogger};
 use std::path::Path;
 
@@ -33,7 +34,7 @@ impl<'a> Driver<'a> {
 
         // Run all benchmarks
         for benchmark in self.benchmarks {
-            benchmark.0(&self.options);
+            benchmark.call(&self.options);
         }
     }
 }

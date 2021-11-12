@@ -6,4 +6,5 @@ mod error;
 pub use error::Result;
 
 pub mod benchmarks;
+pub mod driver;
 pub mod util;

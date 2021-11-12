@@ -1,16 +1,13 @@
 #![feature(format_args_capture)]
 
-mod benchmark;
-mod dictionary;
-mod driver;
 mod naive_rendering_benchmarks;
 mod tessellation_benchmarks;
+
 use chrono::Local;
-use driver::Driver;
 use log::LevelFilter;
 use simplelog::{ColorChoice, Config, TermLogger, TerminalMode, WriteLogger};
 use std::path::PathBuf;
-use vgpu_bench::util::create_file;
+use vgpu_bench::{driver::Driver, util::create_file};
 
 pub fn main() {
     let output_dir = PathBuf::from("output/")
@@ -29,7 +26,7 @@ pub fn main() {
             Config::default(),
             create_file(output_dir.join("trace.log")).unwrap(),
         ))
-        .add(tessellation_benchmarks::X2)
+        .add(vgpu_bench::benchmarks::test_benchmark::testy())
         /*
         .add(|opts| {
             tessellation_benchmarks::profile_svg_files(

@@ -1,9 +1,8 @@
-use crate::dictionary::*;
-use crate::driver::DriverOptions;
 use log::{debug, error, info, trace};
 use std::path::PathBuf;
 use vgpu_bench::benchmarks::rendering::naive_primitive_rendering::PrimitiveNaiveRenderingOptions;
 use vgpu_bench::benchmarks::rendering::naive_svg_rendering::SVGNaiveRenderingOptions;
+use vgpu_bench::driver::{dictionary::*, DriverOptions};
 use vgpu_bench::{benchmarks, util};
 
 pub fn frametimes_svg_files<P>(options: &DriverOptions, input_dir: P)
@@ -34,8 +33,7 @@ where
         .frames(frames);
     debug!("Options: {:?}", options);
 
-    match benchmarks::rendering::naive_svg_rendering::write_frametimes(options)
-    {
+    match benchmarks::rendering::naive_svg_rendering::frametimes(options) {
         Ok(_) => {
             trace!("Completed naive SVG file rendering for frametime capture");
             info!(
