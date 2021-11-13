@@ -37,14 +37,14 @@ pub fn main() {
         ))
         .add(
             TimeNaiveSVGFileRendering::new()
-                .to_file("naive_file_frametimes.csv")
+                .to_file("naive_file_frametimes")
                 .frames(1)
                 .backend(tessellation_util::backends::default())
                 .assets(util::get_files("assets/svg/examples", false)),
         )
         .add(
             TimeNaiveSVGPrimitiveRendering::new()
-                .to_file("naive_primitive_frametimes.csv")
+                .to_file("naive_primitive_frametimes")
                 .backend(tessellation_util::backends::default())
                 .frames(1)
                 .primitives(svg_generator::primitives::default())
@@ -52,13 +52,13 @@ pub fn main() {
         )
         .add(
             ProfileSVGFiles::new()
-                .to_file("file_profiles.csv")
+                .to_file("file_profiles")
                 .backend(tessellation_util::backends::default())
                 .assets(util::get_files("assets/svg/examples", false)),
         )
         .add(
             ProfileSVGPrimitives::new()
-                .to_file("primitive_profiles.csv")
+                .to_file("primitive_profiles")
                 .backend(tessellation_util::backends::default())
                 .primitives(svg_generator::primitives::default())
                 .primitive_count(10)
