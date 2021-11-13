@@ -1,26 +1,20 @@
 use crate::benchmarks::{Benchmark, BenchmarkBuilder};
 use crate::driver::dictionary::*;
 use crate::util;
-use csv::Writer;
+use crate::Result;
 use log::{debug, info, trace, warn};
 use rendering_util::benching::output::SVGNaiveRenderTime;
-use rendering_util::benching::Result;
+use std::ffi::OsStr;
 use std::path::PathBuf;
 use tessellation_util::backends::Tessellator;
 
-pub struct NaiveSVGRenderingBuilder<W>
-where
-    W: std::io::Write,
-{
+pub struct TimeNaiveSVGFileRendering {
     backends: Vec<Box<dyn Tessellator>>,
     assets: Vec<PathBuf>,
     frames: usize,
-    writer: Option<Writer<W>>,
+    output: Option<&'static str>,
 }
-impl<W> std::fmt::Debug for NaiveSVGRenderingBuilder<W>
-where
-    W: std::io::Write,
-{
+impl std::fmt::Debug for TimeNaiveSVGFileRendering {
     fn fmt(
         &self,
         fmt: &mut std::fmt::Formatter<'_>,
@@ -33,16 +27,13 @@ where
     }
 }
 
-impl<W> NaiveSVGRenderingBuilder<W>
-where
-    W: std::io::Write + 'static,
-{
+impl TimeNaiveSVGFileRendering {
     pub fn new() -> Self {
-        NaiveSVGRenderingBuilder {
+        TimeNaiveSVGFileRendering {
             backends: Vec::new(),
             assets: Vec::new(),
             frames: 0,
-            writer: None,
+            output: None,
         }
     }
 
@@ -55,7 +46,15 @@ where
     where
         P: Into<PathBuf>,
     {
-        self.assets.push(path.into());
+        let pb: PathBuf = path.into();
+        if pb.exists()
+            && pb.is_file()
+            && pb.extension() == Some(OsStr::new("svg"))
+        {
+            self.assets.push(pb);
+        } else {
+            warn!("'{}' is not a .svg file; file dropped", pb.display());
+        }
         self
     }
 
@@ -64,12 +63,23 @@ where
         I: IntoIterator,
         I::Item: Into<PathBuf>,
     {
-        self.assets.extend(assets.into_iter().map(|a| a.into()));
+        self.assets.extend(assets.into_iter().filter_map(|path| {
+            let pb: PathBuf = path.into();
+            if pb.exists()
+                && pb.is_file()
+                && pb.extension() == Some(OsStr::new("svg"))
+            {
+                Some(pb)
+            } else {
+                warn!("'{}' is not a .svg file; file dropped", pb.display());
+                None
+            }
+        }));
         self
     }
 
-    pub fn writer(mut self, writer: Writer<W>) -> Self {
-        self.writer = Some(writer);
+    pub fn to_file(mut self, path: &'static str) -> Self {
+        self.output = Some(path);
         self
     }
 
@@ -79,34 +89,20 @@ where
     }
 }
 
-impl<W> BenchmarkBuilder for NaiveSVGRenderingBuilder<W>
-where
-    W: std::io::Write + 'static,
-{
+impl BenchmarkBuilder for TimeNaiveSVGFileRendering {
     fn build(self) -> Benchmark {
         // Input check and sanitizing
-        assert!(self.backends.len() > 0, "No backends were provided");
-        assert!(self.assets.len() > 0, "No assets were found or provided");
-        assert!(self.frames > 0, "Frames must be greater than 0");
-        if self.writer.is_none() {
-            warn!("No writer was provided")
+        assert!(self.backends.len() > 0, "no backends were provided");
+        assert!(self.assets.len() > 0, "no assets were found or provided");
+        assert!(self.frames > 0, "frames must be greater than 0");
+        if self.output.is_none() {
+            warn!("no output path was provided; results will be dropped")
         };
 
         // Write benchmark
         Benchmark::from(move |options| {
-            trace!("Commencing naive SVG file rendering frametime capture");
-            debug!("Options: {:?}", self);
-
-            let output_path: PathBuf = options.output_dir.join(
-                [
-                    DATA_DIR_NAME,
-                    EXAMPLES_DIR_NAME,
-                    SVG_DIR_NAME,
-                    "naive_frametimes.csv", // TODO make this an option
-                ]
-                .iter()
-                .collect::<PathBuf>(),
-            );
+            trace!("commencing naive SVG file rendering frametime capture");
+            debug!("options: {:?}", self);
 
             // Bandaid fix: wgpu uses the same logger - Disable logging
             // temporarily
@@ -130,49 +126,25 @@ where
             log::set_max_level(prev_level);
 
             // Write results
-            if let Some(mut writer) = self.writer {
+            if let Some(output) = self.output {
+                let output_path: PathBuf = options.output_dir.join(
+                    [DATA_DIR_NAME, EXAMPLES_DIR_NAME, SVG_DIR_NAME, output]
+                        .iter()
+                        .collect::<PathBuf>(),
+                );
+                let mut writer = util::csv_writer(output_path.to_owned())?;
                 for result in results {
                     writer.serialize(result)?;
                 }
                 writer.flush()?;
+                info!(
+                    "output naive SVG file rendering frametime capture to '{}'",
+                    output_path.display()
+                );
             }
 
-            // Return results
-            Ok(Vec::new())
+            trace!("completed naive SVG file rendering frametime capture");
+            Ok(())
         })
     }
-}
-
-pub fn frametimes<W>(options: NaiveSVGRenderingBuilder<W>) -> Result<()>
-where
-    W: std::io::Write,
-{
-    // TODO remove this bandaid
-    // Bandaid fix: wgpu uses the same logger - Disable logging temporarily
-    let prev_level = log::max_level();
-    log::set_max_level(log::LevelFilter::Off);
-    // Collect results
-    let mut results: Vec<SVGNaiveRenderTime> = Vec::new();
-    for mut backend in options.backends {
-        let backend: &mut dyn Tessellator = backend.as_mut();
-        for file_path in &options.assets {
-            results.extend(rendering_util::benching::timing::time_naive_svg(
-                backend,
-                file_path,
-                options.frames,
-            )?);
-        }
-    }
-    // Bandaid removal
-    log::set_max_level(prev_level);
-
-    // Write results
-    if let Some(mut writer) = options.writer {
-        for result in results {
-            writer.serialize(result)?;
-        }
-        writer.flush()?;
-    }
-
-    Ok(())
 }

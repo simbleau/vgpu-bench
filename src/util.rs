@@ -1,7 +1,7 @@
 use csv::Writer;
 use walkdir::WalkDir;
 
-use crate::error::Result;
+use crate::Result;
 use std::{ffi::OsStr, fs::File, path::PathBuf};
 
 pub fn csv_writer<P>(path: P) -> Result<Writer<File>>
