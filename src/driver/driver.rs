@@ -1,6 +1,6 @@
 use super::dictionary::*;
-use crate::benchmarks::Benchmark;
-use log::error;
+use crate::benchmarks::{Benchmark, BenchmarkFn};
+use log::{error, info};
 use simplelog::{CombinedLogger, SharedLogger};
 use std::path::Path;
 
@@ -21,7 +21,7 @@ impl Default for DriverOptions<'_> {
 pub struct Driver<'a> {
     options: DriverOptions<'a>,
     loggers: Vec<Box<dyn SharedLogger>>,
-    benchmarks: Vec<Benchmark>,
+    benchmarks: Vec<Box<dyn Benchmark>>,
 }
 
 impl<'a> Driver<'a> {
@@ -32,10 +32,11 @@ impl<'a> Driver<'a> {
     pub fn run(self) {
         // Initialize logger
         CombinedLogger::init(self.loggers).unwrap();
+        info!("Logging started...");
 
         // Run all benchmarks
-        for benchmark in self.benchmarks {
-            if let Err(err) = benchmark.call(&self.options) {
+        for builder in self.benchmarks {
+            if let Err(err) = builder.build().call(&self.options) {
                 error!("Benchmark Failed: {}", err);
             }
         }
@@ -46,7 +47,7 @@ impl<'a> Driver<'a> {
 pub struct DriverBuilder<'a> {
     pub options: DriverOptions<'a>,
     loggers: Vec<Box<dyn SharedLogger>>,
-    benchmarks: Vec<Benchmark>,
+    benchmarks: Vec<Box<dyn Benchmark>>,
 }
 
 impl<'a> DriverBuilder<'a> {
@@ -68,8 +69,11 @@ impl<'a> DriverBuilder<'a> {
         self
     }
 
-    pub fn add(mut self, f: Benchmark) -> Self {
-        self.benchmarks.push(f);
+    pub fn add<B>(mut self, benchmark: B) -> Self
+    where
+        B: Benchmark + 'static,
+    {
+        self.benchmarks.push(Box::new(benchmark));
         self
     }
 

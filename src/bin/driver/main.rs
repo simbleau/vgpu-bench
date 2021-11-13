@@ -9,8 +9,7 @@ use simplelog::{ColorChoice, Config, TermLogger, TerminalMode, WriteLogger};
 use std::path::PathBuf;
 use vgpu_bench::{
     benchmarks::{
-        rendering::naive_svg_rendering::TimeNaiveSVGFileRendering,
-        BenchmarkBuilder,
+        rendering::naive_svg_rendering::TimeNaiveSVGFileRendering, Benchmark,
     },
     driver::{dictionary::*, Driver},
     util::{self, create_file},
@@ -38,12 +37,7 @@ pub fn main() {
                 .to_file("naive_frametimes.csv")
                 .frames(1)
                 .backend(tessellation_util::backends::default())
-                .assets(util::get_files_with_extension(
-                    "assets/svg/examples",
-                    false,
-                    "svg",
-                ))
-                .build(),
+                .assets(util::get_files("assets/svg/examples", false)),
         )
         /*
         .add(|opts| {

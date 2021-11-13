@@ -3,7 +3,7 @@ use std::path::PathBuf;
 use tessellation_util::benching::output::PrimitiveTessellationTime;
 use vgpu_bench::benchmarks::tessellation::primitive_timing::PrimitiveTessellationTimingOptions;
 use vgpu_bench::benchmarks::tessellation::profile::SVGProfilingOptions;
-use vgpu_bench::benchmarks::Benchmark;
+use vgpu_bench::benchmarks::BenchmarkFn;
 use vgpu_bench::driver::dictionary::*;
 use vgpu_bench::driver::DriverOptions;
 use vgpu_bench::{benchmarks, util};

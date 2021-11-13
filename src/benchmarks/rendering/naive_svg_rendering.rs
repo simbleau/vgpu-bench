@@ -1,4 +1,4 @@
-use crate::benchmarks::{Benchmark, BenchmarkBuilder};
+use crate::benchmarks::{Benchmark, BenchmarkFn};
 use crate::driver::dictionary::*;
 use crate::util;
 use crate::Result;
@@ -8,23 +8,12 @@ use std::ffi::OsStr;
 use std::path::PathBuf;
 use tessellation_util::backends::Tessellator;
 
+#[derive(Debug)]
 pub struct TimeNaiveSVGFileRendering {
     backends: Vec<Box<dyn Tessellator>>,
     assets: Vec<PathBuf>,
     frames: usize,
     output: Option<&'static str>,
-}
-impl std::fmt::Debug for TimeNaiveSVGFileRendering {
-    fn fmt(
-        &self,
-        fmt: &mut std::fmt::Formatter<'_>,
-    ) -> std::result::Result<(), std::fmt::Error> {
-        write!(
-            fmt,
-            "SVGNaiveRenderingOptions {{ backends: {:?}, assets: {:?}, frames: {:?} }}",
-            self.backends, self.assets, self.frames
-        )
-    }
 }
 
 impl TimeNaiveSVGFileRendering {
@@ -46,15 +35,7 @@ impl TimeNaiveSVGFileRendering {
     where
         P: Into<PathBuf>,
     {
-        let pb: PathBuf = path.into();
-        if pb.exists()
-            && pb.is_file()
-            && pb.extension() == Some(OsStr::new("svg"))
-        {
-            self.assets.push(pb);
-        } else {
-            warn!("'{}' is not a .svg file; file dropped", pb.display());
-        }
+        self.assets.push(path.into());
         self
     }
 
@@ -63,18 +44,8 @@ impl TimeNaiveSVGFileRendering {
         I: IntoIterator,
         I::Item: Into<PathBuf>,
     {
-        self.assets.extend(assets.into_iter().filter_map(|path| {
-            let pb: PathBuf = path.into();
-            if pb.exists()
-                && pb.is_file()
-                && pb.extension() == Some(OsStr::new("svg"))
-            {
-                Some(pb)
-            } else {
-                warn!("'{}' is not a .svg file; file dropped", pb.display());
-                None
-            }
-        }));
+        self.assets
+            .extend(assets.into_iter().map(|path| path.into()));
         self
     }
 
@@ -89,18 +60,37 @@ impl TimeNaiveSVGFileRendering {
     }
 }
 
-impl BenchmarkBuilder for TimeNaiveSVGFileRendering {
-    fn build(self) -> Benchmark {
-        // Input check and sanitizing
+impl Benchmark for TimeNaiveSVGFileRendering {
+    fn build(self: Box<Self>) -> BenchmarkFn {
+        // Sanitize assets
+        let assets = self
+            .assets
+            .iter()
+            .filter_map(|pb| {
+                if pb.exists()
+                    && pb.is_file()
+                    && pb.extension() == Some(OsStr::new("svg"))
+                {
+                    Some(pb.to_owned())
+                } else {
+                    warn!(
+                        "'{}' is not a .svg file; file dropped",
+                        pb.display()
+                    );
+                    None
+                }
+            })
+            .collect::<Vec<PathBuf>>();
+        // Input check
+        assert!(assets.len() > 0, "no assets were found or provided");
         assert!(self.backends.len() > 0, "no backends were provided");
-        assert!(self.assets.len() > 0, "no assets were found or provided");
         assert!(self.frames > 0, "frames must be greater than 0");
         if self.output.is_none() {
             warn!("no output path was provided; results will be dropped")
         };
 
         // Write benchmark
-        Benchmark::from(move |options| {
+        BenchmarkFn::from(move |options| {
             trace!("commencing naive SVG file rendering frametime capture");
             debug!("options: {:?}", self);
 
@@ -112,7 +102,7 @@ impl BenchmarkBuilder for TimeNaiveSVGFileRendering {
             let mut results: Vec<SVGNaiveRenderTime> = Vec::new();
             for mut backend in self.backends {
                 let backend: &mut dyn Tessellator = backend.as_mut();
-                for file_path in &self.assets {
+                for file_path in &assets {
                     results.extend(
                         rendering_util::benching::timing::time_naive_svg(
                             backend,

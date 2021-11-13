@@ -1,10 +1,9 @@
 use crate::driver::DriverOptions;
 use anyhow::Result;
-use erased_serde::Serialize;
 
-pub struct Benchmark(Box<dyn FnOnce(&DriverOptions) -> Result<()>>);
+pub struct BenchmarkFn(Box<dyn FnOnce(&DriverOptions) -> Result<()>>);
 
-impl Benchmark {
+impl BenchmarkFn {
     pub fn call(self, options: &DriverOptions) -> Result<()> {
         self.0(options)?;
         Ok(())
@@ -14,10 +13,10 @@ impl Benchmark {
     where
         F: FnOnce(&DriverOptions) -> Result<()> + 'static,
     {
-        Benchmark(Box::new(function))
+        BenchmarkFn(Box::new(function))
     }
 }
 
-pub trait BenchmarkBuilder {
-    fn build(self) -> Benchmark;
+pub trait Benchmark {
+    fn build(self: Box<Self>) -> BenchmarkFn;
 }
