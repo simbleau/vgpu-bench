@@ -64,6 +64,14 @@ impl TimeNaiveSVGPrimitiveRendering {
 impl Benchmark for TimeNaiveSVGPrimitiveRendering {
     fn build(self: Box<Self>) -> BenchmarkFn {
         // Input check
+        if let Some(path) = self.output {
+            assert!(
+                PathBuf::from(path).is_relative(),
+                "{path} is not a relative path"
+            );
+        } else {
+            warn!("no output path was provided; results will be dropped");
+        }
         assert!(self.backends.len() > 0, "no backends were provided");
         assert!(self.primitives.len() > 0, "no primitive were provided");
         assert!(
@@ -71,9 +79,6 @@ impl Benchmark for TimeNaiveSVGPrimitiveRendering {
             "primitive count must be greater than 0"
         );
         assert!(self.frames > 0, "frames must be greater than 0");
-        if self.output.is_none() {
-            warn!("no output path was provided; results will be dropped")
-        };
 
         // Write benchmark
         BenchmarkFn::from(move |options| {
@@ -105,20 +110,16 @@ impl Benchmark for TimeNaiveSVGPrimitiveRendering {
             log::set_max_level(prev_level);
 
             // Write results
-            if let Some(output) = self.output {
-                let output_path: PathBuf = options.output_dir.join(
-                    [DATA_DIR_NAME, EXAMPLES_DIR_NAME, SVG_DIR_NAME, output]
-                        .iter()
-                        .collect::<PathBuf>(),
-                );
-                let mut writer = util::csv_writer(output_path.to_owned())?;
+            if let Some(path) = self.output {
+                let mut writer =
+                    util::csv_writer_relative(options.output_dir.join(path))?;
                 for result in results {
                     writer.serialize(result)?;
                 }
                 writer.flush()?;
                 info!(
                     "output naive SVG primitive rendering frametime capture to '{}'",
-                    output_path.display()
+                    self.output.unwrap() // Safety: checked during input check
                 );
             }
 

@@ -1,6 +1,6 @@
 use super::dictionary::*;
 use crate::benchmarks::Benchmark;
-use log::{error, info};
+use log::{error, info, trace};
 use simplelog::{CombinedLogger, SharedLogger};
 use std::path::Path;
 
@@ -32,14 +32,24 @@ impl<'a> Driver<'a> {
     pub fn run(self) {
         // Initialize logger
         CombinedLogger::init(self.loggers).unwrap();
-        info!("Logging started...");
+        info!("logging started");
+
+        // Build all benchmarks
+        trace!("commencing driver building");
+        let mut benchmarks = Vec::new();
+        for builder in self.benchmarks {
+            benchmarks.push(builder.build())
+        }
+        trace!("completed driver build");
 
         // Run all benchmarks
-        for builder in self.benchmarks {
-            if let Err(err) = builder.build().call(&self.options) {
+        trace!("commencing benchmarks");
+        for benchmark in benchmarks {
+            if let Err(err) = benchmark.call(&self.options) {
                 error!("Benchmark Failed: {}", err);
             }
         }
+        trace!("completed benchmarks");
     }
 }
 

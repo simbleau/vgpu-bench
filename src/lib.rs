@@ -1,3 +1,5 @@
+#![feature(format_args_capture)]
+
 extern crate rendering_util;
 extern crate svg_generator;
 extern crate tessellation_util;

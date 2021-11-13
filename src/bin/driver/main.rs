@@ -31,7 +31,6 @@ pub fn main() {
             Config::default(),
             create_file(output_dir.join("trace.log")).unwrap(),
         ))
-        /*
         .add(
             TimeNaiveSVGFileRendering::new()
                 .to_file("naive_file_frametimes.csv")
@@ -39,12 +38,11 @@ pub fn main() {
                 .backend(tessellation_util::backends::default())
                 .assets(util::get_files("assets/svg/examples", false)),
         )
-        */
         .add(
             TimeNaiveSVGPrimitiveRendering::new()
-                .to_file("naive_primitive_frametimes.csv")
+                .to_file("/naive_primitive_frametimes.csv")
                 .backend(tessellation_util::backends::default())
-                .frames(100)
+                .frames(1)
                 .primitives(svg_generator::primitives::default())
                 .primitive_count(1),
         )

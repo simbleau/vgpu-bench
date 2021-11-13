@@ -1,8 +1,22 @@
+use super::Result;
 use csv::Writer;
+use std::{ffi::OsStr, fs::File, path::PathBuf};
 use walkdir::WalkDir;
 
-use crate::Result;
-use std::{ffi::OsStr, fs::File, path::PathBuf};
+pub fn csv_writer_relative<P>(relative_path: P) -> Result<Writer<File>>
+where
+    P: Into<PathBuf>,
+{
+    let path = relative_path.into();
+    if path.is_relative() {
+        Ok(csv_writer(path)?)
+    } else {
+        Err(anyhow::anyhow!(
+            "Argument '{}' is not a relative path",
+            path.display()
+        ))
+    }
+}
 
 pub fn csv_writer<P>(path: P) -> Result<Writer<File>>
 where
