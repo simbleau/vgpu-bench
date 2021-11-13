@@ -1,6 +1,7 @@
 use crate::benchmarks::{Benchmark, BenchmarkFn};
 use crate::driver::dictionary::*;
-use crate::util;
+use crate::Result;
+use crate::{log_assert, util};
 use log::{debug, info, trace, warn};
 use rendering_util::benching::output::PrimitiveNaiveRenderTime;
 use std::path::PathBuf;
@@ -62,23 +63,23 @@ impl TimeNaiveSVGPrimitiveRendering {
 }
 
 impl Benchmark for TimeNaiveSVGPrimitiveRendering {
-    fn build(self: Box<Self>) -> BenchmarkFn {
+    fn build(self: Box<Self>) -> Result<BenchmarkFn> {
         // Input check
         if let Some(path) = self.output {
-            assert!(
+            log_assert!(
                 PathBuf::from(path).is_relative(),
                 "{path} is not a relative path"
             );
         } else {
             warn!("no output path was provided; results will be dropped");
         }
-        assert!(self.backends.len() > 0, "no backends were provided");
-        assert!(self.primitives.len() > 0, "no primitive were provided");
-        assert!(
+        log_assert!(self.backends.len() > 0, "no backends were provided");
+        log_assert!(self.primitives.len() > 0, "no primitive were provided");
+        log_assert!(
             self.primitive_count > 0,
             "primitive count must be greater than 0"
         );
-        assert!(self.frames > 0, "frames must be greater than 0");
+        log_assert!(self.frames > 0, "frames must be greater than 0");
 
         // Write benchmark
         BenchmarkFn::from(move |options| {

@@ -1,6 +1,7 @@
 use crate::benchmarks::{Benchmark, BenchmarkFn};
 use crate::driver::dictionary::*;
-use crate::util;
+use crate::Result;
+use crate::{log_assert, util};
 use log::{debug, info, trace, warn};
 use rendering_util::benching::output::SVGNaiveRenderTime;
 use std::ffi::OsStr;
@@ -60,7 +61,7 @@ impl TimeNaiveSVGFileRendering {
 }
 
 impl Benchmark for TimeNaiveSVGFileRendering {
-    fn build(self: Box<Self>) -> BenchmarkFn {
+    fn build(self: Box<Self>) -> Result<BenchmarkFn> {
         // Sanitize input assets
         let assets = self
             .assets
@@ -84,14 +85,15 @@ impl Benchmark for TimeNaiveSVGFileRendering {
         if let Some(path) = self.output {
             assert!(
                 PathBuf::from(path).is_relative(),
-                "{path} is not a relative path"
+                "{} is not a relative path",
+                path
             );
         } else {
             warn!("no output path was provided; results will be dropped");
         }
-        assert!(assets.len() > 0, "no assets were found or provided");
-        assert!(self.backends.len() > 0, "no backends were provided");
-        assert!(self.frames > 0, "frames must be greater than 0");
+        log_assert!(assets.len() > 0, "no assets were found or provided");
+        log_assert!(self.backends.len() > 0, "no backends were provided");
+        log_assert!(self.frames > 0, "frames must be greater than 0");
 
         // Write benchmark
         BenchmarkFn::from(move |options| {

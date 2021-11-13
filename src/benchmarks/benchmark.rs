@@ -9,14 +9,14 @@ impl BenchmarkFn {
         Ok(())
     }
 
-    pub fn from<F>(function: F) -> Self
+    pub fn from<F>(function: F) -> Result<Self>
     where
         F: FnOnce(&DriverOptions) -> Result<()> + 'static,
     {
-        BenchmarkFn(Box::new(function))
+        Ok(BenchmarkFn(Box::new(function)))
     }
 }
 
 pub trait Benchmark {
-    fn build(self: Box<Self>) -> BenchmarkFn;
+    fn build(self: Box<Self>) -> Result<BenchmarkFn>;
 }

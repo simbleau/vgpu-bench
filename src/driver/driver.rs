@@ -38,15 +38,21 @@ impl<'a> Driver<'a> {
         trace!("commencing driver building");
         let mut benchmarks = Vec::new();
         for builder in self.benchmarks {
-            benchmarks.push(builder.build())
+            match builder.build() {
+                Ok(b) => benchmarks.push(b),
+                Err(e) => {
+                    error!("benchmark build failed: {}", e);
+                    panic!("{}", e);
+                }
+            }
         }
         trace!("completed driver build");
 
         // Run all benchmarks
         trace!("commencing benchmarks");
         for benchmark in benchmarks {
-            if let Err(err) = benchmark.call(&self.options) {
-                error!("Benchmark Failed: {}", err);
+            if let Err(e) = benchmark.call(&self.options) {
+                error!("benchmark failed: {}", e);
             }
         }
         trace!("completed benchmarks");
