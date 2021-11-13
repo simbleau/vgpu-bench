@@ -102,7 +102,7 @@ impl Benchmark for ProfileSVGPrimitives {
 
             // Write results
             if let Some(path) = self.output {
-                let output_path = options.output_dir.join(path);
+                let mut output_path = options.output_dir.join(path);
                 output_path.set_extension("csv");
                 let mut writer = util::csv_writer_relative(&output_path)?;
                 for result in results {
