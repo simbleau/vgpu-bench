@@ -3,7 +3,6 @@ use crate::Result;
 use crate::{log_assert, util};
 use log::{debug, info, trace, warn};
 use rendering_util::benching::output::SVGNaiveRenderTime;
-use std::ffi::OsStr;
 use std::path::PathBuf;
 use tessellation_util::backends::Tessellator;
 

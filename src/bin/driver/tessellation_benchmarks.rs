@@ -5,49 +5,6 @@ use vgpu_bench::driver::dictionary::*;
 use vgpu_bench::driver::DriverOptions;
 use vgpu_bench::{benchmarks, util};
 
-pub fn testx(options: &DriverOptions) -> Vec<Box<dyn erased_serde::Serialize>> {
-    let output_path = options.output_dir.join(
-        [
-            DATA_DIR_NAME,
-            PRIMITIVES_DIR_NAME,
-            SVG_DIR_NAME,
-            "tessellation.csv",
-        ]
-        .iter()
-        .collect::<PathBuf>(),
-    );
-    let writer = util::csv_writer(output_path.to_owned())
-        .expect("Could not create output file");
-    let backend = tessellation_util::backends::default();
-    let primitives = svg_generator::primitives::default();
-    let trials = 1;
-    let options = PrimitiveTessellationTimingOptions::new()
-        .writer(writer)
-        .backend(backend)
-        .primitives(primitives)
-        .primitive_count(10)
-        .primitives_counts((100..=500).step_by(100 as usize))
-        .trials(trials);
-    debug!("Options: {:?}", options);
-
-    trace!("Commencing SVG primitive tessellation time capture");
-
-    // Get result
-    let result =
-        benchmarks::tessellation::primitive_timing::tessellation_times(options)
-            .unwrap(); // ugly unwrap, ignore
-
-    let converted: Vec<Box<dyn erased_serde::Serialize>> = result
-        .into_iter()
-        .map(|x| {
-            let y: Box<dyn erased_serde::Serialize> = Box::new(x);
-            y
-        })
-        .collect();
-
-    converted
-}
-
 pub fn bench_tessellation_primitives(options: &DriverOptions) {
     let output_path = options.output_dir.join(
         [

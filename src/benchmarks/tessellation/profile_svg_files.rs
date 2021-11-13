@@ -3,8 +3,10 @@ use crate::{
     log_assert, util, Result,
 };
 use log::{debug, info, trace, warn};
-use std::{ffi::OsStr, path::PathBuf};
-use tessellation_util::{backends::Tessellator, benching::output::SVGProfile};
+use std::path::PathBuf;
+use tessellation_util::{
+    backends::Tessellator, benching::output::SVGFileProfile,
+};
 
 #[derive(Debug)]
 pub struct ProfileSVGFiles {
@@ -74,12 +76,12 @@ impl Benchmark for ProfileSVGFiles {
             debug!("options: {:?}", self);
 
             // Collect results
-            let mut results: Vec<SVGProfile> = Vec::new();
+            let mut results: Vec<SVGFileProfile> = Vec::new();
             for mut backend in self.backends {
                 let backend: &mut dyn Tessellator = backend.as_mut(); // Coerce & shadow
                 for file_path in &assets {
                     results.push(
-                        tessellation_util::benching::profiling::get_profile(
+                        tessellation_util::benching::profiling::get_file_profile(
                             backend, file_path,
                         )?,
                     );
