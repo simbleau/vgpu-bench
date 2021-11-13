@@ -1,8 +1,25 @@
 use super::Result;
 use csv::Writer;
-use log::warn;
+use log::{info, warn};
 use std::{ffi::OsStr, fs::File, path::PathBuf};
 use walkdir::WalkDir;
+
+pub fn write_csv<P>(
+    path: P,
+    rows: &Vec<Box<dyn erased_serde::Serialize>>,
+) -> Result<()>
+where
+    P: Into<PathBuf>,
+{
+    let mut output_path = path.into();
+    output_path.set_extension("csv");
+    let mut writer = csv_writer(&output_path)?;
+    for row in rows {
+        writer.serialize(row)?;
+    }
+    writer.flush()?;
+    Ok(())
+}
 
 pub fn csv_writer_relative<P>(relative_path: P) -> Result<Writer<File>>
 where

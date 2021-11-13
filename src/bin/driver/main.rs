@@ -35,6 +35,7 @@ pub fn main() {
             Config::default(),
             create_file(output_dir.join("trace.log")).unwrap(),
         ))
+        /*
         .add(
             TimeNaiveSVGFileRendering::new()
                 .to_file("naive_file_frametimes")
@@ -50,12 +51,15 @@ pub fn main() {
                 .primitives(svg_generator::primitives::default())
                 .primitive_count(1),
         )
+        */
         .add(
             ProfileSVGFiles::new()
                 .to_file("file_profiles")
+                .to_plot("plot")
                 .backend(tessellation_util::backends::default())
                 .assets(util::get_files("assets/svg/examples", false)),
         )
+        /*
         .add(
             ProfileSVGPrimitives::new()
                 .to_file("primitive_profiles")
@@ -64,6 +68,7 @@ pub fn main() {
                 .primitive_count(10)
                 .primitives_counts((100..=500).step_by(100 as usize)),
         )
+        */
         .build()
         .run();
 }

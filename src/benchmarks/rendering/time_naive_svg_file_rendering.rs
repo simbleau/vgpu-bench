@@ -1,6 +1,7 @@
 use crate::benchmarks::{Benchmark, BenchmarkFn};
 use crate::Result;
 use crate::{log_assert, util};
+use erased_serde::Serialize;
 use log::{debug, info, trace, warn};
 use rendering_util::benching::output::SVGNaiveRenderTime;
 use std::path::PathBuf;
@@ -104,17 +105,13 @@ impl Benchmark for TimeNaiveSVGFileRendering {
 
             // Write results
             if let Some(path) = self.output {
-                let mut output_path = options.output_dir.join(path);
-                output_path.set_extension("csv");
-                let mut writer = util::csv_writer_relative(&output_path)?;
-                for result in results {
-                    writer.serialize(result)?;
-                }
-                writer.flush()?;
-                info!(
-                    "output naive SVG file rendering frametime capture to '{}'",
-                    &output_path.display()
-                );
+                let path = options.output_dir.join(path);
+                let rows: Vec<Box<dyn Serialize>> = results
+                    .into_iter()
+                    .map(|x| -> Box<dyn Serialize> { Box::new(x) })
+                    .collect();
+                util::write_csv(&path, &rows)?;
+                info!("output CSV data to '{}'", &path.display());
             }
 
             trace!("completed naive SVG file rendering frametime capture");

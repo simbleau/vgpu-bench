@@ -6,11 +6,24 @@ import pandas as pd
 import cairosvg
 import os
 
-INPUT_DATA_DIR = "../.."
-INPUT_CSV = "../../output/data/svg/examples/profiles.csv"
-OUTPUT_DIR = "../../output/figs/svg/examples"
-OUTPUT_NAME = "profiles"
+# Get CLI args
+import sys
+
+print(sys.argv)
+if len(sys.argv) != 4:
+    print("Usage: <input_file> <output_dir> <output_name>")
+    exit(1)
+
+INPUT_CSV = sys.argv[1]
+OUTPUT_DIR = sys.argv[2]
+OUTPUT_NAME = sys.argv[3]
 OUTPUT_TYPE = "png"
+
+#INPUT_DATA_DIR = "../.."
+#INPUT_CSV = "../../output/data/svg/examples/profiles.csv"
+#OUTPUT_DIR = "../../output/figs/svg/examples"
+#OUTPUT_NAME = "profiles"
+#OUTPUT_TYPE = "png"
 
 # Get Data
 data = pd.read_csv(INPUT_CSV)
@@ -35,9 +48,7 @@ for backend in backends:
 
     # Draw icons
     for filename, num_triangles, (x, y) in zip(filenames, triangles, points.get_offsets().data):
-        # Convert to PNG
-        asset_path = os.path.join(INPUT_DATA_DIR, filename)
-        cairosvg.svg2png(url=asset_path, output_width=200,
+        cairosvg.svg2png(url=filename, output_width=200,
                          output_height=200, write_to="temp.png")
         image = plt.imread("temp.png")
         os.remove("temp.png")

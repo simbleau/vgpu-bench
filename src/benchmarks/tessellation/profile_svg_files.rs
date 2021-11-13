@@ -2,6 +2,7 @@ use crate::{
     benchmarks::{Benchmark, BenchmarkFn},
     log_assert, util, Result,
 };
+use erased_serde::Serialize;
 use log::{debug, info, trace, warn};
 use std::path::PathBuf;
 use tessellation_util::{
@@ -13,6 +14,7 @@ pub struct ProfileSVGFiles {
     backends: Vec<Box<dyn Tessellator>>,
     assets: Vec<PathBuf>,
     output: Option<&'static str>,
+    plot_output: Option<&'static str>,
 }
 
 impl ProfileSVGFiles {
@@ -21,6 +23,7 @@ impl ProfileSVGFiles {
             backends: Vec::new(),
             assets: Vec::new(),
             output: None,
+            plot_output: None,
         }
     }
 
@@ -49,6 +52,11 @@ impl ProfileSVGFiles {
 
     pub fn to_file(mut self, path: &'static str) -> Self {
         self.output = Some(path);
+        self
+    }
+
+    pub fn to_plot(mut self, path: &'static str) -> Self {
+        self.plot_output = Some(path);
         self
     }
 }
@@ -90,15 +98,41 @@ impl Benchmark for ProfileSVGFiles {
 
             // Write results
             if let Some(path) = self.output {
+                let path = options.output_dir.join(path);
+                let rows: Vec<Box<dyn Serialize>> = results
+                    .into_iter()
+                    .map(|x| -> Box<dyn Serialize> { Box::new(x) })
+                    .collect();
+                util::write_csv(&path, &rows)?;
+                info!("output SVG file profiling to '{}'", &path.display());
+            }
+
+            // Plot results
+            if let Some(path) = self.plot_output {
+                let mut csv_path =
+                    options.output_dir.join(self.output.unwrap());
+                csv_path.set_extension("csv");
+
                 let mut output_path = options.output_dir.join(path);
-                output_path.set_extension("csv");
-                let mut writer = util::csv_writer_relative(&output_path)?;
-                for result in results {
-                    writer.serialize(result)?;
-                }
-                writer.flush()?;
+                output_path.set_extension("png");
+
+                let o = std::process::Command::new("python3")
+                    .args([
+                        "tools/plotter/plot_examples_profiles.py",
+                        csv_path.to_str().unwrap(),
+                        options.output_dir.to_str().unwrap(),
+                        "profiles",
+                    ])
+                    .output()
+                    .expect("failed to execute process");
+
+                std::io::Write::write_all(&mut std::io::stdout(), &o.stdout)
+                    .unwrap();
+                std::io::Write::write_all(&mut std::io::stdout(), &o.stderr)
+                    .unwrap();
+
                 info!(
-                    "output SVG file profiling to '{}'",
+                    "output plot for SVG file profiling to '{}'",
                     &output_path.display()
                 );
             }
