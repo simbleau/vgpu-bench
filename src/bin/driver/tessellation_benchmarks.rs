@@ -1,92 +1,9 @@
 use log::{debug, error, info, trace};
 use std::path::PathBuf;
-use tessellation_util::benching::output::PrimitiveTessellationTime;
 use vgpu_bench::benchmarks::tessellation::primitive_timing::PrimitiveTessellationTimingOptions;
-use vgpu_bench::benchmarks::tessellation::profile::SVGProfilingOptions;
-use vgpu_bench::benchmarks::BenchmarkFn;
 use vgpu_bench::driver::dictionary::*;
 use vgpu_bench::driver::DriverOptions;
 use vgpu_bench::{benchmarks, util};
-
-pub fn profile_svg_files<P>(options: &DriverOptions, input_dir_path: P)
-where
-    P: Into<PathBuf>,
-{
-    trace!("Commencing SVG file profiling");
-
-    let output_path = options.output_dir.join(
-        [
-            DATA_DIR_NAME,
-            EXAMPLES_DIR_NAME,
-            SVG_DIR_NAME,
-            "profiles.csv",
-        ]
-        .iter()
-        .collect::<PathBuf>(),
-    );
-    let input_files =
-        util::get_files_with_extension(input_dir_path, false, "svg");
-    let writer = util::csv_writer(output_path.to_owned())
-        .expect("Could not create output file");
-    let backend = tessellation_util::backends::default();
-    let options = SVGProfilingOptions::new()
-        .writer(writer)
-        .assets(input_files)
-        .backend(backend);
-    debug!("Options: {:?}", options);
-
-    match benchmarks::tessellation::profile::write_profiles(options) {
-        Ok(_) => {
-            trace!("Completed SVG file profiling");
-            info!(
-                "Completed SVG file profiling. Output to '{}'",
-                output_path.display()
-            );
-        }
-        Err(err) => error!("{:?}", err),
-    }
-}
-
-// TODO generate as Primitives -> SVGs instead of using a hardcoded (cached)
-// directory
-pub fn profile_svg_primitives(options: &DriverOptions) {
-    trace!("Commencing SVG primitive profiling");
-
-    let output_path = options.output_dir.join(
-        [
-            DATA_DIR_NAME,
-            PRIMITIVES_DIR_NAME,
-            SVG_DIR_NAME,
-            "profiles.csv",
-        ]
-        .iter()
-        .collect::<PathBuf>(),
-    );
-    let input_dir_path = [ASSETS_DIR_NAME, SVG_DIR_NAME, PRIMITIVES_DIR_NAME]
-        .iter()
-        .collect::<PathBuf>();
-    let input_files =
-        util::get_files_with_extension(input_dir_path, false, "svg");
-    let writer = util::csv_writer(output_path.to_owned())
-        .expect("Could not create output file");
-    let backend = tessellation_util::backends::default();
-    let options = SVGProfilingOptions::new()
-        .writer(writer)
-        .assets(input_files)
-        .backend(backend);
-    debug!("Options: {:?}", options);
-
-    match benchmarks::tessellation::profile::write_profiles(options) {
-        Ok(_) => {
-            trace!("Completed SVG primitive profiling");
-            info!(
-                "Completed SVG primitive profiling. Output to '{}'",
-                output_path.display()
-            );
-        }
-        Err(err) => error!("{:?}", err),
-    }
-}
 
 pub fn testx(options: &DriverOptions) -> Vec<Box<dyn erased_serde::Serialize>> {
     let output_path = options.output_dir.join(

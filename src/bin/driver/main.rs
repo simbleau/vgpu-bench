@@ -7,8 +7,11 @@ use log::LevelFilter;
 use simplelog::{ColorChoice, Config, TermLogger, TerminalMode, WriteLogger};
 use std::path::PathBuf;
 use vgpu_bench::{
-    benchmarks::rendering::{
-        TimeNaiveSVGFileRendering, TimeNaiveSVGPrimitiveRendering,
+    benchmarks::{
+        rendering::{
+            TimeNaiveSVGFileRendering, TimeNaiveSVGPrimitiveRendering,
+        },
+        tessellation::ProfileSVGFiles,
     },
     driver::Driver,
     util::{self, create_file},
@@ -31,6 +34,7 @@ pub fn main() {
             Config::default(),
             create_file(output_dir.join("trace.log")).unwrap(),
         ))
+        /*
         .add(
             TimeNaiveSVGFileRendering::new()
                 .to_file("naive_file_frametimes.csv")
@@ -40,11 +44,18 @@ pub fn main() {
         )
         .add(
             TimeNaiveSVGPrimitiveRendering::new()
-                .to_file("/naive_primitive_frametimes.csv")
+                .to_file("naive_primitive_frametimes.csv")
                 .backend(tessellation_util::backends::default())
                 .frames(1)
                 .primitives(svg_generator::primitives::default())
                 .primitive_count(1),
+        )
+        */
+        .add(
+            ProfileSVGFiles::new()
+                .to_file("file_profiles.csv")
+                .backend(tessellation_util::backends::default())
+                .assets(util::get_files("assets/svg/examples", false)),
         )
         /*
         .add(|opts| {
