@@ -5,7 +5,7 @@ use crate::{
 use log::{debug, info, trace, warn};
 use svg_generator::Primitive;
 use std::path::PathBuf;
-use tessellation_util::{backends::Tessellator, benching::output::{SVGFileProfile, SVGPrimitiveProfile}};
+use tessellation_util::{backends::Tessellator, benching::output::SVGPrimitiveProfile};
 
 #[derive(Debug)]
 pub struct ProfileSVGPrimitives {
@@ -102,15 +102,15 @@ impl Benchmark for ProfileSVGPrimitives {
 
             // Write results
             if let Some(path) = self.output {
-                let mut writer =
-                    util::csv_writer_relative(options.output_dir.join(path))?;
+                let output_path = options.output_dir.join(path);
+                let mut writer = util::csv_writer_relative(&output_path)?;
                 for result in results {
                     writer.serialize(result)?;
                 }
                 writer.flush()?;
                 info!(
                     "output SVG primitive profiling to '{}'",
-                    self.output.unwrap() // Safety: checked during input check
+                    &output_path.display()
                 );
             }
 

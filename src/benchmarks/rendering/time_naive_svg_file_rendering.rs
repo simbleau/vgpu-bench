@@ -104,15 +104,15 @@ impl Benchmark for TimeNaiveSVGFileRendering {
 
             // Write results
             if let Some(path) = self.output {
-                let mut writer =
-                    util::csv_writer_relative(options.output_dir.join(path))?;
+                let output_path = options.output_dir.join(path);
+                let mut writer = util::csv_writer_relative(&output_path)?;
                 for result in results {
                     writer.serialize(result)?;
                 }
                 writer.flush()?;
                 info!(
                     "output naive SVG file rendering frametime capture to '{}'",
-                    self.output.unwrap() // Safety: checked during input check
+                    &output_path.display()
                 );
             }
 

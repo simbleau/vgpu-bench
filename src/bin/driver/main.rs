@@ -35,7 +35,6 @@ pub fn main() {
             Config::default(),
             create_file(output_dir.join("trace.log")).unwrap(),
         ))
-        /*
         .add(
             TimeNaiveSVGFileRendering::new()
                 .to_file("naive_file_frametimes.csv")
@@ -57,30 +56,14 @@ pub fn main() {
                 .backend(tessellation_util::backends::default())
                 .assets(util::get_files("assets/svg/examples", false)),
         )
-        */
         .add(
             ProfileSVGPrimitives::new()
-                .to_file("prim_profiles.csv")
+                .to_file("primitive_profiles.csv")
                 .backend(tessellation_util::backends::default())
-                .primitive(Primitive::Triangle)
-                .primitive_count(1),
+                .primitives(svg_generator::primitives::default())
+                .primitive_count(10)
+                .primitives_counts((100..=500).step_by(100 as usize)),
         )
-        /*
-        .add(|opts| {
-            tessellation_benchmarks::profile_svg_files(
-                opts,
-                "assets/svg/examples/",
-            )
-        })
-        .add(tessellation_benchmarks::profile_svg_primitives)
-        .add(|opts| {
-            naive_rendering_benchmarks::frametimes_svg_files(
-                opts,
-                "assets/svg/examples/",
-            )
-        })
-        .add(naive_rendering_benchmarks::frametimes_svg_primitives)
-        */
         .build()
         .run();
 }
