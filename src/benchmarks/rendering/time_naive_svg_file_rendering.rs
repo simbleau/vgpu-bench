@@ -1,7 +1,6 @@
 use crate::benchmarks::{Benchmark, BenchmarkFn};
 use crate::driver::dictionary::*;
 use crate::util;
-use crate::Result;
 use log::{debug, info, trace, warn};
 use rendering_util::benching::output::SVGNaiveRenderTime;
 use std::ffi::OsStr;

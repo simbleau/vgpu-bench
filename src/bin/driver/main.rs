@@ -8,10 +8,8 @@ use log::LevelFilter;
 use simplelog::{ColorChoice, Config, TermLogger, TerminalMode, WriteLogger};
 use std::path::PathBuf;
 use vgpu_bench::{
-    benchmarks::{
-        rendering::naive_svg_rendering::TimeNaiveSVGFileRendering, Benchmark,
-    },
-    driver::{dictionary::*, Driver},
+    benchmarks::rendering::TimeNaiveSVGFileRendering,
+    driver::Driver,
     util::{self, create_file},
 };
 

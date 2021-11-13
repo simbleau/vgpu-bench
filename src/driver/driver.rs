@@ -1,5 +1,5 @@
 use super::dictionary::*;
-use crate::benchmarks::{Benchmark, BenchmarkFn};
+use crate::benchmarks::Benchmark;
 use log::{error, info};
 use simplelog::{CombinedLogger, SharedLogger};
 use std::path::Path;
