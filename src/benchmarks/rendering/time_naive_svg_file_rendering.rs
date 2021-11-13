@@ -1,5 +1,4 @@
 use crate::benchmarks::{Benchmark, BenchmarkFn};
-use crate::driver::dictionary::*;
 use crate::Result;
 use crate::{log_assert, util};
 use log::{debug, info, trace, warn};
@@ -83,7 +82,7 @@ impl Benchmark for TimeNaiveSVGFileRendering {
             .collect::<Vec<PathBuf>>();
         // Input check
         if let Some(path) = self.output {
-            assert!(
+            log_assert!(
                 PathBuf::from(path).is_relative(),
                 "{} is not a relative path",
                 path

@@ -1,5 +1,4 @@
 use crate::benchmarks::{Benchmark, BenchmarkFn};
-use crate::driver::dictionary::*;
 use crate::Result;
 use crate::{log_assert, util};
 use log::{debug, info, trace, warn};
