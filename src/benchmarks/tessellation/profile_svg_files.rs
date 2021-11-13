@@ -54,24 +54,7 @@ impl ProfileSVGFiles {
 impl Benchmark for ProfileSVGFiles {
     fn build(self: Box<Self>) -> Result<BenchmarkFn> {
         // Sanitize input assets
-        let assets = self
-            .assets
-            .iter()
-            .filter_map(|pb| {
-                if pb.exists()
-                    && pb.is_file()
-                    && pb.extension() == Some(OsStr::new("svg"))
-                {
-                    Some(pb.to_owned())
-                } else {
-                    warn!(
-                        "'{}' is not a .svg file; file dropped",
-                        pb.display()
-                    );
-                    None
-                }
-            })
-            .collect::<Vec<PathBuf>>();
+        let assets = util::files_with_extension(&self.assets, "svg");
         // Input check
         if let Some(path) = self.output {
             log_assert!(

@@ -1,5 +1,6 @@
 use super::Result;
 use csv::Writer;
+use log::warn;
 use std::{ffi::OsStr, fs::File, path::PathBuf};
 use walkdir::WalkDir;
 
@@ -69,4 +70,30 @@ where
         .into_iter()
         .filter(|path| path.extension() == Some(OsStr::new(ext)))
         .collect()
+}
+
+pub fn files_with_extension<I, S>(files: I, ext: &S) -> Vec<PathBuf>
+where
+    I: IntoIterator,
+    I::Item: Into<PathBuf>,
+    S: AsRef<OsStr> + ?Sized,
+{
+    files
+        .into_iter()
+        .map(Into::into)
+        .fold(Vec::new(), |mut vec, pb| {
+            if pb.exists()
+                && pb.is_file()
+                && pb.extension() == Some(OsStr::new(ext))
+            {
+                vec.push(pb);
+            } else {
+                warn!(
+                    "'{}' is not a .{:?} file; file dropped",
+                    pb.display(),
+                    OsStr::new(ext).to_string_lossy()
+                );
+            }
+            vec
+        })
 }
