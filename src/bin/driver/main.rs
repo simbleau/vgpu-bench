@@ -7,9 +7,24 @@ use chrono::Local;
 use log::LevelFilter;
 use simplelog::{ColorChoice, Config, TermLogger, TerminalMode, WriteLogger};
 use std::path::PathBuf;
-use vgpu_bench::{driver::Driver, util::create_file};
+use vgpu_bench::{
+    benchmarks::BenchmarkBuilder,
+    driver::{dictionary::*, Driver},
+    util::{self, create_file},
+};
 
 pub fn main() {
+    let input_dir_path = [ASSETS_DIR_NAME, SVG_DIR_NAME, PRIMITIVES_DIR_NAME]
+        .iter()
+        .collect::<PathBuf>();
+    let input_files =
+        util::get_files_with_extension(input_dir_path, false, "svg");
+    let x = vgpu_bench::benchmarks::rendering::naive_svg_rendering::NaiveSVGRenderingBuilder::new()
+    .writer(util::csv_writer("test").expect("Could not create output file"))
+    .frames(1)
+    .backend(tessellation_util::backends::default())
+    .asset(input_files.first().unwrap());
+
     let output_dir = PathBuf::from("output/")
         .join(Local::now().format("%d%mY_%H-%M-%S").to_string());
 
@@ -26,7 +41,7 @@ pub fn main() {
             Config::default(),
             create_file(output_dir.join("trace.log")).unwrap(),
         ))
-        .add(vgpu_bench::benchmarks::test_benchmark::testy())
+        .add(x.build())
         /*
         .add(|opts| {
             tessellation_benchmarks::profile_svg_files(

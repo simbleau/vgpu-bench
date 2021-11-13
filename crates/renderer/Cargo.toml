@@ -16,3 +16,4 @@ path = "src/lib.rs"
 serde = { version = "1.0.130", features = ["derive"] }
 bytemuck = "1.2.0"
 libloading = "0.7.1"
+thiserror = "1.0.30"

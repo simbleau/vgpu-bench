@@ -1,31 +1,15 @@
 pub type Result<T> = std::result::Result<T, BenchingError>;
 
-#[derive(Debug)]
+#[derive(thiserror::Error, Debug)]
 pub enum BenchingError {
-    Rendering(renderer::RendererError),
-    IO(std::io::Error),
+    #[error("{0}")]
     Logic(&'static str),
-    CSV(csv::Error),
-    Other(Box<dyn std::error::Error>),
-}
-impl From<renderer::RendererError> for BenchingError {
-    fn from(item: renderer::RendererError) -> Self {
-        BenchingError::Rendering(item)
-    }
-}
-
-impl From<std::io::Error> for BenchingError {
-    fn from(item: std::io::Error) -> Self {
-        BenchingError::IO(item)
-    }
-}
-impl From<csv::Error> for BenchingError {
-    fn from(item: csv::Error) -> Self {
-        BenchingError::CSV(item)
-    }
-}
-impl From<Box<dyn std::error::Error>> for BenchingError {
-    fn from(item: Box<dyn std::error::Error>) -> Self {
-        BenchingError::Other(item)
-    }
+    #[error(transparent)]
+    Rendering(#[from] renderer::RendererError),
+    #[error(transparent)]
+    IO(#[from] std::io::Error),
+    #[error(transparent)]
+    CSV(#[from] csv::Error),
+    #[error(transparent)]
+    Other(#[from] Box<dyn std::error::Error + Send + Sync>),
 }

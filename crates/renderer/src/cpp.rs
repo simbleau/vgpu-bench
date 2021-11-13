@@ -1,6 +1,6 @@
 use crate::artifacts::RenderTimeResult;
 use crate::error::CppRendererError::{
-    Compilation, Initialization, Rendering, Runtime, Staging,
+    Initialization, LibraryRetrieval, Rendering, Runtime, Staging,
 };
 use crate::error::Result;
 use crate::rust::Renderer;
@@ -24,7 +24,7 @@ impl CppRenderer {
     pub fn from(lib_path: PathBuf) -> Result<Self> {
         unsafe {
             let library =
-                Library::new(lib_path).map_err(|err| Compilation(err))?;
+                Library::new(lib_path).map_err(|err| LibraryRetrieval(err))?;
             Ok(Self { library })
         }
     }

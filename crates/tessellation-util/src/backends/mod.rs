@@ -8,10 +8,10 @@ pub trait Tessellator {
     fn init(&mut self, t: &SVGDocument);
     fn get_tessellation_profile(
         &self,
-    ) -> Result<TessellationProfile, Box<dyn std::error::Error>>;
+    ) -> Result<TessellationProfile, Box<dyn std::error::Error + Send + Sync>>;
     fn get_tessellation_data(
         &self,
-    ) -> Result<TessellationData, Box<dyn std::error::Error>>;
+    ) -> Result<TessellationData, Box<dyn std::error::Error + Send + Sync>>;
 }
 impl std::fmt::Debug for dyn Tessellator {
     fn fmt(

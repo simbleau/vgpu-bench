@@ -1,5 +1,6 @@
 use super::dictionary::*;
 use crate::benchmarks::Benchmark;
+use log::error;
 use simplelog::{CombinedLogger, SharedLogger};
 use std::path::Path;
 
@@ -34,7 +35,9 @@ impl<'a> Driver<'a> {
 
         // Run all benchmarks
         for benchmark in self.benchmarks {
-            benchmark.call(&self.options);
+            if let Err(err) = benchmark.call(&self.options) {
+                error!("Benchmark Failed: {}", err);
+            }
         }
     }
 }

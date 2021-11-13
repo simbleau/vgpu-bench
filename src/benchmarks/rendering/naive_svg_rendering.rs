@@ -1,14 +1,14 @@
+use crate::benchmarks::{Benchmark, BenchmarkBuilder};
+use crate::driver::dictionary::*;
+use crate::util;
 use csv::Writer;
+use log::{debug, info, trace, warn};
 use rendering_util::benching::output::SVGNaiveRenderTime;
 use rendering_util::benching::Result;
-use std::io::Write;
 use std::path::PathBuf;
 use tessellation_util::backends::Tessellator;
 
-use crate::benchmarks::Benchmark;
-use crate::driver::DriverOptions;
-
-pub struct SVGNaiveRenderingOptions<W>
+pub struct NaiveSVGRenderingBuilder<W>
 where
     W: std::io::Write,
 {
@@ -17,7 +17,7 @@ where
     frames: usize,
     writer: Option<Writer<W>>,
 }
-impl<W> std::fmt::Debug for SVGNaiveRenderingOptions<W>
+impl<W> std::fmt::Debug for NaiveSVGRenderingBuilder<W>
 where
     W: std::io::Write,
 {
@@ -33,12 +33,12 @@ where
     }
 }
 
-impl<W> SVGNaiveRenderingOptions<W>
+impl<W> NaiveSVGRenderingBuilder<W>
 where
     W: std::io::Write + 'static,
 {
     pub fn new() -> Self {
-        SVGNaiveRenderingOptions {
+        NaiveSVGRenderingBuilder {
             backends: Vec::new(),
             assets: Vec::new(),
             frames: 0,
@@ -77,18 +77,73 @@ where
         self.frames = frames;
         self
     }
+}
 
-    pub fn build(self) -> Benchmark {
-        let b = Benchmark::from(move |x| {
-            let x = &self;
-            Vec::new()
-        });
+impl<W> BenchmarkBuilder for NaiveSVGRenderingBuilder<W>
+where
+    W: std::io::Write + 'static,
+{
+    fn build(self) -> Benchmark {
+        // Input check and sanitizing
+        assert!(self.backends.len() > 0, "No backends were provided");
+        assert!(self.assets.len() > 0, "No assets were found or provided");
+        assert!(self.frames > 0, "Frames must be greater than 0");
+        if self.writer.is_none() {
+            warn!("No writer was provided")
+        };
 
-        b
+        // Write benchmark
+        Benchmark::from(move |options| {
+            trace!("Commencing naive SVG file rendering frametime capture");
+            debug!("Options: {:?}", self);
+
+            let output_path: PathBuf = options.output_dir.join(
+                [
+                    DATA_DIR_NAME,
+                    EXAMPLES_DIR_NAME,
+                    SVG_DIR_NAME,
+                    "naive_frametimes.csv", // TODO make this an option
+                ]
+                .iter()
+                .collect::<PathBuf>(),
+            );
+
+            // Bandaid fix: wgpu uses the same logger - Disable logging
+            // temporarily
+            let prev_level = log::max_level();
+            log::set_max_level(log::LevelFilter::Off);
+            // Collect results
+            let mut results: Vec<SVGNaiveRenderTime> = Vec::new();
+            for mut backend in self.backends {
+                let backend: &mut dyn Tessellator = backend.as_mut();
+                for file_path in &self.assets {
+                    results.extend(
+                        rendering_util::benching::timing::time_naive_svg(
+                            backend,
+                            file_path,
+                            self.frames,
+                        )?,
+                    );
+                }
+            }
+            // Bandaid removal
+            log::set_max_level(prev_level);
+
+            // Write results
+            if let Some(mut writer) = self.writer {
+                for result in results {
+                    writer.serialize(result)?;
+                }
+                writer.flush()?;
+            }
+
+            // Return results
+            Ok(Vec::new())
+        })
     }
 }
 
-pub fn frametimes<W>(options: SVGNaiveRenderingOptions<W>) -> Result<()>
+pub fn frametimes<W>(options: NaiveSVGRenderingBuilder<W>) -> Result<()>
 where
     W: std::io::Write,
 {

@@ -60,7 +60,7 @@ impl Tessellator for LyonTessellator {
 
     fn get_tessellation_profile(
         &self,
-    ) -> Result<TessellationProfile, Box<dyn Error>> {
+    ) -> Result<TessellationProfile, Box<dyn Error + Send + Sync>> {
         let data = self.get_tessellation_data()?;
         Ok(TessellationProfile {
             vertices: data.vertices.len() as u32,
@@ -71,7 +71,7 @@ impl Tessellator for LyonTessellator {
 
     fn get_tessellation_data(
         &self,
-    ) -> Result<TessellationData, Box<dyn Error>> {
+    ) -> Result<TessellationData, Box<dyn Error + Send + Sync>> {
         // Create vertex buffer
         let mut fill_tess = FillTessellator::new();
         let mut stroke_tess = StrokeTessellator::new();

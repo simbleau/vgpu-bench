@@ -1,35 +1,27 @@
-use crate::error::RendererError::CppLibraryError;
-use std::{error::Error, fmt};
-
 pub type Result<T> = std::result::Result<T, RendererError>;
 
-#[derive(Debug)]
+#[derive(thiserror::Error, Debug)]
 pub enum RendererError {
-    RustLibraryError(Box<dyn std::error::Error>),
-    CppLibraryError(CppRendererError),
+    #[error("unexpected fatal error with Rust renderer")]
+    RustLibraryError(#[source] Box<dyn std::error::Error + Send + Sync>),
+    #[error("unexpected fatal error with C/C++ renderer")]
+    CppLibraryError(
+        #[source]
+        #[from]
+        CppRendererError,
+    ),
 }
 
-// C++ Error Glue below
-impl<T> From<T> for RendererError
-where
-    T: Into<CppRendererError>,
-{
-    fn from(item: T) -> Self {
-        CppLibraryError(item.into())
-    }
-}
-
-#[derive(Debug)]
+#[derive(thiserror::Error, Debug)]
 pub enum CppRendererError {
-    Compilation(libloading::Error),
+    #[error("unable to load C/C++ library")]
+    LibraryRetrieval(libloading::Error),
+    #[error("unable to initialize C/C++ library")]
     Initialization(libloading::Error),
+    #[error("Unable to stage file")]
     Staging(libloading::Error),
+    #[error("Unable to render file")]
     Rendering(libloading::Error),
+    #[error("C/C++ library returned error code: {0} (expected 0)")]
     Runtime(i32),
 }
-impl fmt::Display for CppRendererError {
-    fn fmt(&self, f: &mut fmt::Formatter) -> fmt::Result {
-        write!(f, "{}", self)
-    }
-}
-impl Error for CppRendererError {}

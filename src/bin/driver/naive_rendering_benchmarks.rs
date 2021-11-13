@@ -1,7 +1,7 @@
 use log::{debug, error, info, trace};
 use std::path::PathBuf;
 use vgpu_bench::benchmarks::rendering::naive_primitive_rendering::PrimitiveNaiveRenderingOptions;
-use vgpu_bench::benchmarks::rendering::naive_svg_rendering::SVGNaiveRenderingOptions;
+use vgpu_bench::benchmarks::rendering::naive_svg_rendering::NaiveSVGRenderingBuilder;
 use vgpu_bench::driver::{dictionary::*, DriverOptions};
 use vgpu_bench::{benchmarks, util};
 
@@ -26,7 +26,7 @@ where
         .expect("Could not create output file");
     let backend = tessellation_util::backends::default();
     let frames = 500;
-    let options = SVGNaiveRenderingOptions::new()
+    let options = NaiveSVGRenderingBuilder::new()
         .writer(writer)
         .assets(input_files)
         .backend(backend)
