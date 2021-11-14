@@ -55,7 +55,7 @@ pub fn main() {
         .add(
             ProfileSVGFiles::new()
                 .to_file("file_profiles")
-                .to_plot("plot")
+                .to_plot("file_profiles")
                 .backend(tessellation_util::backends::default())
                 .assets(util::get_files("assets/svg/examples", false)),
         )
