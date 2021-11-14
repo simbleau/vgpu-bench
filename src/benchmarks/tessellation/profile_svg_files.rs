@@ -125,7 +125,7 @@ impl Benchmark for ProfileSVGFiles {
                 data_path.set_extension("csv");
 
                 let _output = util::call_python3_program(
-                    "tools/plotter/plot_profile_svg_filesx.py",
+                    "tools/plotter/plot_profile_svg_files.py",
                     [
                         data_path.to_str().unwrap(),
                         options.output_dir.to_str().unwrap(),
