@@ -22,6 +22,7 @@ pub struct Driver<'a> {
     options: DriverOptions<'a>,
     loggers: Vec<Box<dyn SharedLogger>>,
     benchmarks: Vec<Box<dyn Benchmark>>,
+    on_error_panic: bool,
 }
 
 impl<'a> Driver<'a> {
@@ -42,7 +43,9 @@ impl<'a> Driver<'a> {
                 Ok(b) => benchmarks.push(b),
                 Err(e) => {
                     error!("benchmark build failed: {}", e);
-                    panic!("{}", e);
+                    if self.on_error_panic {
+                        panic!("{}", e);
+                    }
                 }
             }
         }
@@ -53,6 +56,9 @@ impl<'a> Driver<'a> {
         for benchmark in benchmarks {
             if let Err(e) = benchmark.call(&self.options) {
                 error!("benchmark failed: {}", e);
+                if self.on_error_panic {
+                    panic!("{}", e);
+                }
             }
         }
         trace!("completed benchmarks");
@@ -64,6 +70,7 @@ pub struct DriverBuilder<'a> {
     pub options: DriverOptions<'a>,
     loggers: Vec<Box<dyn SharedLogger>>,
     benchmarks: Vec<Box<dyn Benchmark>>,
+    on_error_panic: bool,
 }
 
 impl<'a> DriverBuilder<'a> {
@@ -72,7 +79,18 @@ impl<'a> DriverBuilder<'a> {
             options: DriverOptions::default(),
             loggers: Vec::new(),
             benchmarks: Vec::new(),
+            on_error_panic: true,
         }
+    }
+
+    pub fn on_error_continue(mut self) -> Self {
+        self.on_error_panic = false;
+        self
+    }
+
+    pub fn on_error_panic(mut self) -> Self {
+        self.on_error_panic = true;
+        self
     }
 
     pub fn output_dir(mut self, output_dir: &'a Path) -> Self {
@@ -98,6 +116,7 @@ impl<'a> DriverBuilder<'a> {
             options: self.options,
             loggers: self.loggers,
             benchmarks: self.benchmarks,
+            on_error_panic: self.on_error_panic,
         }
     }
 }
