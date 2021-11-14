@@ -62,7 +62,7 @@ pub fn main() {
         .add(
             ProfileSVGPrimitives::new()
                 .to_csv("primitive_profiles")
-                //.to_plot("primitive_profiles") -- TODO Plotting support.
+                // TODO Plotting support
                 .backend(tessellation_util::backends::default())
                 .primitives(svg_generator::primitives::default())
                 .primitive_count(10)
@@ -77,6 +77,7 @@ pub fn main() {
                 .primitives_counts((100..=1000).step_by(100 as usize))
                 .trials(10),
         )
+        // TODO TimeSVGFileTessellation
         .build()
         .run();
 }
