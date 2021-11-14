@@ -4,9 +4,14 @@ import pandas as pd
 import numpy as np
 import helper_methods
 
-INPUT_CSV = "../../output/data/svg/examples/naive_frametimes.csv"
-OUTPUT_DIR = "../../output/figs/svg/examples/naive_frametimes"
-OUTPUT_PREFIX = "frametimes_"
+# Get CLI args
+import sys
+if len(sys.argv) != 4:
+    print("Usage: <input_file> <output_dir> <output_name>")
+    exit(1)
+INPUT_CSV = sys.argv[1]
+OUTPUT_DIR = sys.argv[2]
+OUTPUT_NAME = sys.argv[3]
 OUTPUT_TYPE = "png"
 
 # Get data
@@ -14,14 +19,14 @@ data = pd.read_csv(INPUT_CSV)
 # Sort by frames in order
 data = data.sort_values(by=["frame"], ascending=True)
 # Filter rows
-filenames = data["filename"].unique()
+primitives = data['primitive'].unique()
 
-for filename in filenames:
+for primitive in primitives:
     # Make subplots
     fig, ax = plt.subplots()
 
-    # Get rows for this file
-    rows = data[data["filename"] == filename]
+    # Get rows for this primitive
+    rows = data[data["primitive"] == primitive]
     num_rows = len(rows)
 
     # Make plot
@@ -48,11 +53,10 @@ for filename in filenames:
     ax.axhline(y=min_frametime, color='blue', linestyle='--')
 
     # Dress plot
-    basename = os.path.basename(filename)
     ax.set_xlabel("Frame")
     ax.set_ylabel("Total time (ms)")
     ax.set_title(
-        f"Continuous frame-times of {basename}, naive")
+        f"Continuous frame-times of {primitive}, naive")
     ax.yaxis.grid()
     plt.tight_layout()
 
@@ -74,4 +78,4 @@ for filename in filenames:
     if not os.path.exists(OUTPUT_DIR):
         os.makedirs(OUTPUT_DIR)
     fig.savefig(
-        f"{OUTPUT_DIR}/{OUTPUT_PREFIX}{basename}.{OUTPUT_TYPE}", dpi=500)
+        f"{OUTPUT_DIR}/{OUTPUT_NAME}_{primitive}.{OUTPUT_TYPE}", dpi=500)

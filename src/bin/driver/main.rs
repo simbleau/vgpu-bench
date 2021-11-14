@@ -7,7 +7,12 @@ use log::LevelFilter;
 use simplelog::{ColorChoice, Config, TermLogger, TerminalMode, WriteLogger};
 use std::path::PathBuf;
 use vgpu_bench::{
-    benchmarks::tessellation::{ProfileSVGFiles, ProfileSVGPrimitives},
+    benchmarks::{
+        rendering::{
+            TimeNaiveSVGFileRendering, TimeNaiveSVGPrimitiveRendering,
+        },
+        tessellation::{ProfileSVGFiles, ProfileSVGPrimitives},
+    },
     driver::Driver,
     util::{self, create_file},
 };
@@ -30,23 +35,23 @@ pub fn main() {
             Config::default(),
             create_file(output_dir.join("trace.log")).unwrap(),
         ))
-        /*
         .add(
             TimeNaiveSVGFileRendering::new()
-                .to_file("naive_file_frametimes")
-                .frames(1)
+                .to_csv("naive_file_frametimes")
+                .to_plot("naive_file_frametimes")
+                .frames(500)
                 .backend(tessellation_util::backends::default())
                 .assets(util::get_files("assets/svg/examples", false)),
         )
         .add(
             TimeNaiveSVGPrimitiveRendering::new()
-                .to_file("naive_primitive_frametimes")
+                .to_csv("naive_primitive_frametimes")
+                .to_plot("naive_primitive_frametimes")
                 .backend(tessellation_util::backends::default())
-                .frames(1)
+                .frames(500)
                 .primitives(svg_generator::primitives::default())
                 .primitive_count(1),
         )
-        */
         .add(
             ProfileSVGFiles::new()
                 .to_csv("file_profiles")
@@ -57,7 +62,7 @@ pub fn main() {
         .add(
             ProfileSVGPrimitives::new()
                 .to_csv("primitive_profiles")
-                .to_plot("primitive_profiles")
+                //.to_plot("primitive_profiles") -- TODO Plotting support.
                 .backend(tessellation_util::backends::default())
                 .primitives(svg_generator::primitives::default())
                 .primitive_count(10)
