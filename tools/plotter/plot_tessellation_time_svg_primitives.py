@@ -3,9 +3,14 @@ import matplotlib.pyplot as plt
 import pandas as pd
 import helper_methods
 
-INPUT_CSV = "../../output/data/svg/primitives/tessellation.csv"
-OUTPUT_DIR = "../../output/figs/svg/primitives/tessellation/"
-OUTPUT_PREFIX = "tessellation_"
+# Get CLI args
+import sys
+if len(sys.argv) != 4:
+    print("Usage: <input_file> <output_dir> <output_name>")
+    exit(1)
+INPUT_CSV = sys.argv[1]
+OUTPUT_DIR = sys.argv[2]
+OUTPUT_NAME = sys.argv[3]
 OUTPUT_TYPE = "png"
 
 # Get data
@@ -50,11 +55,11 @@ for primitive in primitives:
         chart_tess_stds.append(helper_methods.ns_to_ms(tess_time_std))
 
     # Plot data
-    width = 700  # the width of the bars
-    bar1 = ax.bar(chart_labels, chart_init_means, width, yerr=chart_init_stds,
-                  alpha=0.5, ecolor='black', capsize=5, label='Initialization')
-    bar2 = ax.bar(chart_labels, chart_tess_means, width, yerr=chart_tess_stds,
-                  alpha=0.5, ecolor='black', capsize=5, label='Tessellation', bottom=chart_init_means)
+    import numpy as np
+    bar1 = ax.bar(chart_labels, chart_init_means, width=25, yerr=chart_init_stds,
+                  alpha=0.5, ecolor='black', capsize=3, label='Initialization')
+    bar2 = ax.bar(chart_labels, chart_tess_means, width=25, yerr=chart_tess_stds,
+                  alpha=0.5, ecolor='black', capsize=3, label='Tessellation', bottom=chart_init_means)
     ax.bar_label(bar1, fmt='%0.0f', label_type='center')
     ax.bar_label(bar2, fmt='%0.0f', label_type='center')
 
@@ -72,4 +77,4 @@ for primitive in primitives:
     if not os.path.exists(OUTPUT_DIR):
         os.makedirs(OUTPUT_DIR)
     fig.savefig(
-        f"{OUTPUT_DIR}/{OUTPUT_PREFIX}{primitive}.{OUTPUT_TYPE}", dpi=500)
+        f"{OUTPUT_DIR}/{OUTPUT_NAME}_{primitive}.{OUTPUT_TYPE}", dpi=500)

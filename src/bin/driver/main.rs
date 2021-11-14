@@ -11,7 +11,9 @@ use vgpu_bench::{
         rendering::{
             TimeNaiveSVGFileRendering, TimeNaiveSVGPrimitiveRendering,
         },
-        tessellation::{ProfileSVGFiles, ProfileSVGPrimitives},
+        tessellation::{
+            ProfileSVGFiles, ProfileSVGPrimitives, TimeSVGPrimitiveTessellation,
+        },
     },
     driver::Driver,
     util::{self, create_file},
@@ -35,6 +37,7 @@ pub fn main() {
             Config::default(),
             create_file(output_dir.join("trace.log")).unwrap(),
         ))
+        /*
         .add(
             TimeNaiveSVGFileRendering::new()
                 .to_csv("naive_file_frametimes")
@@ -67,6 +70,16 @@ pub fn main() {
                 .primitives(svg_generator::primitives::default())
                 .primitive_count(10)
                 .primitives_counts((100..=500).step_by(100 as usize)),
+        )
+        */
+        .add(
+            TimeSVGPrimitiveTessellation::new()
+                .to_csv("primitive_tessellation")
+                .to_plot("primitive_tessellation")
+                .backend(tessellation_util::backends::default())
+                .primitives(svg_generator::primitives::default())
+                .primitives_counts((100..=1000).step_by(100 as usize))
+                .trials(10),
         )
         .build()
         .run();
