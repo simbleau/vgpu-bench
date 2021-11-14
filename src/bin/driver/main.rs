@@ -1,7 +1,5 @@
 #![feature(format_args_capture)]
 
-mod tessellation_benchmarks;
-
 use chrono::Local;
 use log::LevelFilter;
 use simplelog::{ColorChoice, Config, TermLogger, TerminalMode, WriteLogger};
@@ -37,7 +35,6 @@ pub fn main() {
             Config::default(),
             create_file(output_dir.join("trace.log")).unwrap(),
         ))
-        /*
         .add(
             TimeNaiveSVGFileRendering::new()
                 .to_csv("naive_file_frametimes")
@@ -71,7 +68,6 @@ pub fn main() {
                 .primitive_count(10)
                 .primitives_counts((100..=500).step_by(100 as usize)),
         )
-        */
         .add(
             TimeSVGPrimitiveTessellation::new()
                 .to_csv("primitive_tessellation")
