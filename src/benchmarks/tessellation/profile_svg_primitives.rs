@@ -4,16 +4,19 @@ use crate::{
 };
 use erased_serde::Serialize;
 use log::{debug, info, trace, warn};
-use svg_generator::Primitive;
 use std::path::PathBuf;
-use tessellation_util::{backends::Tessellator, benching::output::SVGPrimitiveProfile};
+use svg_generator::Primitive;
+use tessellation_util::{
+    backends::Tessellator, benching::output::SVGPrimitiveProfile,
+};
 
 #[derive(Debug)]
 pub struct ProfileSVGPrimitives {
     backends: Vec<Box<dyn Tessellator>>,
     primitives: Vec<Primitive>,
     primitive_counts: Vec<u32>,
-    output: Option<&'static str>,
+    csv_output: Option<&'static str>,
+    plot_output: Option<&'static str>,
 }
 
 impl ProfileSVGPrimitives {
@@ -22,7 +25,8 @@ impl ProfileSVGPrimitives {
             backends: Vec::new(),
             primitives: Vec::new(),
             primitive_counts: Vec::new(),
-            output: None,
+            csv_output: None,
+            plot_output: None,
         }
     }
 
@@ -57,8 +61,13 @@ impl ProfileSVGPrimitives {
         self
     }
 
-    pub fn to_file(mut self, path: &'static str) -> Self {
-        self.output = Some(path);
+    pub fn to_csv(mut self, path: &'static str) -> Self {
+        self.csv_output = Some(path);
+        self
+    }
+
+    pub fn to_plot(mut self, path: &'static str) -> Self {
+        self.plot_output = Some(path);
         self
     }
 }
@@ -66,7 +75,7 @@ impl ProfileSVGPrimitives {
 impl Benchmark for ProfileSVGPrimitives {
     fn build(self: Box<Self>) -> Result<BenchmarkFn> {
         // Input check
-        if let Some(path) = self.output {
+        if let Some(path) = self.csv_output {
             log_assert!(
                 PathBuf::from(path).is_relative(),
                 "{} is not a relative path",
@@ -74,6 +83,17 @@ impl Benchmark for ProfileSVGPrimitives {
             );
         } else {
             warn!("no output path was provided; results will be dropped");
+        }
+        if let Some(path) = self.plot_output {
+            log_assert!(
+                PathBuf::from(path).is_relative(),
+                "{} is not a relative path",
+                path
+            );
+            log_assert!(
+                self.csv_output.is_some(),
+                "you cannot save a plot without an output path set"
+            )
         }
         log_assert!(self.primitives.len() > 0, "no primitive were provided");
         log_assert!(
@@ -94,7 +114,7 @@ impl Benchmark for ProfileSVGPrimitives {
                 for primitive_count in &self.primitive_counts {
                     for primitive in &self.primitives {
                         let result =
-                    tessellation_util::benching::profiling::get_primitive_profile(backend, 
+                    tessellation_util::benching::profiling::get_primitive_profile(backend,
                         *primitive, *primitive_count)?;
                         results.push(result);
                     }
@@ -102,7 +122,7 @@ impl Benchmark for ProfileSVGPrimitives {
             }
 
             // Write results
-            if let Some(path) = self.output {
+            if let Some(path) = self.csv_output {
                 let path = options.output_dir.join(path);
                 let rows: Vec<Box<dyn Serialize>> = results
                     .into_iter()
@@ -110,6 +130,26 @@ impl Benchmark for ProfileSVGPrimitives {
                     .collect();
                 util::write_csv(&path, &rows)?;
                 info!("output CSV data to '{}'", &path.display());
+            }
+
+            // Plot results
+            if let Some(plot_output) = self.plot_output {
+                let mut csv_path =
+                    options.output_dir.join(self.csv_output.unwrap());
+                csv_path.set_extension("csv");
+
+                let _proc_output = util::call_python3_program(
+                    "tools/plotter/plot_profile_svg_primitives.py",
+                    [
+                        csv_path.to_str().unwrap(),
+                        options.output_dir.to_str().unwrap(),
+                        plot_output,
+                    ],
+                )?;
+                info!(
+                    "output plot to '{}'",
+                    options.output_dir.join(plot_output).display()
+                );
             }
 
             trace!("completed SVG primitive profiling");

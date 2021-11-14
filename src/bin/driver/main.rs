@@ -6,14 +6,8 @@ use chrono::Local;
 use log::LevelFilter;
 use simplelog::{ColorChoice, Config, TermLogger, TerminalMode, WriteLogger};
 use std::path::PathBuf;
-use svg_generator::Primitive;
 use vgpu_bench::{
-    benchmarks::{
-        rendering::{
-            TimeNaiveSVGFileRendering, TimeNaiveSVGPrimitiveRendering,
-        },
-        tessellation::{ProfileSVGFiles, ProfileSVGPrimitives},
-    },
+    benchmarks::tessellation::{ProfileSVGFiles, ProfileSVGPrimitives},
     driver::Driver,
     util::{self, create_file},
 };
@@ -60,16 +54,15 @@ pub fn main() {
                 .backend(tessellation_util::backends::default())
                 .assets(util::get_files("assets/svg/examples", false)),
         )
-        /*
         .add(
             ProfileSVGPrimitives::new()
-                .to_file("primitive_profiles")
+                .to_csv("primitive_profiles")
+                .to_plot("primitive_profiles")
                 .backend(tessellation_util::backends::default())
                 .primitives(svg_generator::primitives::default())
                 .primitive_count(10)
                 .primitives_counts((100..=500).step_by(100 as usize)),
         )
-        */
         .build()
         .run();
 }

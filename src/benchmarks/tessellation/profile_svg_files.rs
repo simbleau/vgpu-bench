@@ -119,22 +119,22 @@ impl Benchmark for ProfileSVGFiles {
             }
 
             // Plot results
-            if let Some(plot_name) = self.plot_output {
+            if let Some(plot_output) = self.plot_output {
                 let mut csv_path =
                     options.output_dir.join(self.csv_output.unwrap());
                 csv_path.set_extension("csv");
 
-                let _output = util::call_python3_program(
+                let _proc_output = util::call_python3_program(
                     "tools/plotter/plot_profile_svg_files.py",
                     [
                         csv_path.to_str().unwrap(),
                         options.output_dir.to_str().unwrap(),
-                        plot_name,
+                        plot_output,
                     ],
                 )?;
                 info!(
                     "output plot to '{}'",
-                    options.output_dir.join(plot_name).display()
+                    options.output_dir.join(plot_output).display()
                 );
             }
 
