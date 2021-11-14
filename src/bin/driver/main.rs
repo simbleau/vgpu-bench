@@ -22,7 +22,7 @@ pub fn main() {
         .join(Local::now().format("%d%m%Y_%H-%M-%S").to_string());
 
     Driver::builder()
-        .on_error_panic()
+        .on_error_panic(true)
         .output_dir(output_dir.as_path())
         .logger(TermLogger::new(
             LevelFilter::Trace,

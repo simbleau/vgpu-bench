@@ -83,13 +83,8 @@ impl<'a> DriverBuilder<'a> {
         }
     }
 
-    pub fn on_error_continue(mut self) -> Self {
-        self.on_error_panic = false;
-        self
-    }
-
-    pub fn on_error_panic(mut self) -> Self {
-        self.on_error_panic = true;
+    pub fn on_error_panic(mut self, should_panic: bool) -> Self {
+        self.on_error_panic = should_panic;
         self
     }
 
