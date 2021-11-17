@@ -1,4 +1,3 @@
-use super::dictionary::*;
 use crate::benchmarks::Benchmark;
 use log::{error, info, trace};
 use simplelog::{CombinedLogger, SharedLogger};
@@ -12,7 +11,7 @@ pub struct DriverOptions<'a> {
 impl Default for DriverOptions<'_> {
     fn default() -> Self {
         DriverOptions {
-            output_dir: Path::new(OUTPUT_DIR_NAME),
+            output_dir: Path::new("output"),
         }
     }
 }
