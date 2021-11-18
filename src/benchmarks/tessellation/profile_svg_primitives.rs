@@ -139,9 +139,10 @@ impl BenchmarkBuilder for ProfileSVGPrimitives {
                     options.output_dir.join(self.csv_output.unwrap());
                 csv_path.set_extension("csv");
 
-                let _proc_output = util::call_python3_program(
-                    "tools/plotter/plot_profile_svg_primitives.py",
+                let _proc_output = util::call_program(
+                    "python3",
                     [
+                        "tools/plotter/plot_profile_svg_primitives.py",
                         csv_path.to_str().unwrap(),
                         options.output_dir.to_str().unwrap(),
                         plot_output,

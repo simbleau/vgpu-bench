@@ -9,40 +9,39 @@ use std::{
 };
 use walkdir::WalkDir;
 
-pub fn call_python3_program<I, S>(program_path: S, args: I) -> Result<Output>
+pub fn call_program<I, S>(program_path: S, args: I) -> Result<Output>
 where
     I: IntoIterator<Item = S>,
     S: AsRef<OsStr>,
 {
-    let program_path = program_path.as_ref();
-    let os_str = OsString::from(program_path);
-    let mut new_args: Vec<OsString> = Vec::new();
-    new_args.push(os_str);
-    let args = args.into_iter().map(|x| OsString::from(x.as_ref()));
-    new_args.extend(args);
+    let program_path = OsString::from(program_path.as_ref());
+    trace!("executing process '{}'", program_path.to_string_lossy());
 
-    trace!(
-        "running python3 program '{}'",
-        program_path.to_string_lossy()
-    );
     // Run program
-    let output = std::process::Command::new("python3")
-        .args(new_args)
+    let output = std::process::Command::new(&program_path)
+        .args(args)
         .output()
-        .expect("python3 was unable to run. Is `python3` in your PATH?");
+        .expect(
+            format!(
+                "'{}' was unable to execute, is it in your PATH?",
+                program_path.to_string_lossy()
+            )
+            .as_str(),
+        );
 
     // Check status code
     let output = match output.status.success() {
         true => output,
         false => {
             error!(
-                "python3 call to program '{}' exited with failed status ({}) [Stderr: '{}']",
+                "'{}' exited with failure ({}, err: '{}')",
                 program_path.to_string_lossy(),
                 output.status.to_string(),
                 &String::from_utf8_lossy(&output.stderr)
             );
             return Err(anyhow::anyhow!(
-                "failed python3 program call ({})",
+                "'{}' failed ({})",
+                program_path.to_string_lossy(),
                 output.status.to_string()
             ));
         }
