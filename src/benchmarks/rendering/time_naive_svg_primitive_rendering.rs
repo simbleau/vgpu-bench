@@ -1,6 +1,9 @@
-use crate::benchmarks::{Benchmark, BenchmarkFn};
+use crate::benchmarks::{
+    Benchmark, BenchmarkBuilder, BenchmarkData, BenchmarkFn,
+};
 use crate::Result;
 use crate::{log_assert, util};
+use benchmark_macro_derive::BenchmarkData;
 use erased_serde::Serialize;
 use log::{debug, info, trace, warn};
 use rendering_util::benching::output::PrimitiveNaiveRenderTime;
@@ -8,7 +11,7 @@ use std::path::PathBuf;
 use svg_generator::Primitive;
 use tessellation_util::backends::Tessellator;
 
-#[derive(Debug)]
+#[derive(Debug, BenchmarkData)]
 pub struct TimeNaiveSVGPrimitiveRendering {
     backends: Vec<Box<dyn Tessellator>>,
     primitives: Vec<Primitive>,
@@ -69,7 +72,7 @@ impl TimeNaiveSVGPrimitiveRendering {
     }
 }
 
-impl Benchmark for TimeNaiveSVGPrimitiveRendering {
+impl BenchmarkBuilder for TimeNaiveSVGPrimitiveRendering {
     fn build(self: Box<Self>) -> Result<BenchmarkFn> {
         // Input check
         if let Some(path) = self.csv_output {

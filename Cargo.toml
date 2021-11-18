@@ -27,6 +27,7 @@ path = "src/bin/driver/main.rs"
 
 [workspace]
 members = [
+    "crates/benchmark-macro-derive",
     "crates/renderer",
     "crates/svg-generator",
     "crates/tessellation-util",
@@ -35,11 +36,13 @@ members = [
 ]
 
 [dependencies]
+benchmark_macro_derive = { package = "benchmark-macro-derive", path = "crates/benchmark-macro-derive" }
 renderer = { package = "renderer", path = "crates/renderer" }
 tessellation-util = { package = "tessellation-util", path = "crates/tessellation-util" }
 rendering-util = { package = "rendering-util", path = "crates/rendering-util" }
 naive-renderer = { package = "naive-renderer", path = "crates/naive-renderer" }
 svg-generator = { package = "svg-generator", path = "crates/svg-generator" }
+nvtx = { package = "nvtx-rs", version = "0.11" }
 
 const_format = "0.2.21"
 lyon = { version ="0.17.5", features = ["extra"] }

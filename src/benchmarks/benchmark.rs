@@ -17,6 +17,12 @@ impl BenchmarkFn {
     }
 }
 
-pub trait Benchmark {
+pub trait Benchmark: BenchmarkData + BenchmarkBuilder {}
+
+pub trait BenchmarkData {
+    fn name(&self) -> &'static str;
+}
+
+pub trait BenchmarkBuilder {
     fn build(self: Box<Self>) -> Result<BenchmarkFn>;
 }

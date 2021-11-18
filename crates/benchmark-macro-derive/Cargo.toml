@@ -1,0 +1,18 @@
+[package]
+name = "benchmark-macro-derive"
+description = "A derive proc-macro which serves reflective benchmarking metadata"
+version = "0.1.0"
+authors = ["Spencer Imbleau <spencer@imbleau.com>"]
+edition = "2021"
+license = "MIT OR Apache-2.0"
+repository = "https://github.com/simbleau/vgpu-bench"
+workspace = "../.."
+
+[lib]
+proc-macro = true
+name = "benchmark_macro_derive"
+path = "src/lib.rs"
+
+[dependencies]
+syn = "*"
+quote = "*"

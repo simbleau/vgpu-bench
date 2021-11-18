@@ -1,7 +1,8 @@
 use crate::{
-    benchmarks::{Benchmark, BenchmarkFn},
+    benchmarks::{Benchmark, BenchmarkBuilder, BenchmarkData, BenchmarkFn},
     log_assert, util, Result,
 };
+use benchmark_macro_derive::BenchmarkData;
 use erased_serde::Serialize;
 use log::{debug, info, trace, warn};
 use std::path::PathBuf;
@@ -9,7 +10,7 @@ use tessellation_util::{
     backends::Tessellator, benching::output::SVGFileProfile,
 };
 
-#[derive(Debug)]
+#[derive(Debug, BenchmarkData)]
 pub struct ProfileSVGFiles {
     backends: Vec<Box<dyn Tessellator>>,
     assets: Vec<PathBuf>,
@@ -61,7 +62,7 @@ impl ProfileSVGFiles {
     }
 }
 
-impl Benchmark for ProfileSVGFiles {
+impl BenchmarkBuilder for ProfileSVGFiles {
     fn build(self: Box<Self>) -> Result<BenchmarkFn> {
         // Sanitize input assets
         let assets = util::files_with_extension(&self.assets, "svg");

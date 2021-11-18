@@ -1,13 +1,16 @@
-use crate::benchmarks::{Benchmark, BenchmarkFn};
+use crate::benchmarks::{
+    Benchmark, BenchmarkBuilder, BenchmarkData, BenchmarkFn,
+};
 use crate::Result;
 use crate::{log_assert, util};
+use benchmark_macro_derive::BenchmarkData;
 use erased_serde::Serialize;
 use log::{debug, info, trace, warn};
 use rendering_util::benching::output::SVGNaiveRenderTime;
 use std::path::PathBuf;
 use tessellation_util::backends::Tessellator;
 
-#[derive(Debug)]
+#[derive(Debug, BenchmarkData)]
 pub struct TimeNaiveSVGFileRendering {
     backends: Vec<Box<dyn Tessellator>>,
     assets: Vec<PathBuf>,
@@ -66,7 +69,7 @@ impl TimeNaiveSVGFileRendering {
     }
 }
 
-impl Benchmark for TimeNaiveSVGFileRendering {
+impl BenchmarkBuilder for TimeNaiveSVGFileRendering {
     fn build(self: Box<Self>) -> Result<BenchmarkFn> {
         // Sanitize input assets
         let assets = util::files_with_extension(&self.assets, "svg");

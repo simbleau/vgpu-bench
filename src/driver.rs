@@ -35,11 +35,16 @@ impl<'a> Driver<'a> {
         info!("logging started");
 
         // Build all benchmarks
+        nvtx::mark("build-stage");
         trace!("commencing driver building");
         let mut benchmarks = Vec::new();
         for builder in self.benchmarks {
-            match builder.build() {
-                Ok(b) => benchmarks.push(b),
+            let name = builder.name();
+            nvtx::range_push(format!("building {}", name).as_str());
+            let result = builder.build();
+            nvtx::range_pop();
+            match result {
+                Ok(b) => benchmarks.push((name, b)),
                 Err(e) => {
                     error!("benchmark build failed: {}", e);
                     if self.on_error_panic {
@@ -51,9 +56,13 @@ impl<'a> Driver<'a> {
         trace!("completed driver build");
 
         // Run all benchmarks
+        nvtx::mark("benchmark-stage");
         trace!("commencing benchmarks");
-        for benchmark in benchmarks {
-            if let Err(e) = benchmark.call(&self.options) {
+        for (name, benchmark_fn) in benchmarks {
+            nvtx::range_push(format!("benching {}", name).as_str());
+            let result = benchmark_fn.call(&self.options);
+            nvtx::range_pop();
+            if let Err(e) = result {
                 error!("benchmark failed: {}", e);
                 if self.on_error_panic {
                     panic!("{}", e);
