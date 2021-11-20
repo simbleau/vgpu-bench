@@ -1,5 +1,5 @@
 use crate::artifacts::RenderTimeResult;
-use crate::error::CppRendererError::{
+use crate::error::CRendererError::{
     Initialization, LibraryRetrieval, Rendering, Runtime, Staging,
 };
 use crate::error::Result;
@@ -16,11 +16,11 @@ type Render = fn(
     frames: ::std::os::raw::c_size_t,
 ) -> ::std::os::raw::c_int;
 
-pub struct CppRenderer {
+pub struct CRenderer {
     library: Library,
 }
 
-impl CppRenderer {
+impl CRenderer {
     pub fn from(lib_path: PathBuf) -> Result<Self> {
         unsafe {
             let library =
@@ -30,7 +30,7 @@ impl CppRenderer {
     }
 }
 
-impl Renderer for CppRenderer {
+impl Renderer for CRenderer {
     fn init(&mut self) -> Result<()> {
         unsafe {
             let init: Symbol<Init> = self
@@ -89,5 +89,5 @@ impl Renderer for CppRenderer {
 // Helper function to reduce code repetition
 fn str_to_cstring(input: &str) -> std::ffi::CString {
     return std::ffi::CString::new(input)
-        .expect(&format!("Creation of CString failed from {}", input));
+        .expect(&format!("Creation of CString failed from '{}'", input));
 }

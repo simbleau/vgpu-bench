@@ -5,15 +5,15 @@ pub enum RendererError {
     #[error("unexpected fatal error with Rust renderer")]
     RustLibraryError(#[source] Box<dyn std::error::Error + Send + Sync>),
     #[error("unexpected fatal error with C/C++ renderer")]
-    CppLibraryError(
+    CLibraryError(
         #[source]
         #[from]
-        CppRendererError,
+        CRendererError,
     ),
 }
 
 #[derive(thiserror::Error, Debug)]
-pub enum CppRendererError {
+pub enum CRendererError {
     #[error("unable to load C/C++ library")]
     LibraryRetrieval(libloading::Error),
     #[error("unable to initialize C/C++ library")]
