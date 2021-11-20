@@ -6,7 +6,7 @@ use crate::{log_assert, util};
 use benchmark_macro_derive::BenchmarkData;
 use erased_serde::Serialize;
 use log::{debug, info, trace, warn};
-use rendering_util::benching::output::SVGNaiveRenderTime;
+use rendering_util::benching::output::NaiveSVGFileRenderTime;
 use std::path::PathBuf;
 use tessellation_util::backends::Tessellator;
 
@@ -108,7 +108,7 @@ impl BenchmarkBuilder for TimeNaiveSVGFileRendering {
             let prev_level = log::max_level();
             log::set_max_level(log::LevelFilter::Off);
             // Collect results
-            let mut results: Vec<SVGNaiveRenderTime> = Vec::new();
+            let mut results: Vec<NaiveSVGFileRenderTime> = Vec::new();
             for mut backend in self.backends {
                 let backend: &mut dyn Tessellator = backend.as_mut();
                 for file_path in &assets {

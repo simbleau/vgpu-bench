@@ -1,6 +1,7 @@
 use super::Result;
 use csv::Writer;
 use log::{error, trace, warn};
+use renderer::targets::{SVGDocument, SVGFile};
 use std::{
     ffi::{OsStr, OsString},
     fs::File,
@@ -8,6 +9,14 @@ use std::{
     process::Output,
 };
 use walkdir::WalkDir;
+
+pub fn path_to_svg<P>(path: P) -> SVGDocument
+where
+    P: Into<PathBuf>,
+{
+    let file = SVGFile::from(&path.into());
+    SVGDocument::from(file)
+}
 
 pub fn call_program<I, S>(program_path: S, args: I) -> Result<Output>
 where
@@ -40,9 +49,10 @@ where
                 &String::from_utf8_lossy(&output.stderr)
             );
             return Err(anyhow::anyhow!(
-                "'{}' failed ({})",
+                "'{}' exited with failure ({}, err: '{}')",
                 program_path.to_string_lossy(),
-                output.status.to_string()
+                output.status.to_string(),
+                &String::from_utf8_lossy(&output.stderr)
             ));
         }
     };

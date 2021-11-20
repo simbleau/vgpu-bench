@@ -11,7 +11,7 @@ impl SVGDocument {
 
 impl From<SVGFile> for SVGDocument {
     fn from(item: SVGFile) -> Self {
-        let source = std::fs::read(item.path()).unwrap();
+        let source = std::fs::read(item.path()).unwrap(); //TODO return result
         SVGDocument(String::from_utf8_lossy(&source).to_string())
     }
 }

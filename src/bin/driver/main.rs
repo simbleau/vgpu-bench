@@ -2,12 +2,14 @@
 
 use chrono::Local;
 use log::LevelFilter;
+use naive_renderer::NaiveRenderer;
 use simplelog::{ColorChoice, Config, TermLogger, TerminalMode, WriteLogger};
 use std::path::PathBuf;
 use vgpu_bench::{
     benchmarks::{
         rendering::{
             TimeNaiveSVGFileRendering, TimeNaiveSVGPrimitiveRendering,
+            TimeSVGFileRendering,
         },
         tessellation::{
             ProfileSVGFiles, ProfileSVGPrimitives, TimeSVGPrimitiveTessellation,
@@ -35,6 +37,7 @@ pub fn main() {
             Config::default(),
             create_file(output_dir.join("trace.log")).unwrap(),
         ))
+        /*
         .add(
             TimeNaiveSVGFileRendering::new()
                 .to_csv("naive_file_frametimes")
@@ -76,6 +79,15 @@ pub fn main() {
                 .primitives(svg_generator::primitives::default())
                 .primitives_counts((100..=1000).step_by(100 as usize))
                 .trials(10),
+        )
+        */
+        .add(
+            TimeSVGFileRendering::new()
+                .to_csv("file_frametimes")
+                .to_plot("file_frametimes")
+                .renderer(Box::new(NaiveRenderer::new()))
+                .assets(util::get_files("assets/svg/examples", false))
+                .frames(100),
         )
         // TODO TimeSVGFileTessellation
         .build()

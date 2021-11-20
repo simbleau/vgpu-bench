@@ -1,7 +1,7 @@
 use serde::Serialize;
 
 #[derive(Debug, Serialize)]
-pub struct SVGNaiveRenderTime {
+pub struct NaiveSVGFileRenderTime {
     pub tessellator: String,
     pub filename: String,
     pub triangles: u32,
@@ -10,7 +10,7 @@ pub struct SVGNaiveRenderTime {
 }
 
 #[derive(Debug, Serialize)]
-pub struct PrimitiveNaiveRenderTime {
+pub struct NaivePrimitiveRenderTime {
     pub tessellator: String,
     pub primitive: String,
     pub amount: u32,

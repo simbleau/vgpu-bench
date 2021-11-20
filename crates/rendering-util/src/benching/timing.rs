@@ -1,7 +1,7 @@
 use super::error::Result;
-use super::output::PrimitiveNaiveRenderTime;
+use super::output::NaivePrimitiveRenderTime;
 use super::timing;
-use crate::benching::output::SVGNaiveRenderTime;
+use crate::benching::output::NaiveSVGFileRenderTime;
 use naive_renderer::NaiveRenderer;
 use renderer::artifacts::RenderTimeResult;
 use renderer::rust::Renderer;
@@ -20,11 +20,22 @@ pub fn time_svg(
     Ok(renderer.render(frames)?)
 }
 
+pub fn time_primitive(
+    renderer: &mut dyn Renderer,
+    primitive: Primitive,
+    primitive_count: u32,
+    frames: usize,
+) -> Result<RenderTimeResult> {
+    let svg_src = svg_generator::generate_svg(primitive, primitive_count, true);
+    let svg = SVGDocument::from(svg_src);
+    Ok(time_svg(renderer, &svg, frames)?)
+}
+
 pub fn time_naive_svg<P>(
     backend: &mut dyn Tessellator,
     svg_path: P,
     frames: usize,
-) -> Result<Vec<SVGNaiveRenderTime>>
+) -> Result<Vec<NaiveSVGFileRenderTime>>
 where
     P: Into<PathBuf>,
 {
@@ -38,9 +49,9 @@ where
     let profile = backend.get_tessellation_profile()?;
     let render_time_result = timing::time_svg(&mut renderer, &svg, frames)?;
 
-    let mut results: Vec<SVGNaiveRenderTime> = Vec::new();
+    let mut results: Vec<NaiveSVGFileRenderTime> = Vec::new();
     for (frame, dur) in render_time_result.frame_times.iter().enumerate() {
-        let naive_rendertime = SVGNaiveRenderTime {
+        let naive_rendertime = NaiveSVGFileRenderTime {
             tessellator: backend.name().to_owned(),
             filename: svg_path.display().to_string(),
             triangles: profile.triangles,
@@ -58,7 +69,7 @@ pub fn time_naive_primitive(
     primitive: Primitive,
     primitive_count: u32,
     frames: usize,
-) -> Result<Vec<PrimitiveNaiveRenderTime>> {
+) -> Result<Vec<NaivePrimitiveRenderTime>> {
     let mut renderer = NaiveRenderer::new();
 
     let svg_src = svg_generator::generate_svg(primitive, primitive_count, true);
@@ -68,9 +79,9 @@ pub fn time_naive_primitive(
     let profile = backend.get_tessellation_profile()?;
     let render_time_result = timing::time_svg(&mut renderer, &svg, frames)?;
 
-    let mut results: Vec<PrimitiveNaiveRenderTime> = Vec::new();
+    let mut results: Vec<NaivePrimitiveRenderTime> = Vec::new();
     for (frame, dur) in render_time_result.frame_times.iter().enumerate() {
-        let naive_rendertime = PrimitiveNaiveRenderTime {
+        let naive_rendertime = NaivePrimitiveRenderTime {
             tessellator: backend.name().to_owned(),
             primitive: primitive.name().to_owned(),
             amount: primitive_count,

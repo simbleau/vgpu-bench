@@ -1,3 +1,4 @@
+use crate::benchmarks::rendering::output::FileRenderTime;
 use crate::benchmarks::{
     Benchmark, BenchmarkBuilder, BenchmarkData, BenchmarkFn,
 };
@@ -6,53 +7,49 @@ use crate::{log_assert, util};
 use benchmark_macro_derive::BenchmarkData;
 use erased_serde::Serialize;
 use log::{debug, info, trace, warn};
-use rendering_util::benching::output::NaivePrimitiveRenderTime;
+use renderer::rust::Renderer;
 use std::path::PathBuf;
-use svg_generator::Primitive;
-use tessellation_util::backends::Tessellator;
 
 #[derive(Debug, BenchmarkData)]
-pub struct TimeNaiveSVGPrimitiveRendering {
-    backends: Vec<Box<dyn Tessellator>>,
-    primitives: Vec<Primitive>,
-    primitive_count: u32,
+pub struct TimeSVGFileRendering {
+    renderer: Option<Box<dyn Renderer>>,
+    assets: Vec<PathBuf>,
     frames: usize,
     csv_output: Option<&'static str>,
     plot_output: Option<&'static str>,
 }
 
-impl TimeNaiveSVGPrimitiveRendering {
+impl TimeSVGFileRendering {
     pub fn new() -> Self {
-        TimeNaiveSVGPrimitiveRendering {
-            backends: Vec::new(),
-            primitives: Vec::new(),
-            primitive_count: 0,
+        TimeSVGFileRendering {
+            renderer: None,
+            assets: Vec::new(),
             frames: 0,
             csv_output: None,
             plot_output: None,
         }
     }
 
-    pub fn backend(mut self, backend: Box<dyn Tessellator>) -> Self {
-        self.backends.push(backend);
+    pub fn renderer(mut self, renderer: Box<dyn Renderer>) -> Self {
+        self.renderer = Some(renderer);
         self
     }
 
-    pub fn primitive(mut self, primitive: Primitive) -> Self {
-        self.primitives.push(primitive);
-        self
-    }
-
-    pub fn primitives<I>(mut self, primitives: I) -> Self
+    pub fn asset<P>(mut self, path: P) -> Self
     where
-        I: IntoIterator<Item = Primitive>,
+        P: Into<PathBuf>,
     {
-        self.primitives.extend(primitives);
+        self.assets.push(path.into());
         self
     }
 
-    pub fn primitive_count(mut self, primitive_count: u32) -> Self {
-        self.primitive_count = primitive_count;
+    pub fn assets<I>(mut self, assets: I) -> Self
+    where
+        I: IntoIterator,
+        I::Item: Into<PathBuf>,
+    {
+        self.assets
+            .extend(assets.into_iter().map(|path| path.into()));
         self
     }
 
@@ -72,13 +69,17 @@ impl TimeNaiveSVGPrimitiveRendering {
     }
 }
 
-impl BenchmarkBuilder for TimeNaiveSVGPrimitiveRendering {
+impl BenchmarkBuilder for TimeSVGFileRendering {
     fn build(self: Box<Self>) -> Result<BenchmarkFn> {
+        // Sanitize input assets
+        let assets = util::files_with_extension(&self.assets, "svg");
         // Input check
+        log_assert!(self.renderer.is_some(), "a renderer must be set");
         if let Some(path) = self.csv_output {
             log_assert!(
                 PathBuf::from(path).is_relative(),
-                "{path} is not a relative path"
+                "{} is not a relative path",
+                path
             );
         } else {
             warn!("no output path was provided; results will be dropped");
@@ -94,42 +95,32 @@ impl BenchmarkBuilder for TimeNaiveSVGPrimitiveRendering {
                 "you cannot save a plot without an output path set"
             )
         }
-        log_assert!(self.backends.len() > 0, "no backends were provided");
-        log_assert!(self.primitives.len() > 0, "no primitive were provided");
-        log_assert!(
-            self.primitive_count > 0,
-            "primitive count must be greater than 0"
-        );
+        log_assert!(assets.len() > 0, "no assets were found or provided");
         log_assert!(self.frames > 0, "frames must be greater than 0");
 
         // Write benchmark
         BenchmarkFn::from(move |options| {
-            trace!(
-                "commencing naive SVG primitive rendering frametime capture"
-            );
+            trace!("commencing file rendering frametime capture");
             debug!("options: {:?}", self);
 
-            // Bandaid fix: wgpu uses the same logger - Disable logging
-            // temporarily
-            let prev_level = log::max_level();
-            log::set_max_level(log::LevelFilter::Off);
             // Collect results
-            let mut results: Vec<NaivePrimitiveRenderTime> = Vec::new();
-            for mut backend in self.backends {
-                let backend: &mut dyn Tessellator = backend.as_mut();
-                for primitive in &self.primitives {
-                    results.extend(
-                        rendering_util::benching::timing::time_naive_primitive(
-                            backend,
-                            primitive.to_owned(),
-                            self.primitive_count,
-                            self.frames,
-                        )?,
-                    );
+            let mut renderer = self.renderer.unwrap();
+            let renderer = renderer.as_mut();
+            let mut results: Vec<FileRenderTime> = Vec::new();
+            for file_path in &assets {
+                let result = rendering_util::benching::timing::time_svg(
+                    renderer,
+                    &util::path_to_svg(file_path),
+                    self.frames,
+                )?;
+                for (frame, dur) in result.frame_times.iter().enumerate() {
+                    results.push(FileRenderTime {
+                        filename: file_path.display().to_string(),
+                        frame,
+                        frame_time: dur.as_nanos(),
+                    })
                 }
             }
-            // Bandaid removal
-            log::set_max_level(prev_level);
 
             // Write results
             if let Some(path) = self.csv_output {
@@ -151,7 +142,7 @@ impl BenchmarkBuilder for TimeNaiveSVGPrimitiveRendering {
                 let _proc_output = util::call_program(
                     "python3",
                     [
-                        "tools/plotter/plot_naive_frametimes_primitives.py",
+                        "tools/plotter/plot_frametimes_files.py",
                         csv_path.to_str().unwrap(),
                         options.output_dir.to_str().unwrap(),
                         plot_output,
@@ -163,7 +154,7 @@ impl BenchmarkBuilder for TimeNaiveSVGPrimitiveRendering {
                 );
             }
 
-            trace!("completed naive SVG primitive rendering frametime capture");
+            trace!("completed SVG file rendering frametime capture");
             Ok(())
         })
     }
