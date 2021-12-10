@@ -2,7 +2,6 @@
 
 use chrono::Local;
 use log::LevelFilter;
-use naive_renderer::NaiveRenderer;
 use renderer::c::CRenderer;
 use simplelog::{ColorChoice, Config, TermLogger, TerminalMode, WriteLogger};
 use std::path::PathBuf;
