@@ -64,6 +64,7 @@ pub fn main() {
                 .backend(tessellation_util::backends::default())
                 .assets(util::get_files("assets/svg/examples", false)),
         )
+        /*
         .add(
             TimeNaiveSVGPrimitiveRendering::new()
                 .to_csv("naive_primitive_frametimes")
@@ -98,7 +99,6 @@ pub fn main() {
                 .primitives_counts((100..=1000).step_by(100 as usize))
                 .trials(10),
         )
-        /*
         .add(
             TimeSVGFileRendering::new()
                 .to_csv("file_frametimes")

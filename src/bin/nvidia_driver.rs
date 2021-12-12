@@ -43,6 +43,14 @@ pub fn main() {
     };
     let output_dir = Path::new(&output_dir);
 
+    print!("Running nsys driver...");
     let driver = NvidiaDriver::new(input_path, output_dir);
     driver.run();
+    println!("Done");
+
+    println!("Converting output...");
+    driver.convert("json");
+    println!("Done");
+
+    println!("Execution finished. Exiting...");
 }
