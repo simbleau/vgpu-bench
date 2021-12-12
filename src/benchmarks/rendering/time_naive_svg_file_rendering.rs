@@ -126,7 +126,7 @@ impl BenchmarkBuilder for TimeNaiveSVGFileRendering {
 
             // Write results
             if let Some(path) = self.csv_output {
-                let path = options.output_dir.join(path);
+                let path = options.benchmark_dir().join(path);
                 let rows: Vec<Box<dyn Serialize>> = results
                     .into_iter()
                     .map(|x| -> Box<dyn Serialize> { Box::new(x) })
@@ -138,7 +138,7 @@ impl BenchmarkBuilder for TimeNaiveSVGFileRendering {
             // Plot results
             if let Some(plot_output) = self.plot_output {
                 let mut csv_path =
-                    options.output_dir.join(self.csv_output.unwrap());
+                    options.benchmark_dir().join(self.csv_output.unwrap());
                 csv_path.set_extension("csv");
 
                 let _proc_output = util::call_program(
@@ -146,13 +146,13 @@ impl BenchmarkBuilder for TimeNaiveSVGFileRendering {
                     [
                         "tools/plotter/plot_naive_frametimes_files.py",
                         csv_path.to_str().unwrap(),
-                        options.output_dir.to_str().unwrap(),
+                        options.benchmark_dir().to_str().unwrap(),
                         plot_output,
                     ],
                 )?;
                 info!(
                     "output plot to '{}'",
-                    options.output_dir.join(plot_output).display()
+                    options.benchmark_dir().join(plot_output).display()
                 );
             }
 

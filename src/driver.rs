@@ -1,11 +1,11 @@
 use crate::benchmarks::Benchmark;
 use log::{error, info, trace};
 use simplelog::{CombinedLogger, SharedLogger};
-use std::path::Path;
+use std::path::{Path, PathBuf};
 
 // Driver options - Read only
 pub struct DriverOptions<'a> {
-    pub output_dir: &'a Path,
+    output_dir: &'a Path,
 }
 
 impl Default for DriverOptions<'_> {
@@ -13,6 +13,12 @@ impl Default for DriverOptions<'_> {
         DriverOptions {
             output_dir: Path::new("output"),
         }
+    }
+}
+
+impl DriverOptions<'_> {
+    pub fn benchmark_dir(&self) -> PathBuf {
+        self.output_dir.join("benchmarks")
     }
 }
 

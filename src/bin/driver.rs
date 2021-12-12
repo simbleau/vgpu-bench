@@ -1,10 +1,10 @@
 #![feature(format_args_capture)]
 
-use chrono::Local;
+use clap::{App, Arg};
 use log::LevelFilter;
 use renderer::c::CRenderer;
 use simplelog::{ColorChoice, Config, TermLogger, TerminalMode, WriteLogger};
-use std::path::PathBuf;
+use std::path::Path;
 use vgpu_bench::{
     benchmarks::{
         rendering::{
@@ -20,12 +20,35 @@ use vgpu_bench::{
 };
 
 pub fn main() {
+    let matches = App::new("Benchmark Driver")
+        .version("1.0")
+        .author("Spencer C. Imbleau <spencer@imbleau.com>")
+        .about("Runs arbitrary benchmarks sequentially.")
+        // TODO verbose argument
+        // TODO on error panic argument
+        // TODO logger arguments
+        .arg(
+            Arg::with_name("output")
+                .short("o")
+                .help("Select an output directory (ex: ./output/)")
+                .takes_value(true)
+                .required(true),
+        )
+        .get_matches();
+
+    let output_dir = Path::new(matches.value_of("output").unwrap());
+    if output_dir.exists() {
+        eprintln!("Output path does not exist: '{}'", output_dir.display());
+        std::process::exit(1);
+    }
+
+    /*
     let output_dir = PathBuf::from("output/")
         .join(Local::now().format("%d%m%Y_%H-%M-%S").to_string());
-
+    */
     Driver::builder()
         .on_error_panic(true)
-        .output_dir(output_dir.as_path())
+        .output_dir(output_dir)
         .logger(TermLogger::new(
             LevelFilter::Trace,
             Config::default(),
