@@ -29,7 +29,7 @@ pub fn main() {
         // TODO logger arguments
         .arg(
             Arg::with_name("output")
-                .short("o")
+                .index(1)
                 .help("Select an output directory (ex: ./output/)")
                 .takes_value(true)
                 .required(true),
@@ -42,10 +42,6 @@ pub fn main() {
         std::process::exit(1);
     }
 
-    /*
-    let output_dir = PathBuf::from("output/")
-        .join(Local::now().format("%d%m%Y_%H-%M-%S").to_string());
-    */
     Driver::builder()
         .on_error_panic(true)
         .output_dir(output_dir)
@@ -102,6 +98,7 @@ pub fn main() {
                 .primitives_counts((100..=1000).step_by(100 as usize))
                 .trials(10),
         )
+        /*
         .add(
             TimeSVGFileRendering::new()
                 .to_csv("file_frametimes")
@@ -113,6 +110,7 @@ pub fn main() {
                 .assets(util::get_files("assets/svg/examples", false))
                 .frames(100),
         )
+        */
         // TODO TimeSVGFileTessellation
         .build()
         .run();

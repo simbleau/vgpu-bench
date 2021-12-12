@@ -1,4 +1,4 @@
-use std::path::PathBuf;
+use std::{ffi::OsString, path::PathBuf};
 
 pub struct NvidiaDriver {
     input_program: PathBuf,
@@ -17,10 +17,42 @@ impl NvidiaDriver {
     }
 
     pub fn run(self) {
-        // TODO Start NVidia NSight Systems here
+        let program_path = OsString::from("nsys");
+        let args = [
+            "profile",
+            "-s",
+            "cpu",
+            "-o",
+            &self.output_dir.join("nvidia").to_string_lossy().to_string(),
+            &self.input_program.as_os_str().to_string_lossy().to_string(),
+            "--",
+            &self.output_dir.to_string_lossy().to_string(),
+        ];
 
-        // TODO Wait for completion
+        // Run program
+        let output = std::process::Command::new(&program_path)
+            .args(args)
+            .output()
+            .expect(
+                format!(
+                    "'{}' was unable to execute, is it in your PATH?",
+                    program_path.to_string_lossy()
+                )
+                .as_str(),
+            );
 
-        // TODO Retreive output
+        // Check status code
+        match output.status.success() {
+            true => output,
+            false => {
+                eprintln!(
+                    "'{}' exited with failure ({}, err: '{}')",
+                    program_path.to_string_lossy(),
+                    output.status.to_string(),
+                    &String::from_utf8_lossy(&output.stderr)
+                );
+                std::process::exit(1);
+            }
+        };
     }
 }

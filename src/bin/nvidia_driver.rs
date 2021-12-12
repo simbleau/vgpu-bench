@@ -2,6 +2,7 @@ use std::path::{Path, PathBuf};
 
 use chrono::Local;
 use clap::{App, Arg};
+use vgpu_bench::nvidia_driver::NvidiaDriver;
 
 pub fn main() {
     let matches = App::new("NVIDIA Nsight Systems Driver")
@@ -26,7 +27,7 @@ pub fn main() {
 
     // Get input program
     let input_path = Path::new(matches.value_of("input").unwrap());
-    if input_path.exists() {
+    if !input_path.exists() {
         eprintln!("Input path does not exist: '{}'", input_path.display());
         std::process::exit(1);
     }
@@ -40,4 +41,8 @@ pub fn main() {
             parent_dir.join(timestamp)
         }
     };
+    let output_dir = Path::new(&output_dir);
+
+    let driver = NvidiaDriver::new(input_path, output_dir);
+    driver.run();
 }
