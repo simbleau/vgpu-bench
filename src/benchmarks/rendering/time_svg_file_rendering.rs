@@ -7,7 +7,7 @@ use crate::{log_assert, util};
 use benchmark_macro_derive::BenchmarkData;
 use erased_serde::Serialize;
 use log::{debug, info, trace, warn};
-use renderer::rust::Renderer;
+use renderer::Renderer;
 use std::path::PathBuf;
 
 #[derive(Debug, BenchmarkData)]

@@ -5,23 +5,23 @@ pub enum RendererError {
     #[error("unexpected fatal error with Rust renderer")]
     RustLibraryError(#[source] Box<dyn std::error::Error + Send + Sync>),
     #[error("unexpected fatal error with C/C++ renderer")]
-    CLibraryError(
+    ExternalLibraryError(
         #[source]
         #[from]
-        CRendererError,
+        ExternalRendererError,
     ),
 }
 
 #[derive(thiserror::Error, Debug)]
-pub enum CRendererError {
-    #[error("unable to load C/C++ library")]
+pub enum ExternalRendererError {
+    #[error("unable to load external library")]
     LibraryRetrieval(libloading::Error),
-    #[error("unable to initialize C/C++ library")]
+    #[error("unable to initialize external library")]
     Initialization(libloading::Error),
     #[error("Unable to stage file")]
     Staging(libloading::Error),
     #[error("Unable to render file")]
     Rendering(libloading::Error),
-    #[error("C/C++ library returned error code: {0} (expected 0)")]
+    #[error("external library returned error code: {0} (expected 0)")]
     Runtime(i32),
 }

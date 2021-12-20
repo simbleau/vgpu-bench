@@ -1,8 +1,6 @@
-use std::path::{Path, PathBuf};
-
-use chrono::Local;
 use clap::{App, Arg};
-use vgpu_bench::nvidia_driver::NvidiaDriver;
+use std::{io::Write, path::Path};
+use vgpu_bench::nvidia_monitor::NvidiaDriver;
 
 pub fn main() {
     let matches = App::new("NVIDIA Nsight Systems Driver")
@@ -19,36 +17,31 @@ pub fn main() {
         .arg(
             Arg::with_name("input")
                 .short("i")
-                .help("Select an input program")
+                .help("Select an input program (ex: ./program.sh)")
                 .takes_value(true)
                 .required(true),
         )
         .get_matches();
 
-    // Get input program
+    // Sanitize args
+    let output_dir = Path::new(matches.value_of("output").unwrap());
+    std::fs::create_dir_all(output_dir).expect(
+        format!("could not create dir: '{}'", output_dir.display()).as_str(),
+    );
     let input_path = Path::new(matches.value_of("input").unwrap());
-    if !input_path.exists() {
-        eprintln!("Input path does not exist: '{}'", input_path.display());
-        std::process::exit(1);
-    }
-
-    // Get output directory
-    let parent_dir = PathBuf::from("output/");
-    let output_dir = match matches.is_present("output") {
-        true => parent_dir.join(matches.value_of("output").unwrap()),
-        false => {
-            let timestamp = Local::now().format("%d%m%Y_%H-%M-%S").to_string();
-            parent_dir.join(timestamp)
-        }
-    };
-    let output_dir = Path::new(&output_dir);
+    assert!(
+        input_path.exists() && input_path.is_file(),
+        "input path does not exist"
+    );
 
     print!("Running nsys driver...");
+    std::io::stdout().flush().unwrap();
     let driver = NvidiaDriver::new(input_path, output_dir);
     driver.run();
     println!("Done");
 
     println!("Converting output...");
+    std::io::stdout().flush().unwrap();
     driver.convert("json");
     println!("Done");
 

@@ -17,15 +17,24 @@ impl NvidiaDriver {
     }
 
     pub fn run(&self) {
+        // usage: nsys profile <application> [application-arguments]
         let program_path = OsString::from("nsys");
         let args = [
             "profile",
+            // ===== FLAGS =====
+            // Sample CPU
             "-s",
             "cpu",
+            // Choose output report file name
             "-o",
             &self.output_dir.join("nvidia").to_string_lossy().to_string(),
+            // Overwrite reports if they exist
+            "--force-overwrite",
+            "true",
+            // ===== APPLICATION =====
             &self.input_program.as_os_str().to_string_lossy().to_string(),
             "--",
+            // ===== APPLICATION ARGUMENTS =====
             &self.output_dir.to_string_lossy().to_string(),
         ];
 

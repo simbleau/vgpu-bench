@@ -22,12 +22,22 @@ name = "vgpu_bench"
 path = "src/lib.rs"
 
 [[bin]]
-name = "vgpu_driver"
-path = "src/bin/driver.rs"
+name = "tessellation_driver"
+path = "src/bin/tessellation.rs"
 
 [[bin]]
-name = "vgpu_nvidia_driver"
-path = "src/bin/nvidia_driver.rs"
+name = "naive_rendering_driver"
+path = "src/bin/naive_rendering.rs"
+
+
+[[bin]]
+name = "external_rendering_driver"
+path = "src/bin/external_rendering.rs"
+
+
+[[bin]]
+name = "nvidia_monitor"
+path = "src/bin/nvidia_monitor.rs"
 
 [workspace]
 members = [

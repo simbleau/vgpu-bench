@@ -5,9 +5,11 @@
 extern crate libloading;
 
 mod error;
-pub use error::{CRendererError, RendererError, Result};
+pub use error::{ExternalRendererError, RendererError, Result};
 
 pub mod artifacts;
-pub mod c;
-pub mod rust;
+pub mod ffi;
 pub mod targets;
+
+mod renderer;
+pub use renderer::Renderer;

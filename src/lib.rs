@@ -1,5 +1,6 @@
 #![feature(format_args_capture)]
 #![feature(trait_alias)]
+#![feature(iter_intersperse)]
 
 extern crate nvtx;
 extern crate rendering_util;
@@ -9,7 +10,7 @@ extern crate tessellation_util;
 pub use anyhow::Result;
 pub mod benchmarks;
 pub mod driver;
-pub mod nvidia_driver;
+pub mod nvidia_monitor;
 pub mod util;
 
 mod macros;

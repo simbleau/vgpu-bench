@@ -2,46 +2,49 @@
 
 use clap::{App, Arg};
 use log::LevelFilter;
-use renderer::c::CRenderer;
 use simplelog::{ColorChoice, Config, TermLogger, TerminalMode, WriteLogger};
 use std::path::Path;
 use vgpu_bench::{
-    benchmarks::{
-        rendering::{
-            TimeNaiveSVGFileRendering, TimeNaiveSVGPrimitiveRendering,
-            TimeSVGFileRendering,
-        },
-        tessellation::{
-            ProfileSVGFiles, ProfileSVGPrimitives, TimeSVGPrimitiveTessellation,
-        },
+    benchmarks::tessellation::{
+        ProfileSVGFiles, ProfileSVGPrimitives, TimeSVGPrimitiveTessellation,
     },
     driver::Driver,
-    util::{self, create_file},
+    util::{self, create_or_append},
 };
 
 pub fn main() {
-    let matches = App::new("Benchmark Driver")
+    // Get arguments
+    let matches = App::new("Tessellation Benchmark Driver")
         .version("1.0")
         .author("Spencer C. Imbleau <spencer@imbleau.com>")
-        .about("Runs arbitrary benchmarks sequentially.")
-        // TODO verbose argument
-        // TODO on error panic argument
-        // TODO logger arguments
         .arg(
             Arg::with_name("output")
-                .index(1)
+                .short("o")
                 .help("Select an output directory (ex: ./output/)")
+                .takes_value(true)
+                .required(true),
+        )
+        .arg(
+            Arg::with_name("input")
+                .short("i")
+                .help("Select a folder of assets as input (ex: ./input/)")
                 .takes_value(true)
                 .required(true),
         )
         .get_matches();
 
+    // Sanitize args
     let output_dir = Path::new(matches.value_of("output").unwrap());
-    if output_dir.exists() {
-        eprintln!("Output path does not exist: '{}'", output_dir.display());
-        std::process::exit(1);
-    }
+    std::fs::create_dir_all(output_dir).expect(
+        format!("could not create dir: '{}'", output_dir.display()).as_str(),
+    );
+    let input_dir = Path::new(matches.value_of("input").unwrap());
+    assert!(
+        input_dir.exists() && input_dir.is_dir(),
+        "input path does not exist"
+    );
 
+    // Run driver
     Driver::builder()
         .on_error_panic(true)
         .output_dir(output_dir)
@@ -54,32 +57,14 @@ pub fn main() {
         .logger(WriteLogger::new(
             LevelFilter::Trace,
             Config::default(),
-            create_file(output_dir.join("trace.log")).unwrap(),
+            create_or_append(output_dir.join("trace.log")).unwrap(),
         ))
-        .add(
-            TimeNaiveSVGFileRendering::new()
-                .to_csv("naive_file_frametimes")
-                .to_plot("naive_file_frametimes")
-                .frames(500)
-                .backend(tessellation_util::backends::default())
-                .assets(util::get_files("assets/svg/examples", false)),
-        )
-        /*
-        .add(
-            TimeNaiveSVGPrimitiveRendering::new()
-                .to_csv("naive_primitive_frametimes")
-                .to_plot("naive_primitive_frametimes")
-                .backend(tessellation_util::backends::default())
-                .frames(500)
-                .primitives(svg_generator::primitives::default())
-                .primitive_count(1),
-        )
         .add(
             ProfileSVGFiles::new()
                 .to_csv("file_profiles")
                 .to_plot("file_profiles")
                 .backend(tessellation_util::backends::default())
-                .assets(util::get_files("assets/svg/examples", false)),
+                .assets(util::get_files(input_dir, false)),
         )
         .add(
             ProfileSVGPrimitives::new()
@@ -99,18 +84,6 @@ pub fn main() {
                 .primitives_counts((100..=1000).step_by(100 as usize))
                 .trials(10),
         )
-        .add(
-            TimeSVGFileRendering::new()
-                .to_csv("file_frametimes")
-                .to_plot("file_frametimes")
-                .renderer(Box::new(
-                    CRenderer::from("ffi/examples/cpp/renderer.so".into())
-                        .unwrap(),
-                ))
-                .assets(util::get_files("assets/svg/examples", false))
-                .frames(100),
-        )
-        */
         // TODO TimeSVGFileTessellation
         .build()
         .run();

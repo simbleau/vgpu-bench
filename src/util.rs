@@ -21,10 +21,20 @@ where
 pub fn call_program<I, S>(program_path: S, args: I) -> Result<Output>
 where
     I: IntoIterator<Item = S>,
+    I: Clone,
     S: AsRef<OsStr>,
 {
     let program_path = OsString::from(program_path.as_ref());
-    trace!("executing process '{}'", program_path.to_string_lossy());
+
+    trace!(
+        "executing process '{} {}'",
+        program_path.to_string_lossy(),
+        args.clone()
+            .into_iter()
+            .map(|arg| arg.as_ref().to_string_lossy().to_string())
+            .intersperse(" ".to_string())
+            .collect::<String>()
+    );
 
     // Run program
     let output = std::process::Command::new(&program_path)
@@ -100,11 +110,11 @@ pub fn csv_writer<P>(path: P) -> Result<Writer<File>>
 where
     P: Into<PathBuf>,
 {
-    let output_file = create_file(path)?;
+    let output_file = create_or_append(path)?;
     Ok(csv::Writer::from_writer(output_file))
 }
 
-pub fn create_file<P>(path: P) -> Result<File>
+pub fn create_or_append<P>(path: P) -> Result<File>
 where
     P: Into<PathBuf>,
 {
@@ -112,8 +122,10 @@ where
     let output_path: PathBuf = path.into();
     let parent_dir = output_path.parent().expect("Path must have a parent");
     std::fs::create_dir_all(parent_dir)?;
-
-    Ok(std::fs::File::create(output_path)?)
+    Ok(std::fs::OpenOptions::new()
+        .append(true)
+        .create(true)
+        .open(output_path)?)
 }
 
 pub fn get_files<P>(dir: P, recursive: bool) -> Vec<PathBuf>

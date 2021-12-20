@@ -1,10 +1,10 @@
 use crate::artifacts::RenderTimeResult;
-use crate::error::CRendererError::{
+use crate::error::ExternalRendererError::{
     Initialization, LibraryRetrieval, Rendering, Runtime, Staging,
 };
 use crate::error::Result;
-use crate::rust::Renderer;
 use crate::targets::SVGDocument;
+use crate::Renderer;
 use libloading::{Library, Symbol};
 use std::path::PathBuf;
 use std::time::Duration;
@@ -16,21 +16,24 @@ type Render = fn(
     frames: ::std::os::raw::c_size_t,
 ) -> ::std::os::raw::c_int;
 
-pub struct CRenderer {
+pub struct ExternalRenderer {
     library: Library,
 }
 
-impl CRenderer {
-    pub fn from(lib_path: PathBuf) -> Result<Self> {
+impl ExternalRenderer {
+    pub fn from<P>(lib_path: P) -> Result<Self>
+    where
+        P: Into<PathBuf>,
+    {
         unsafe {
-            let library =
-                Library::new(lib_path).map_err(|err| LibraryRetrieval(err))?;
+            let library = Library::new(lib_path.into())
+                .map_err(|err| LibraryRetrieval(err))?;
             Ok(Self { library })
         }
     }
 }
 
-impl Renderer for CRenderer {
+impl Renderer for ExternalRenderer {
     fn init(&mut self) -> Result<()> {
         unsafe {
             let init: Symbol<Init> = self
