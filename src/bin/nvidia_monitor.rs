@@ -69,7 +69,7 @@ pub fn main() {
     vgpu_bench::util::call_program("nsys", args).unwrap();
     println!("Done");
 
-    println!("Converting output...");
+    print!("Converting output...");
     std::io::stdout().flush().unwrap();
     let args = [
         "export",
