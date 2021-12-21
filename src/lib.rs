@@ -10,7 +10,6 @@ extern crate tessellation_util;
 pub use anyhow::Result;
 pub mod benchmarks;
 pub mod driver;
-pub mod nvidia_monitor;
 pub mod util;
 
 mod macros;

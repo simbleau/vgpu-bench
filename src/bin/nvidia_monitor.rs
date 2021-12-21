@@ -1,6 +1,7 @@
+#![feature(iter_intersperse)]
+
 use clap::{App, Arg};
 use std::{io::Write, path::Path};
-use vgpu_bench::nvidia_monitor::NvidiaDriver;
 
 pub fn main() {
     let matches = App::new("NVIDIA Nsight Systems Driver")
@@ -12,7 +13,7 @@ pub fn main() {
                 .short("o")
                 .help("Select an output directory (ex: ./output/)")
                 .takes_value(true)
-                .required(false),
+                .required(true),
         )
         .arg(
             Arg::with_name("input")
@@ -20,6 +21,10 @@ pub fn main() {
                 .help("Select an input program (ex: ./program.sh)")
                 .takes_value(true)
                 .required(true),
+        )
+        .arg(
+             Arg::with_name("app_args")
+                .multiple(true)
         )
         .get_matches();
 
@@ -34,15 +39,60 @@ pub fn main() {
         "input path does not exist"
     );
 
+    let output_name = "nvidia";
+
     print!("Running nsys driver...");
     std::io::stdout().flush().unwrap();
-    let driver = NvidiaDriver::new(input_path, output_dir);
-    driver.run();
+
+    let report_name = output_dir.join(output_name).display().to_string();
+    let application_name = input_path.display().to_string();
+    let mut args = vec![
+        "profile",
+        // ===== FLAGS =====
+        // Sample CPU
+        "-s",
+        "cpu",
+        // Choose output report file name
+        "-o",
+        &report_name,
+        // Overwrite reports if they exist
+        "--force-overwrite",
+        "true",
+        // ===== APPLICATION =====
+        &application_name,
+    ];
+    let app_args = matches.values_of("app_args").unwrap();
+    if app_args.len() > 0 {
+        args.extend(app_args);
+    }
+
+    vgpu_bench::util::call_program("nsys", args).unwrap();
     println!("Done");
 
     println!("Converting output...");
     std::io::stdout().flush().unwrap();
-    driver.convert("json");
+    let args = [
+        "export",
+        // ===== FLAGS =====
+        // Choose output file name
+        "-o",
+        &output_dir
+            .join(output_name.to_owned() + ".json")
+            .display()
+            .to_string(),
+        // Choose output file format
+        "--type",
+        "json",
+        // Separated JSON strings for easier parsing
+        "--separate-strings",
+        "true",
+        // ===== QDREP FILE =====
+        &output_dir
+            .join(output_name.to_owned() + ".qdrep")
+            .display()
+            .to_string(),
+    ];
+    vgpu_bench::util::call_program("nsys", args).unwrap();
     println!("Done");
 
     println!("Execution finished. Exiting...");
