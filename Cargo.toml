@@ -23,21 +23,21 @@ path = "src/lib.rs"
 
 [[bin]]
 name = "tessellation_driver"
-path = "src/bin/tessellation.rs"
+path = "src/bin/drivers/tessellation.rs"
 
 [[bin]]
 name = "naive_rendering_driver"
-path = "src/bin/naive_rendering.rs"
+path = "src/bin/drivers/naive_rendering.rs"
 
 
 [[bin]]
 name = "external_rendering_driver"
-path = "src/bin/external_rendering.rs"
+path = "src/bin/drivers/external_rendering.rs"
 
 
 [[bin]]
 name = "nvidia_monitor"
-path = "src/bin/nvidia_monitor.rs"
+path = "src/bin/monitors/nvidia_monitor.rs"
 
 [workspace]
 members = [

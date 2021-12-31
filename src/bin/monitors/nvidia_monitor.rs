@@ -4,7 +4,7 @@ use clap::{App, Arg};
 use std::{io::Write, path::Path};
 
 pub fn main() {
-    let matches = App::new("NVIDIA Nsight Systems Driver")
+    let matches = App::new("NVIDIA Nsight Systems Monitor")
         .version("1.0")
         .author("Spencer C. Imbleau <spencer@imbleau.com>")
         .about("Runs an input program under NVIDIA Nsight Systems and consolidates output.")
