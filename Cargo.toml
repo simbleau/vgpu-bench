@@ -26,6 +26,10 @@ name = "tessellation_driver"
 path = "src/bin/drivers/tessellation.rs"
 
 [[bin]]
+name = "stress_test"
+path = "src/bin/drivers/stress_memory_test.rs"
+
+[[bin]]
 name = "naive_rendering_driver"
 path = "src/bin/drivers/naive_rendering.rs"
 
