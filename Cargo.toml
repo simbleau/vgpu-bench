@@ -39,6 +39,10 @@ path = "src/bin/drivers/external_rendering.rs"
 name = "nvidia_monitor"
 path = "src/bin/monitors/nvidia_monitor.rs"
 
+[[bin]]
+name = "memory_monitor"
+path = "src/bin/monitors/memory_monitor.rs"
+
 [workspace]
 members = [
     "crates/benchmark-macro-derive",
@@ -58,6 +62,7 @@ naive-renderer = { package = "naive-renderer", path = "crates/naive-renderer" }
 svg-generator = { package = "svg-generator", path = "crates/svg-generator" }
 nvtx = { package = "nvtx-rs", version = "0.11" }
 
+systemstat = "0.1.10"
 clap = "2.33.3"
 const_format = "0.2.21"
 lyon = { version ="0.17.5", features = ["extra"] }
