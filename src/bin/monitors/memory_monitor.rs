@@ -63,7 +63,7 @@ pub fn main() {
         "input path does not exist"
     );
     let sample_rate = matches
-        .value_of("rate")
+        .value_of("sample rate")
         .unwrap_or("1000")
         .parse::<i32>()
         .expect("sample rate must be an i32 integer");
