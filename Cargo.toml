@@ -47,6 +47,10 @@ path = "src/bin/monitors/nvidia_monitor.rs"
 name = "memory_monitor"
 path = "src/bin/monitors/memory_monitor.rs"
 
+[[bin]]
+name = "cpu_monitor"
+path = "src/bin/monitors/cpu_monitor.rs"
+
 [workspace]
 members = [
     "crates/benchmark-macro-derive",
