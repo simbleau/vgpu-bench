@@ -1,5 +1,3 @@
-#![feature(format_args_capture)]
-
 use clap::{App, Arg};
 use log::LevelFilter;
 use simplelog::{ColorChoice, Config, TermLogger, TerminalMode, WriteLogger};

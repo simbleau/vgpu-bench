@@ -39,7 +39,7 @@ pub fn main() {
         "input path does not exist"
     );
 
-    let output_name = "nvidia";
+    let output_name = "nvidia.nsys-rep";
 
     print!("Running nsys driver...");
     std::io::stdout().flush().unwrap();
