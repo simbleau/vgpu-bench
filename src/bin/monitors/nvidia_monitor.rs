@@ -88,7 +88,7 @@ pub fn main() {
         "true",
         // ===== QDREP FILE =====
         &output_dir
-            .join(output_name.to_owned() + ".qdrep")
+            .join(output_name.to_owned() + ".nsys-rep")
             .display()
             .to_string(),
     ];
