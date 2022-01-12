@@ -49,9 +49,10 @@ pub fn main() {
     let mut args = vec![
         "profile",
         // ===== FLAGS =====
-        // Sample CPU
-        "-s",
-        "cpu",
+        // Sample GPU metrics
+        "--gpu-metrics-device=all",
+        "--gpu-metrics-frequency",
+        "20000",
         // Choose output report file name
         "-o",
         &report_name,
