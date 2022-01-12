@@ -1,4 +1,3 @@
-#![feature(format_args_capture)]
 #![feature(trait_alias)]
 #![feature(iter_intersperse)]
 
