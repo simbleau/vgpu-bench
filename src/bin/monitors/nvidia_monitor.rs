@@ -49,6 +49,9 @@ pub fn main() {
     let mut args = vec![
         "profile",
         // ===== FLAGS =====
+        // Export a SQLite Database as well
+        "--export",
+        "sqlite",
         // Sample GPU metrics
         "--gpu-metrics-device=all",
         "--gpu-metrics-frequency",
