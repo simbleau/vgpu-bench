@@ -21,15 +21,13 @@ pub struct ExternalRenderer {
 }
 
 impl ExternalRenderer {
-    pub fn from<P>(lib_path: P) -> Result<Self>
+    pub unsafe fn from<P>(lib_path: P) -> Result<Self>
     where
         P: Into<PathBuf>,
     {
-        unsafe {
-            let library = Library::new(lib_path.into())
-                .map_err(|err| LibraryRetrieval(err))?;
-            Ok(Self { library })
-        }
+        let library = Library::new(lib_path.into())
+            .map_err(|err| LibraryRetrieval(err))?;
+        Ok(Self { library })
     }
 }
 

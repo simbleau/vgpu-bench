@@ -74,9 +74,9 @@ pub fn main() {
             TimeSVGFileRendering::new()
                 .to_csv("file_frametimes")
                 .to_plot("file_frametimes")
-                .renderer(Box::new(
-                    ExternalRenderer::from(renderer_path).unwrap(),
-                ))
+                .renderer(Box::new(unsafe {
+                    ExternalRenderer::from(renderer_path).unwrap()
+                }))
                 .assets(util::get_files(input_dir, false))
                 .frames(100),
         )
