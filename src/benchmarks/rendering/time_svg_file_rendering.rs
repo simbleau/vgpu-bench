@@ -98,6 +98,10 @@ impl BenchmarkBuilder for TimeSVGFileRendering {
         log_assert!(assets.len() > 0, "no assets were found or provided");
         log_assert!(self.frames > 0, "frames must be greater than 0");
 
+        // Bandaid fix: external loggers might use the same logger and affect
+        // performance
+        let prev_level = log::max_level();
+        log::set_max_level(log::LevelFilter::Off);
         // Write benchmark
         BenchmarkFn::from(move |options| {
             trace!("commencing file rendering frametime capture");
@@ -121,6 +125,8 @@ impl BenchmarkBuilder for TimeSVGFileRendering {
                     })
                 }
             }
+            // Bandaid removal
+            log::set_max_level(prev_level);
 
             // Write results
             if let Some(path) = self.csv_output {

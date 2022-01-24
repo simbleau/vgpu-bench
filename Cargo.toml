@@ -33,10 +33,14 @@ path = "src/bin/drivers/stress_memory_test.rs"
 name = "naive_rendering_driver"
 path = "src/bin/drivers/naive_rendering.rs"
 
-
 [[bin]]
 name = "external_rendering_driver"
 path = "src/bin/drivers/external_rendering.rs"
+
+
+[[bin]]
+name = "pathfinder_rendering_driver"
+path = "src/bin/drivers/pathfinder_rendering/bin.rs"
 
 
 [[bin]]
@@ -69,6 +73,7 @@ rendering-util = { package = "rendering-util", path = "crates/rendering-util" }
 naive-renderer = { package = "naive-renderer", path = "crates/naive-renderer" }
 svg-generator = { package = "svg-generator", path = "crates/svg-generator" }
 nvtx = { package = "nvtx-rs", version = "0.11" }
+pathfinder_vgpu_glue = { git="https://github.com/simbleau/pathfinder.git" }
 
 systemstat = "0.1.10"
 clap = "2.33.3"
