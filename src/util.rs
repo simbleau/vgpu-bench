@@ -111,7 +111,14 @@ where
     P: Into<PathBuf>,
 {
     let output_file = create_or_append(path)?;
-    Ok(csv::Writer::from_writer(output_file))
+    let mut write_header = true;
+    if output_file.metadata().unwrap().len() > 0 {
+        write_header = false;
+    }
+    let writer = csv::WriterBuilder::default()
+        .has_headers(write_header)
+        .from_writer(output_file);
+    Ok(writer)
 }
 
 pub fn create_or_append<P>(path: P) -> Result<File>
