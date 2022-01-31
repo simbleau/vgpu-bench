@@ -37,7 +37,11 @@ impl<'a> Driver<'a> {
 
     pub fn run(self) {
         // Initialize logger
-        CombinedLogger::init(self.loggers).unwrap();
+        if let Err(e) = CombinedLogger::init(self.loggers) {
+            let err_msg =
+                "Logged failed to initialize... Was it already initialized?";
+            eprintln!("{err_msg}\n{e}");
+        }
         info!("logging started");
 
         // Build all benchmarks
