@@ -15,8 +15,39 @@ This project is used as a framework to provide metrics for use in a wider scope 
 - [vgpu-bench](#vgpu-bench)
 - [Motivation](#motivation)
 - [Sections](#sections)
+  - [Getting Started](#getting-started)
+    - [Requirements](#requirements)
+    - [Dependencies](#dependencies)
+    - [Install](#install)
   - [Methodology](#methodology)
 - [License](#license)
+
+## Getting Started
+
+#### Requirements:
+
+ - **Operating System**
+   - Ubuntu 20.04
+   - Windows
+ - **NVIDIA graphics card with minimum driver version:**
+   - NVIDIA Turing architecture TU10x, TU11x - r440
+   - NVIDIA Ampere architecture GA100 - r450
+   - NVIDIA Ampere architecture GA100 MIG - r470 TRD1
+   - NVIDIA Ampere architecture GA10x - r455
+
+#### Dependencies
+ - Rust 1.58+: **[Installation Guide](https://rustup.rs/)**
+ - **[NVIDIA NSight-Systems](https://developer.nvidia.com/nsight-systems)**
+ - Ubuntu 20.04
+   - `sudo apt install curl python3 python3-pip`
+   - `pip3 install matplotlib pandas numpy cairovg`
+ - Windows
+   - You'll have to figure this out for yourself right now...
+
+#### Install
+ - Install dependencies above.
+ - Clone repo
+ - Link pathfinder resources to same directory
 
 ## Methodology
 
