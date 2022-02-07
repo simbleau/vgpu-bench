@@ -46,9 +46,9 @@ This project is used as a framework to provide metrics for use in a wider scope 
 
 #### Install
  - Install dependencies above.
- - Clone repo
- - Clone [pathfinder](https://github.com/servo/pathfinder) repo wherever permissions are not an issue
- - Link pathfinder resources to same directory (e.g. `ln -s ~/pathfinder/resources ~/vgpu-bench/resources`)
+ - Clone [vgpu-bench](https://github.com/simbleau/vgpu-bench)
+ - Clone [pathfinder](https://github.com/servo/pathfinder)
+ - Link pathfinder resources in the vgpu-bench directory (e.g. `ln -s ~/pathfinder/resources ~/vgpu-bench/resources`)
 
 ## Methodology
 
