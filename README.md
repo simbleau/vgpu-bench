@@ -36,8 +36,8 @@ This project is used as a framework to provide metrics for use in a wider scope 
    - NVIDIA Ampere architecture GA10x - r455
 
 #### Dependencies
- - Rust 1.58+: **[Installation Guide](https://rustup.rs/)**
- - **[NVIDIA NSight-Systems](https://developer.nvidia.com/nsight-systems)**
+ - [Rust 1.58+](https://rustup.rs/)
+ - [NVIDIA NSight-Systems](https://developer.nvidia.com/nsight-systems)
  - Ubuntu 20.04
    - `sudo apt install curl python3 python3-pip`
    - `pip3 install matplotlib pandas numpy cairosvg`
