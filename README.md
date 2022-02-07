@@ -39,7 +39,7 @@ This project is used as a framework to provide metrics for use in a wider scope 
  - [Rust 1.58+](https://rustup.rs/)
  - [NVIDIA NSight-Systems](https://developer.nvidia.com/nsight-systems)
  - Ubuntu 20.04
-   - `sudo apt install curl python3 python3-pip`
+   - `sudo apt install curl python3 python3-pip libgtk-3-dev`
    - `pip3 install matplotlib pandas numpy cairosvg`
  - Windows
    - You'll have to figure this out for yourself right now...
@@ -47,7 +47,8 @@ This project is used as a framework to provide metrics for use in a wider scope 
 #### Install
  - Install dependencies above.
  - Clone repo
- - Link pathfinder resources to same directory
+ - Clone [pathfinder](https://github.com/servo/pathfinder) repo wherever permissions are not an issue
+ - Link pathfinder resources to same directory (e.g. `ln -s ~/pathfinder/resources ~/vgpu-bench/resources`)
 
 ## Methodology
 
