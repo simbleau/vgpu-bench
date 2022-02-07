@@ -40,7 +40,7 @@ This project is used as a framework to provide metrics for use in a wider scope 
  - **[NVIDIA NSight-Systems](https://developer.nvidia.com/nsight-systems)**
  - Ubuntu 20.04
    - `sudo apt install curl python3 python3-pip`
-   - `pip3 install matplotlib pandas numpy cairovg`
+   - `pip3 install matplotlib pandas numpy cairosvg`
  - Windows
    - You'll have to figure this out for yourself right now...
 
