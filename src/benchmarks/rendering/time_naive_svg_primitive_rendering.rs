@@ -101,7 +101,7 @@ impl BenchmarkBuilder for TimeNaiveSVGPrimitiveRendering {
         log_assert!(self.frames > 0, "frames must be greater than 0");
 
         // Write benchmark
-        BenchmarkFn::from(move |options| {
+        let bfn = BenchmarkFn::from(move |options| {
             trace!(
                 "commencing naive SVG primitive rendering frametime capture"
             );
@@ -163,6 +163,8 @@ impl BenchmarkBuilder for TimeNaiveSVGPrimitiveRendering {
 
             trace!("completed naive SVG primitive rendering frametime capture");
             Ok(())
-        })
+        });
+
+        Ok(bfn)
     }
 }

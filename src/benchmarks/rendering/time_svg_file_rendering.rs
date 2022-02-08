@@ -101,7 +101,7 @@ impl BenchmarkBuilder for TimeSVGFileRendering {
         let prev_level = log::max_level();
         log::set_max_level(log::LevelFilter::Off);
         // Write benchmark
-        BenchmarkFn::from(move |options| {
+        let bfn = BenchmarkFn::from(move |options| {
             trace!("commencing file rendering frametime capture");
             debug!("options: {:?}", self);
 
@@ -160,6 +160,8 @@ impl BenchmarkBuilder for TimeSVGFileRendering {
 
             trace!("completed SVG file rendering frametime capture");
             Ok(())
-        })
+        });
+
+        Ok(bfn)
     }
 }

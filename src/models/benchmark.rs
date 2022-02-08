@@ -8,11 +8,11 @@ impl BenchmarkFn {
         Ok(self.0(options)?)
     }
 
-    pub fn from<F>(function: F) -> Result<Self>
+    pub fn from<F>(function: F) -> Self
     where
         F: FnOnce(&DriverOptions) -> Result<()> + 'static,
     {
-        Ok(BenchmarkFn(Box::new(function)))
+        BenchmarkFn(Box::new(function))
     }
 }
 

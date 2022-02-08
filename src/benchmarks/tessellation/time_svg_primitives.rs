@@ -113,7 +113,7 @@ impl BenchmarkBuilder for TimeSVGPrimitiveTessellation {
         log_assert!(self.backends.len() > 0, "no backends were provided");
 
         // Write benchmark
-        BenchmarkFn::from(move |options| {
+        let bfn = BenchmarkFn::from(move |options| {
             trace!("commencing SVG primitive tessellation timing");
             debug!("options: {:?}", self);
 
@@ -168,6 +168,8 @@ impl BenchmarkBuilder for TimeSVGPrimitiveTessellation {
 
             trace!("completed SVG primitive tessellation timing");
             Ok(())
-        })
+        });
+
+        Ok(bfn)
     }
 }

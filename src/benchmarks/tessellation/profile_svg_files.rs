@@ -92,7 +92,7 @@ impl BenchmarkBuilder for ProfileSVGFiles {
         log_assert!(self.backends.len() > 0, "no backends were provided");
 
         // Write benchmark
-        BenchmarkFn::from(move |options| {
+        let bfn = BenchmarkFn::from(move |options| {
             trace!("commencing SVG file profiling");
             debug!("options: {:?}", self);
 
@@ -143,6 +143,8 @@ impl BenchmarkBuilder for ProfileSVGFiles {
 
             trace!("completed SVG file profiling");
             Ok(())
-        })
+        });
+
+        Ok(bfn)
     }
 }
