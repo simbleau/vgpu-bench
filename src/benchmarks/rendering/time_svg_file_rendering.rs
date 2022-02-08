@@ -1,7 +1,5 @@
 use crate::benchmarks::rendering::output::FileRenderTime;
-use crate::benchmarks::{
-    Benchmark, BenchmarkBuilder, BenchmarkData, BenchmarkFn,
-};
+use crate::models::{Benchmark, BenchmarkBuilder, BenchmarkData, BenchmarkFn};
 use crate::Result;
 use crate::{log_assert, util};
 use benchmark_macro_derive::BenchmarkData;

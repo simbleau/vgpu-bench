@@ -1,4 +1,4 @@
-use crate::benchmarks::Benchmark;
+use crate::models::Benchmark;
 use log::{error, info, trace};
 use simplelog::{CombinedLogger, SharedLogger};
 use std::path::{Path, PathBuf};

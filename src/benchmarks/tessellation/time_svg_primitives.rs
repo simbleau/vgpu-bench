@@ -1,6 +1,7 @@
 use crate::{
-    benchmarks::{Benchmark, BenchmarkBuilder, BenchmarkData, BenchmarkFn},
-    log_assert, util, Result,
+    log_assert,
+    models::{Benchmark, BenchmarkBuilder, BenchmarkData, BenchmarkFn},
+    util, Result,
 };
 use benchmark_macro_derive::BenchmarkData;
 use erased_serde::Serialize;
