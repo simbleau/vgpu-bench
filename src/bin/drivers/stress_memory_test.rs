@@ -1,3 +1,4 @@
+use anyhow::Result;
 use clap::{App, Arg};
 use log::LevelFilter;
 use simplelog::{ColorChoice, Config, TermLogger, TerminalMode, WriteLogger};
@@ -8,7 +9,7 @@ use vgpu_bench::{
     util::{self, create_or_append},
 };
 
-pub fn main() {
+pub fn main() -> Result<()> {
     // Get arguments
     let matches = App::new("Tessellation Memory Test Benchmark Driver")
         .version("1.0")
@@ -59,8 +60,11 @@ pub fn main() {
             ProfileSVGFiles::new()
                 .to_csv("stress_profiles")
                 .backend(tessellation_util::backends::default())
-                .assets(util::get_files(input_dir, false)),
+                .assets(util::get_files(input_dir, false))
+                .try_into()?,
         )
         .build()
         .run();
+
+    Ok(())
 }

@@ -1,9 +1,8 @@
 use crate::{
     log_assert,
-    models::{Benchmark, BenchmarkBuilder, BenchmarkData, BenchmarkFn},
+    models::{BenchmarkFn, BenchmarkMetadata, Unit},
     util, Result,
 };
-use benchmark_macro_derive::BenchmarkData;
 use erased_serde::Serialize;
 use log::{debug, info, trace, warn};
 use std::path::PathBuf;
@@ -12,7 +11,7 @@ use tessellation_util::{
     backends::Tessellator, benching::output::PrimitiveTessellationTime,
 };
 
-#[derive(Debug, BenchmarkData)]
+#[derive(Debug)]
 pub struct TimeSVGPrimitiveTessellation {
     backends: Vec<Box<dyn Tessellator>>,
     primitives: Vec<Primitive>,
@@ -81,8 +80,21 @@ impl TimeSVGPrimitiveTessellation {
     }
 }
 
-impl BenchmarkBuilder for TimeSVGPrimitiveTessellation {
-    fn build(self: Box<Self>) -> Result<BenchmarkFn> {
+pub const DEFAULT_METADATA: BenchmarkMetadata = BenchmarkMetadata {
+    name: "Time SVG Primitive Tessellation",
+};
+impl TryFrom<TimeSVGPrimitiveTessellation> for Unit {
+    type Error = anyhow::Error;
+
+    fn try_from(
+        value: TimeSVGPrimitiveTessellation,
+    ) -> Result<Self, Self::Error> {
+        Ok(Unit::new(DEFAULT_METADATA, value.build()?))
+    }
+}
+
+impl TimeSVGPrimitiveTessellation {
+    fn build(self) -> Result<BenchmarkFn> {
         // Input check
         if let Some(path) = self.csv_output {
             log_assert!(

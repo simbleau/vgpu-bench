@@ -1,9 +1,6 @@
 // Benchmark Models
-mod benchmark;
-pub use benchmark::Benchmark;
-pub use benchmark::BenchmarkBuilder;
-pub use benchmark::BenchmarkData;
-pub use benchmark::BenchmarkFn;
+mod benchmark_fn;
+pub use benchmark_fn::BenchmarkFn;
 
 mod benchmark_metadata;
 pub use benchmark_metadata::BenchmarkMetadata;
@@ -17,5 +14,6 @@ pub use monitor::MonitorFrequency;
 mod monitor_metadata;
 pub use monitor_metadata::MonitorMetadata;
 
-// TODO
+// Unit Models
 mod unit;
+pub use unit::Unit;

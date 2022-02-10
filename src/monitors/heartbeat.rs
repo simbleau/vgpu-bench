@@ -1,5 +1,3 @@
-use std::time::Instant;
-
 use crate::models::{Measurable, Monitor, MonitorFrequency, MonitorMetadata};
 use crate::monitors::heartbeat::Heartbeat::{Beat1, Beat2};
 use crate::monitors::heartbeat::MonitorFrequency::Hertz;
@@ -22,7 +20,15 @@ impl Default for HeartbeatMonitor {
         }
     }
 }
+
 impl Monitor for HeartbeatMonitor {
+    fn metadata(&self) -> &'static MonitorMetadata {
+        &MonitorMetadata {
+            name: "Heartbeat Monitor",
+            frequency: Hertz(1),
+        }
+    }
+
     fn before(&mut self) {
         self.beating = true;
     }
@@ -48,12 +54,5 @@ impl Monitor for HeartbeatMonitor {
 
     fn after(&mut self) {
         self.beating = false;
-    }
-
-    fn metadata(&self) -> &'static MonitorMetadata {
-        &MonitorMetadata {
-            name: "Heartbeat Monitor",
-            frequency: Hertz(1),
-        }
     }
 }

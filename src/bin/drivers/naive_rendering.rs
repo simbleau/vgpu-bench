@@ -1,3 +1,4 @@
+use anyhow::Result;
 use clap::{App, Arg};
 use log::LevelFilter;
 use simplelog::{ColorChoice, Config, TermLogger, TerminalMode, WriteLogger};
@@ -10,7 +11,7 @@ use vgpu_bench::{
     util::{self, create_or_append},
 };
 
-pub fn main() {
+pub fn main() -> Result<()> {
     // Get arguments
     let matches = App::new("Naive Rendering Benchmark Driver")
         .version("1.0")
@@ -63,7 +64,8 @@ pub fn main() {
                 .to_plot("naive_file_frametimes")
                 .frames(500)
                 .backend(tessellation_util::backends::default())
-                .assets(util::get_files(input_dir, false)),
+                .assets(util::get_files(input_dir, false))
+                .try_into()?,
         )
         .add(
             TimeNaiveSVGPrimitiveRendering::new()
@@ -72,8 +74,11 @@ pub fn main() {
                 .backend(tessellation_util::backends::default())
                 .frames(500)
                 .primitives(svg_generator::primitives::default())
-                .primitive_count(1),
+                .primitive_count(1)
+                .try_into()?,
         )
         .build()
         .run();
+
+    Ok(())
 }

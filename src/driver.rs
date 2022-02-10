@@ -1,4 +1,4 @@
-use crate::models::Benchmark;
+use crate::models::Unit;
 use log::{error, info, trace};
 use simplelog::{CombinedLogger, SharedLogger};
 use std::path::{Path, PathBuf};
@@ -26,7 +26,7 @@ impl DriverOptions<'_> {
 pub struct Driver<'a> {
     options: DriverOptions<'a>,
     loggers: Vec<Box<dyn SharedLogger>>,
-    benchmarks: Vec<Box<dyn Benchmark>>,
+    benchmarks: Vec<Unit>,
     on_error_panic: bool,
 }
 
@@ -44,33 +44,14 @@ impl<'a> Driver<'a> {
         }
         info!("logging started");
 
-        // Build all benchmarks
-        nvtx::mark("build-stage");
-        trace!("commencing driver building");
-        let mut benchmarks = Vec::new();
-        for builder in self.benchmarks {
-            let name = builder.name();
-            nvtx::range_push(format!("building {}", name).as_str());
-            let result = builder.build();
-            nvtx::range_pop();
-            match result {
-                Ok(b) => benchmarks.push((name, b)),
-                Err(e) => {
-                    error!("benchmark build failed: {}", e);
-                    if self.on_error_panic {
-                        panic!("{}", e);
-                    }
-                }
-            }
-        }
-        trace!("completed driver build");
-
         // Run all benchmarks
         nvtx::mark("benchmark-stage");
         trace!("commencing benchmarks");
-        for (name, benchmark_fn) in benchmarks {
-            nvtx::range_push(format!("benching {}", name).as_str());
-            let result = benchmark_fn.call(&self.options);
+        for mut benchmark in self.benchmarks {
+            nvtx::range_push(
+                format!("benching {}", benchmark.metadata().name).as_str(),
+            );
+            let result = benchmark.run(&self.options);
             nvtx::range_pop();
             if let Err(e) = result {
                 error!("benchmark failed: {}", e);
@@ -87,7 +68,7 @@ impl<'a> Driver<'a> {
 pub struct DriverBuilder<'a> {
     pub options: DriverOptions<'a>,
     loggers: Vec<Box<dyn SharedLogger>>,
-    benchmarks: Vec<Box<dyn Benchmark>>,
+    benchmarks: Vec<Unit>,
     on_error_panic: bool,
 }
 
@@ -116,11 +97,8 @@ impl<'a> DriverBuilder<'a> {
         self
     }
 
-    pub fn add<B>(mut self, benchmark: B) -> Self
-    where
-        B: Benchmark + 'static,
-    {
-        self.benchmarks.push(Box::new(benchmark));
+    pub fn add(mut self, benchmark: Unit) -> Self {
+        self.benchmarks.push(benchmark);
         self
     }
 

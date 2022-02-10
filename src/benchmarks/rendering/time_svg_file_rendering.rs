@@ -1,14 +1,13 @@
 use crate::benchmarks::rendering::output::FileRenderTime;
-use crate::models::{Benchmark, BenchmarkBuilder, BenchmarkData, BenchmarkFn};
+use crate::models::{BenchmarkFn, BenchmarkMetadata, Unit};
 use crate::Result;
 use crate::{log_assert, util};
-use benchmark_macro_derive::BenchmarkData;
 use erased_serde::Serialize;
 use log::{debug, info, trace, warn};
 use renderer::Renderer;
 use std::path::PathBuf;
 
-#[derive(Debug, BenchmarkData)]
+#[derive(Debug)]
 pub struct TimeSVGFileRendering {
     renderer: Option<Box<dyn Renderer>>,
     assets: Vec<PathBuf>,
@@ -67,8 +66,19 @@ impl TimeSVGFileRendering {
     }
 }
 
-impl BenchmarkBuilder for TimeSVGFileRendering {
-    fn build(self: Box<Self>) -> Result<BenchmarkFn> {
+pub const DEFAULT_METADATA: BenchmarkMetadata = BenchmarkMetadata {
+    name: "Time SVG File Rendering",
+};
+impl TryFrom<TimeSVGFileRendering> for Unit {
+    type Error = anyhow::Error;
+
+    fn try_from(value: TimeSVGFileRendering) -> Result<Self, Self::Error> {
+        Ok(Unit::new(DEFAULT_METADATA, value.build()?))
+    }
+}
+
+impl TimeSVGFileRendering {
+    fn build(self) -> Result<BenchmarkFn> {
         // Sanitize input assets
         let assets = util::files_with_extension(&self.assets, "svg");
         // Input check

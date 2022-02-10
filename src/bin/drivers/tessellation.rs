@@ -1,3 +1,4 @@
+use anyhow::Result;
 use clap::{App, Arg};
 use log::LevelFilter;
 use simplelog::{ColorChoice, Config, TermLogger, TerminalMode, WriteLogger};
@@ -10,7 +11,7 @@ use vgpu_bench::{
     util::{self, create_or_append},
 };
 
-pub fn main() {
+pub fn main() -> Result<()> {
     // Get arguments
     let matches = App::new("Tessellation Benchmark Driver")
         .version("1.0")
@@ -62,7 +63,8 @@ pub fn main() {
                 .to_csv("file_profiles")
                 .to_plot("file_profiles")
                 .backend(tessellation_util::backends::default())
-                .assets(util::get_files(input_dir, false)),
+                .assets(util::get_files(input_dir, false))
+                .try_into()?,
         )
         .add(
             ProfileSVGPrimitives::new()
@@ -71,7 +73,8 @@ pub fn main() {
                 .backend(tessellation_util::backends::default())
                 .primitives(svg_generator::primitives::default())
                 .primitive_count(10)
-                .primitives_counts((100..=500).step_by(100 as usize)),
+                .primitives_counts((100..=500).step_by(100 as usize))
+                .try_into()?,
         )
         .add(
             TimeSVGPrimitiveTessellation::new()
@@ -80,9 +83,12 @@ pub fn main() {
                 .backend(tessellation_util::backends::default())
                 .primitives(svg_generator::primitives::default())
                 .primitives_counts((100..=1000).step_by(100 as usize))
-                .trials(10),
+                .trials(10)
+                .try_into()?,
         )
         // TODO TimeSVGFileTessellation
         .build()
         .run();
+
+    Ok(())
 }

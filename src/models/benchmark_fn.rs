@@ -8,20 +8,10 @@ impl BenchmarkFn {
         Ok(self.0(options)?)
     }
 
-    pub fn from<F>(function: F) -> Self
+    pub fn from<F>(func: F) -> Self
     where
         F: FnOnce(&DriverOptions) -> Result<()> + 'static,
     {
-        BenchmarkFn(Box::new(function))
+        BenchmarkFn(Box::new(func))
     }
-}
-
-pub trait Benchmark: BenchmarkData + BenchmarkBuilder {}
-
-pub trait BenchmarkData {
-    fn name(&self) -> &'static str;
-}
-
-pub trait BenchmarkBuilder {
-    fn build(self: Box<Self>) -> Result<BenchmarkFn>;
 }

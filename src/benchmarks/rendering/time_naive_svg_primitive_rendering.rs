@@ -1,7 +1,6 @@
-use crate::models::{Benchmark, BenchmarkBuilder, BenchmarkData, BenchmarkFn};
+use crate::models::{BenchmarkFn, BenchmarkMetadata, Unit};
 use crate::Result;
 use crate::{log_assert, util};
-use benchmark_macro_derive::BenchmarkData;
 use erased_serde::Serialize;
 use log::{debug, info, trace, warn};
 use rendering_util::benching::output::NaivePrimitiveRenderTime;
@@ -9,7 +8,7 @@ use std::path::PathBuf;
 use svg_generator::Primitive;
 use tessellation_util::backends::Tessellator;
 
-#[derive(Debug, BenchmarkData)]
+#[derive(Debug)]
 pub struct TimeNaiveSVGPrimitiveRendering {
     backends: Vec<Box<dyn Tessellator>>,
     primitives: Vec<Primitive>,
@@ -70,8 +69,21 @@ impl TimeNaiveSVGPrimitiveRendering {
     }
 }
 
-impl BenchmarkBuilder for TimeNaiveSVGPrimitiveRendering {
-    fn build(self: Box<Self>) -> Result<BenchmarkFn> {
+pub const DEFAULT_METADATA: BenchmarkMetadata = BenchmarkMetadata {
+    name: "Time Naive SVG Primitive Rendering",
+};
+impl TryFrom<TimeNaiveSVGPrimitiveRendering> for Unit {
+    type Error = anyhow::Error;
+
+    fn try_from(
+        value: TimeNaiveSVGPrimitiveRendering,
+    ) -> Result<Self, Self::Error> {
+        Ok(Unit::new(DEFAULT_METADATA, value.build()?))
+    }
+}
+
+impl TimeNaiveSVGPrimitiveRendering {
+    fn build(self) -> Result<BenchmarkFn> {
         // Input check
         if let Some(path) = self.csv_output {
             log_assert!(

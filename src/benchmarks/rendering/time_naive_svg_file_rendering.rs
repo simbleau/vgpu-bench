@@ -1,14 +1,13 @@
-use crate::models::{Benchmark, BenchmarkBuilder, BenchmarkData, BenchmarkFn};
+use crate::models::{BenchmarkFn, BenchmarkMetadata, Unit};
 use crate::Result;
 use crate::{log_assert, util};
-use benchmark_macro_derive::BenchmarkData;
 use erased_serde::Serialize;
 use log::{debug, info, trace, warn};
 use rendering_util::benching::output::NaiveSVGFileRenderTime;
 use std::path::PathBuf;
 use tessellation_util::backends::Tessellator;
 
-#[derive(Debug, BenchmarkData)]
+#[derive(Debug)]
 pub struct TimeNaiveSVGFileRendering {
     backends: Vec<Box<dyn Tessellator>>,
     assets: Vec<PathBuf>,
@@ -67,8 +66,19 @@ impl TimeNaiveSVGFileRendering {
     }
 }
 
-impl BenchmarkBuilder for TimeNaiveSVGFileRendering {
-    fn build(self: Box<Self>) -> Result<BenchmarkFn> {
+pub const DEFAULT_METADATA: BenchmarkMetadata = BenchmarkMetadata {
+    name: "Time Naive SVG File Rendering",
+};
+impl TryFrom<TimeNaiveSVGFileRendering> for Unit {
+    type Error = anyhow::Error;
+
+    fn try_from(value: TimeNaiveSVGFileRendering) -> Result<Self, Self::Error> {
+        Ok(Unit::new(DEFAULT_METADATA, value.build()?))
+    }
+}
+
+impl TimeNaiveSVGFileRendering {
+    pub fn build(self) -> Result<BenchmarkFn> {
         // Sanitize input assets
         let assets = util::files_with_extension(&self.assets, "svg");
         // Input check

@@ -1,3 +1,4 @@
+use anyhow::Result;
 use clap::{App, Arg};
 use log::LevelFilter;
 use renderer::ffi::ExternalRenderer;
@@ -9,7 +10,7 @@ use vgpu_bench::{
     util::{self, create_or_append},
 };
 
-pub fn main() {
+pub fn main() -> Result<()> {
     // Get arguments
     let matches = App::new("External Library Rendering Benchmark Driver")
         .version("1.0")
@@ -78,8 +79,11 @@ pub fn main() {
                     ExternalRenderer::from(renderer_path).unwrap()
                 }))
                 .assets(util::get_files(input_dir, false))
-                .frames(100),
+                .frames(100)
+                .try_into()?,
         )
         .build()
         .run();
+
+    Ok(())
 }

@@ -1,4 +1,5 @@
 mod render_glue;
+use anyhow::Result;
 use clap::{App, Arg};
 use log::LevelFilter;
 use render_glue::PathfinderImpl;
@@ -10,7 +11,7 @@ use vgpu_bench::{
     util::{self, create_or_append},
 };
 
-pub fn main() {
+pub fn main() -> Result<()> {
     // Get arguments
     let matches = App::new("Pathfinder Rendering Benchmark Driver")
         .version("1.0")
@@ -66,7 +67,8 @@ pub fn main() {
                         .to_csv("file_frametimes_pathfinder")
                         .renderer(Box::new(PathfinderImpl::new(asset.clone())))
                         .asset(asset.clone())
-                        .frames(100),
+                        .frames(100)
+                        .try_into()?,
                 )
                 .build()
                 .run();
@@ -92,4 +94,6 @@ pub fn main() {
             benchmark_dir.join("file_frametimes_pathfinder").display()
         );
     }
+
+    Ok(())
 }
