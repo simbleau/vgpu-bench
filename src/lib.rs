@@ -10,6 +10,7 @@ pub use anyhow::Result;
 pub mod benchmarks;
 pub mod driver;
 pub mod models;
+pub mod monitors;
 pub mod util;
 
 mod macros;

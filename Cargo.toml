@@ -75,6 +75,7 @@ svg-generator = { package = "svg-generator", path = "crates/svg-generator" }
 nvtx = { package = "nvtx-rs", version = "0.11" }
 pathfinder_vgpu_glue = { git="https://github.com/simbleau/pathfinder.git" }
 
+crossbeam = "0.8"
 systemstat = "0.1.10"
 clap = "2.33.3"
 const_format = "0.2.21"
