@@ -62,7 +62,7 @@ impl ProfileSVGFiles {
     }
 }
 
-const DEFAULT_METADATA: BenchmarkMetadata = BenchmarkMetadata {
+pub const DEFAULT_METADATA: BenchmarkMetadata = BenchmarkMetadata {
     name: "Profile SVG Files",
 };
 impl TryFrom<ProfileSVGFiles> for Unit {
