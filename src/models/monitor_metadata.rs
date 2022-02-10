@@ -1,6 +1,6 @@
 use crate::models::MonitorFrequency;
 
 pub struct MonitorMetadata {
-    pub name: &'static str,
+    pub name: String,
     pub frequency: MonitorFrequency,
 }

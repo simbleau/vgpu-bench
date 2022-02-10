@@ -1,6 +1,6 @@
 // Benchmark Models
-mod benchmark_fn;
-pub use benchmark_fn::BenchmarkFn;
+mod benchmark;
+pub use benchmark::BenchmarkFn;
 
 mod benchmark_metadata;
 pub use benchmark_metadata::BenchmarkMetadata;

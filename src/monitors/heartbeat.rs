@@ -8,13 +8,31 @@ pub enum Heartbeat {
 }
 
 pub struct HeartbeatMonitor {
+    data: MonitorMetadata,
     beating: bool,
     beat: Heartbeat,
 }
 unsafe impl Send for HeartbeatMonitor {}
+
+impl HeartbeatMonitor {
+    pub fn new<S: Into<String>>(name: S, frequency: MonitorFrequency) -> Self {
+        HeartbeatMonitor {
+            data: MonitorMetadata {
+                name: name.into(),
+                frequency,
+            },
+            beating: false,
+            beat: Beat1,
+        }
+    }
+}
 impl Default for HeartbeatMonitor {
     fn default() -> Self {
         Self {
+            data: MonitorMetadata {
+                name: "Heartbeat Monitor".to_string(),
+                frequency: Hertz(1),
+            },
             beating: false,
             beat: Heartbeat::Beat1,
         }
@@ -22,11 +40,8 @@ impl Default for HeartbeatMonitor {
 }
 
 impl Monitor for HeartbeatMonitor {
-    fn metadata(&self) -> &'static MonitorMetadata {
-        &MonitorMetadata {
-            name: "Heartbeat Monitor",
-            frequency: Hertz(1),
-        }
+    fn metadata(&self) -> &MonitorMetadata {
+        &self.data
     }
 
     fn before(&mut self) {

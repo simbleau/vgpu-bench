@@ -10,6 +10,7 @@ pub enum Measurable {
     Uninitialized,
 }
 
+#[derive(Debug, Clone, Copy)]
 pub enum MonitorFrequency {
     Hertz(usize),
     Duration(Duration),
@@ -27,7 +28,7 @@ impl MonitorFrequency {
 }
 
 pub trait Monitor {
-    fn metadata(&self) -> &'static MonitorMetadata;
+    fn metadata(&self) -> &MonitorMetadata;
 
     fn before(&mut self);
 
@@ -41,6 +42,9 @@ pub trait Monitor {
 #[cfg(test)]
 #[test]
 fn test_monitor() {
+    use log::LevelFilter;
+    use simplelog::{ColorChoice, Config, TermLogger, TerminalMode};
+
     use super::BenchmarkFn;
     use crate::driver::Driver;
     use crate::models::benchmark_metadata::BenchmarkMetadata;
@@ -56,8 +60,23 @@ fn test_monitor() {
     });
 
     let mut unit = Unit::new(benchmark_data, benchmark_fn);
-    unit.monitors_mut()
-        .push(Box::new(HeartbeatMonitor::default()));
+    unit.monitors_mut().push(Box::new(HeartbeatMonitor::new(
+        "Mon1",
+        MonitorFrequency::Hertz(1),
+    )));
+    unit.monitors_mut().push(Box::new(HeartbeatMonitor::new(
+        "Mon2",
+        MonitorFrequency::Hertz(10),
+    )));
 
-    Driver::builder().add(unit).build().run();
+    Driver::builder()
+        .logger(TermLogger::new(
+            LevelFilter::Trace,
+            Config::default(),
+            TerminalMode::Mixed,
+            ColorChoice::Auto,
+        ))
+        .add(unit)
+        .build()
+        .run();
 }

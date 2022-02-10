@@ -88,12 +88,12 @@ impl Unit {
                     trace!("{mon_name}: broke execution spinlock", mon_name = mon.metadata().name);
                 });
             }
-                    trace!("{bm_name}: waiting on execution barrier", bm_name = self.metadata().name);
+            trace!("{bm_name}: waiting on execution barrier", bm_name = self.metadata().name);
             barrier.wait();
             trace!("{bm_name}: released from execution barrier", bm_name = self.metadata().name);
             func.call(options).unwrap();
-            trace!("{bm_name}: finished execution", bm_name = self.metadata().name);
             complete.store(true, Ordering::Release);
+            trace!("{bm_name}: finished execution", bm_name = self.metadata().name);
         })
         .map_err(|thread_ex| anyhow!("Unit thread exception: {thread_ex:?}"))?;
 
