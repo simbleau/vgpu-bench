@@ -65,7 +65,7 @@ impl Unit {
 
         // Prepare buffers for measurables
         let barrier = Barrier::new(self.monitors.len() + 1);
-        let complete = AtomicBool::new(true);
+        let complete = AtomicBool::new(false);
         log_assert!(self.func.is_some(), "This benchmark has already run");
         let func = self.func.take().unwrap();
         crossbeam::scope(|scope| {
