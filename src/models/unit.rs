@@ -68,7 +68,8 @@ impl Unit {
         log_assert!(self.func.is_some(), "This benchmark has already run");
         let func = self.func.take().unwrap();
         crossbeam::scope(|scope| {
-            for mon in self.monitors.iter() {
+            let bm_name = self.metadata().name.to_owned();
+            for mon in self.monitors.iter_mut() {
                 scope.spawn(|_| {
                     trace!("{mon_name}: waiting on execution barrier", mon_name = mon.metadata().name);
                     barrier.wait();
@@ -76,6 +77,8 @@ impl Unit {
                     // Spinlock on completion of Benchmark
                     loop {
                         thread::sleep(mon.metadata().frequency.as_duration());
+                        // TODO record start and stop time of tick for accuracy
+                        mon.tick();
                         let measurement = mon.poll();
                         if complete.load(Ordering::Relaxed) == true {
                             break;
@@ -87,12 +90,12 @@ impl Unit {
                     trace!("{mon_name}: broke execution spinlock", mon_name = mon.metadata().name);
                 });
             }
-            trace!("{bm_name}: waiting on execution barrier", bm_name = self.metadata().name);
+            trace!("{bm_name}: waiting on execution barrier");
             barrier.wait();
-            trace!("{bm_name}: released from execution barrier", bm_name = self.metadata().name);
+            trace!("{bm_name}: released from execution barrier");
             func.call(options).unwrap();
             complete.store(true, Ordering::Release);
-            trace!("{bm_name}: finished execution", bm_name = self.metadata().name);
+            trace!("{bm_name}: finished execution");
         })
         .map_err(|thread_ex| anyhow!("Unit thread exception: {thread_ex:?}"))?;
 
