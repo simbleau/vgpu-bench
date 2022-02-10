@@ -1,5 +1,4 @@
 use std::sync::atomic::{AtomicBool, Ordering};
-use std::sync::Arc;
 use std::sync::Barrier;
 use std::thread;
 
@@ -98,11 +97,10 @@ impl Unit {
         .map_err(|thread_ex| anyhow!("Unit thread exception: {thread_ex:?}"))?;
 
         // Lifecycle hook - After completion
-        let barrier = Arc::new(Barrier::new(self.monitors.len()));
+        let barrier = Barrier::new(self.monitors.len());
         crossbeam::scope(|scope| {
             for mon in self.monitors.iter_mut() {
                 scope.spawn(|_| {
-                    let barrier = Arc::clone(&barrier);
                     trace!(
                         "{mon_name}: waiting on lifecycle 'after' barrier",
                         mon_name = mon.metadata().name
