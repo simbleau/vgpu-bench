@@ -1,16 +1,12 @@
-use crate::models::{Measurable, Monitor, MonitorFrequency, MonitorMetadata};
-use crate::monitors::heartbeat::Heartbeat::{Beat1, Beat2};
-use crate::monitors::heartbeat::MonitorFrequency::Hertz;
+use std::time::Instant;
 
-pub enum Heartbeat {
-    Beat1,
-    Beat2,
-}
+use crate::models::{Measurable, Monitor, MonitorFrequency, MonitorMetadata};
+use crate::monitors::heartbeat::MonitorFrequency::Hertz;
 
 pub struct HeartbeatMonitor {
     data: MonitorMetadata,
     beating: bool,
-    beat: Heartbeat,
+    beating_since: Option<Instant>,
 }
 unsafe impl Send for HeartbeatMonitor {}
 
@@ -22,7 +18,7 @@ impl HeartbeatMonitor {
                 frequency,
             },
             beating: false,
-            beat: Beat1,
+            beating_since: None,
         }
     }
 }
@@ -34,7 +30,7 @@ impl Default for HeartbeatMonitor {
                 frequency: Hertz(1),
             },
             beating: false,
-            beat: Heartbeat::Beat1,
+            beating_since: None,
         }
     }
 }
@@ -44,30 +40,26 @@ impl Monitor for HeartbeatMonitor {
         &self.data
     }
 
-    fn before(&mut self) {
+    fn on_init(&mut self) {
         self.beating = true;
-    }
-
-    fn tick(&mut self) {
-        if self.beating {
-            match self.beat {
-                Beat1 => self.beat = Beat2,
-                Beat2 => self.beat = Beat1,
-            }
-        }
+        self.beating_since = Some(Instant::now());
     }
 
     fn poll(&self) -> Measurable {
         match self.beating {
-            true => match self.beat {
-                Beat1 => Measurable::Integer(0),
-                Beat2 => Measurable::Integer(1),
-            },
+            true => {
+                let elapsed = Instant::now().duration_since(
+                    self.beating_since.expect("Was this monitor initialized?"),
+                );
+                let beats =
+                    elapsed.div_duration_f64(self.data.frequency.as_duration());
+                Measurable::Integer(beats as i64)
+            }
             false => Measurable::Illegal,
         }
     }
 
-    fn after(&mut self) {
+    fn on_destroy(&mut self) {
         self.beating = false;
     }
 }

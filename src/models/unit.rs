@@ -1,6 +1,7 @@
 use std::sync::atomic::{AtomicBool, Ordering};
 use std::sync::Barrier;
 use std::thread;
+use std::time::Instant;
 
 use crate::driver::DriverOptions;
 use crate::log_assert;
@@ -52,7 +53,7 @@ impl Unit {
                         "{mon_name}: released from lifecycle 'before' barrier",
                         mon_name = mon.metadata().name
                     );
-                    mon.before();
+                    mon.on_init();
                     trace!(
                         "{mon_name}: began monitoring",
                         mon_name = mon.metadata().name
@@ -77,14 +78,14 @@ impl Unit {
                     // Spinlock on completion of Benchmark
                     loop {
                         thread::sleep(mon.metadata().frequency.as_duration());
-                        // TODO record start and stop time of tick for accuracy
-                        mon.tick();
+                        let start = Instant::now();
                         let measurement = mon.poll();
+                        let elapsed = Instant::now() - start;
                         if complete.load(Ordering::Relaxed) == true {
                             break;
                         } else {
                             // TODO save measurement
-                            debug!("Monitor {{{mon_name}}}: Poll {{{measurement:?}}}", mon_name = mon.metadata().name);
+                            debug!("{mon_name}: Polled {measurement:?} in {elapsed:?}", mon_name = mon.metadata().name);
                         }
                     }
                     trace!("{mon_name}: broke execution spinlock", mon_name = mon.metadata().name);
@@ -113,7 +114,7 @@ impl Unit {
                         "{mon_name}: released from lifecycle 'after' barrier",
                         mon_name = mon.metadata().name
                     );
-                    mon.after();
+                    mon.on_destroy();
                     trace!(
                         "{mon_name}: finished monitoring",
                         mon_name = mon.metadata().name

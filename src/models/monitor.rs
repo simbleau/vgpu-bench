@@ -30,13 +30,11 @@ impl MonitorFrequency {
 pub trait Monitor {
     fn metadata(&self) -> &MonitorMetadata;
 
-    fn before(&mut self);
-
-    fn tick(&mut self);
+    fn on_init(&mut self);
 
     fn poll(&self) -> Measurable;
 
-    fn after(&mut self);
+    fn on_destroy(&mut self);
 }
 
 #[cfg(test)]
