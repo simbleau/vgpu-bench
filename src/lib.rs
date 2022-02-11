@@ -1,6 +1,7 @@
 #![feature(trait_alias)]
 #![feature(iter_intersperse)]
 #![feature(div_duration)]
+#![feature(duration_consts_float)]
 
 extern crate nvtx;
 extern crate rendering_util;
