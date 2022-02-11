@@ -4,7 +4,7 @@ use crate::models::{Measurable, Monitor, MonitorFrequency, MonitorMetadata};
 use crate::monitors::heartbeat::MonitorFrequency::Hertz;
 
 pub struct HeartbeatMonitor {
-    data: MonitorMetadata,
+    metadata: MonitorMetadata,
     beating: bool,
     beating_since: Option<Instant>,
 }
@@ -13,7 +13,7 @@ unsafe impl Send for HeartbeatMonitor {}
 impl HeartbeatMonitor {
     pub fn new<S: Into<String>>(name: S, frequency: MonitorFrequency) -> Self {
         HeartbeatMonitor {
-            data: MonitorMetadata {
+            metadata: MonitorMetadata {
                 name: name.into(),
                 frequency,
             },
@@ -25,7 +25,7 @@ impl HeartbeatMonitor {
 impl Default for HeartbeatMonitor {
     fn default() -> Self {
         Self {
-            data: MonitorMetadata {
+            metadata: MonitorMetadata {
                 name: "Heartbeat Monitor".to_string(),
                 frequency: Hertz(1),
             },
@@ -37,7 +37,7 @@ impl Default for HeartbeatMonitor {
 
 impl Monitor for HeartbeatMonitor {
     fn metadata(&self) -> &MonitorMetadata {
-        &self.data
+        &self.metadata
     }
 
     fn on_init(&mut self) {
@@ -51,8 +51,8 @@ impl Monitor for HeartbeatMonitor {
                 let elapsed = Instant::now().duration_since(
                     self.beating_since.expect("Was this monitor initialized?"),
                 );
-                let beats =
-                    elapsed.div_duration_f64(self.data.frequency.as_duration());
+                let beats = elapsed
+                    .div_duration_f64(self.metadata.frequency.as_duration());
                 Measurable::Integer(beats as i64)
             }
             false => Measurable::Illegal,
