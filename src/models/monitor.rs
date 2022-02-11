@@ -1,4 +1,5 @@
 use super::MonitorMetadata;
+use anyhow::Result;
 use std::time::Duration;
 
 #[derive(Debug)]
@@ -32,7 +33,7 @@ pub trait Monitor {
 
     fn on_init(&mut self);
 
-    fn poll(&self) -> Measurable;
+    fn poll(&self) -> Result<Measurable>;
 
     fn on_destroy(&mut self);
 }

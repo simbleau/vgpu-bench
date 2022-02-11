@@ -1,3 +1,4 @@
+use anyhow::Result;
 use std::time::Instant;
 
 use crate::models::{Measurable, Monitor, MonitorFrequency, MonitorMetadata};
@@ -45,7 +46,7 @@ impl Monitor for HeartbeatMonitor {
         self.beating_since = Some(Instant::now());
     }
 
-    fn poll(&self) -> Measurable {
+    fn poll(&self) -> Result<Measurable> {
         match self.beating {
             true => {
                 let elapsed = Instant::now().duration_since(
@@ -53,9 +54,9 @@ impl Monitor for HeartbeatMonitor {
                 );
                 let beats = elapsed
                     .div_duration_f64(self.metadata.frequency.as_duration());
-                Measurable::Integer(beats as i64)
+                Ok(Measurable::Integer(beats as i64))
             }
-            false => Measurable::Illegal,
+            false => Ok(Measurable::Illegal),
         }
     }
 
