@@ -1,5 +1,4 @@
 use anyhow::Result;
-use log::error;
 use systemstat::{Platform, System};
 
 use crate::models::{Measurable, Monitor, MonitorFrequency, MonitorMetadata};
