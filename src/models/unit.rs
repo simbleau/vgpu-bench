@@ -75,11 +75,12 @@ impl Unit {
             for mon in self.monitors.iter_mut() {
                 scope.spawn(|_| {
                     let mon_name = mon.metadata().name.clone();
+                    let freq_nanos = mon.metadata().frequency.as_duration().as_nanos();
+
                     trace!("{mon_name}: waiting on execution barrier");
                     barrier.wait();
                     trace!("{mon_name}: released from execution barrier");
                     // Spinlock on completion of Benchmark
-                    let freq_nanos = mon.metadata().frequency.as_duration().as_nanos();
                     loop {
                         // Sleep until next poll
                         let time_since_start = (Instant::now() - start_time).as_nanos();
@@ -106,13 +107,13 @@ impl Unit {
                         }
 
                         if complete.load(Ordering::Relaxed) == true {
+                            trace!("{mon_name}: broke execution spinlock");
                             break;
                         } else {
-                            // TODO save measurement
                             debug!("{mon_name}: Polled {measurement:?} in {elapsed:?}");
+                            // TODO save measurement
                         }
                     }
-                    trace!("{mon_name}: broke execution spinlock");
                 });
             }
             trace!("{bm_name}: waiting on execution barrier");

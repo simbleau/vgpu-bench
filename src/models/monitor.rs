@@ -61,7 +61,7 @@ fn test_monitor() {
     let mut unit = Unit::new(benchmark_data, benchmark_fn);
     unit.monitors_mut().push(Box::new(HeartbeatMonitor::new(
         "Mon1",
-        MonitorFrequency::Hertz(1),
+        MonitorFrequency::Hertz(3),
     )));
     unit.monitors_mut()
         .push(Box::new(CpuUtilizationMonitor::default()));
