@@ -31,11 +31,11 @@ impl MonitorFrequency {
 pub trait Monitor {
     fn metadata(&self) -> &MonitorMetadata;
 
-    fn on_init(&mut self);
+    fn on_start(&mut self);
 
     fn poll(&self) -> Result<Measurable>;
 
-    fn on_destroy(&mut self);
+    fn on_stop(&mut self);
 }
 
 #[cfg(test)]
@@ -48,7 +48,7 @@ fn test_monitor() {
     use crate::driver::Driver;
     use crate::models::benchmark_metadata::BenchmarkMetadata;
     use crate::models::unit::Unit;
-    use crate::monitors::HeartbeatMonitor;
+    use crate::monitors::{CpuUtilizationMonitor, HeartbeatMonitor};
     use std::thread;
     use std::time::Duration;
 
@@ -63,10 +63,8 @@ fn test_monitor() {
         "Mon1",
         MonitorFrequency::Hertz(1),
     )));
-    unit.monitors_mut().push(Box::new(HeartbeatMonitor::new(
-        "Mon2",
-        MonitorFrequency::Hertz(10),
-    )));
+    unit.monitors_mut()
+        .push(Box::new(CpuUtilizationMonitor::default()));
 
     Driver::builder()
         .logger(TermLogger::new(

@@ -2,6 +2,7 @@ use anyhow::Result;
 use systemstat::{Platform, System};
 
 use crate::models::{Measurable, Monitor, MonitorFrequency, MonitorMetadata};
+use crate::monitors::cpu_utilization::MonitorFrequency::Hertz;
 use std::{thread, time::Duration};
 
 pub struct CpuUtilizationMonitor {
@@ -14,9 +15,7 @@ impl Default for CpuUtilizationMonitor {
         Self {
             metadata: MonitorMetadata {
                 name: String::from("CPU Utilization"),
-                frequency: MonitorFrequency::Duration(Duration::from_secs_f64(
-                    0.25,
-                )),
+                frequency: Hertz(1),
             },
         }
     }
@@ -27,7 +26,7 @@ impl Monitor for CpuUtilizationMonitor {
         &self.metadata
     }
 
-    fn on_init(&mut self) {}
+    fn on_start(&mut self) {}
 
     fn poll(&self) -> Result<Measurable> {
         let sys = System::new();
@@ -37,5 +36,5 @@ impl Monitor for CpuUtilizationMonitor {
         Ok(Measurable::Float(1.0 - load.idle as f64))
     }
 
-    fn on_destroy(&mut self) {}
+    fn on_stop(&mut self) {}
 }

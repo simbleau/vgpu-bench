@@ -41,7 +41,7 @@ impl Monitor for HeartbeatMonitor {
         &self.metadata
     }
 
-    fn on_init(&mut self) {
+    fn on_start(&mut self) {
         self.beating = true;
         self.beating_since = Some(Instant::now());
     }
@@ -60,7 +60,7 @@ impl Monitor for HeartbeatMonitor {
         }
     }
 
-    fn on_destroy(&mut self) {
+    fn on_stop(&mut self) {
         self.beating = false;
     }
 }
