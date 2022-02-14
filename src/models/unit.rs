@@ -39,6 +39,10 @@ impl Unit {
     }
 
     pub fn run(&mut self, options: &DriverOptions) -> Result<()> {
+        let bm_name = self.metadata().name.to_owned();
+        let num_mon = self.monitors.len();
+        info!("{bm_name} is starting with {num_mon} monitors");
+
         // Lifecycle hook - 'on_start'
         let barrier = Barrier::new(self.monitors.len());
         crossbeam::scope(|scope| {
@@ -70,23 +74,20 @@ impl Unit {
         let func = self.func.take().unwrap();
         let start_time = Instant::now();
         crossbeam::scope(|scope| {
-            let bm_name = self.metadata().name.to_owned();
-            let num_mon = self.monitors.len();
             for mon in self.monitors.iter_mut() {
                 scope.spawn(|_| {
                     let mon_name = mon.metadata().name.clone();
                     let freq_nanos = mon.metadata().frequency.as_duration().as_nanos();
 
-                    trace!("{mon_name}: waiting on execution barrier");
+                    trace!("{mon_name}: waiting to poll");
                     barrier.wait();
-                    trace!("{mon_name}: released from execution barrier");
+                    trace!("{mon_name}: starting polling");
                     // Spinlock on completion of Benchmark
                     loop {
-                        // Sleep until next poll
+                        // Sleep until next poll time
                         let time_since_start = (Instant::now() - start_time).as_nanos();
                         let time_till_next = freq_nanos - (time_since_start % freq_nanos);
                         let sleep_time = Duration::from_nanos(time_till_next as u64);
-                        //debug!("tss: {tss:?}, ttn: {ttn:?}, st: {st:?}", tss = Duration::from_nanos(time_since_start as u64), ttn = Duration::from_nanos(time_till_next as u64), st = sleep_time);
                         thread::sleep(sleep_time);
 
                         // Poll
@@ -107,7 +108,7 @@ impl Unit {
                         }
 
                         if complete.load(Ordering::Relaxed) == true {
-                            trace!("{mon_name}: broke execution spinlock");
+                            trace!("{mon_name}: completed monitoring");
                             break;
                         } else {
                             debug!("{mon_name}: Polled {measurement:?} in {elapsed:?}");
@@ -116,13 +117,12 @@ impl Unit {
                     }
                 });
             }
-            trace!("{bm_name}: waiting on execution barrier");
+            trace!("{bm_name}: waiting to execute");
             barrier.wait();
-            trace!("{bm_name}: released from execution barrier");
-            info!("{bm_name} is starting with {num_mon} monitors");
+            trace!("{bm_name}: starting execution");
             func.call(options).unwrap();
+            trace!("{bm_name}: completed execution");
             complete.store(true, Ordering::Release);
-            info!("{bm_name}: finished execution");
         })
         .map_err(|thread_ex| anyhow!("Unit thread exception: {thread_ex:?}"))?;
 
@@ -150,6 +150,7 @@ impl Unit {
         })
         .map_err(|thread_ex| anyhow!("Unit thread exception: {thread_ex:?}"))?;
 
+        info!("{bm_name}: finished execution");
         Ok(())
     }
 }
