@@ -42,7 +42,7 @@ impl<'a> Driver<'a> {
                 "Logged failed to initialize... Was it already initialized?";
             eprintln!("{err_msg}\n{e}");
         }
-        info!("logging started");
+        info!("logging initialized");
 
         // Run all benchmarks
         nvtx::mark("benchmark-stage");
@@ -61,6 +61,8 @@ impl<'a> Driver<'a> {
             }
         }
         trace!("completed benchmarks");
+
+        // TODO stop logging
     }
 }
 

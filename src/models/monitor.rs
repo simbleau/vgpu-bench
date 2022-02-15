@@ -37,3 +37,12 @@ pub trait Monitor {
 
     fn on_stop(&mut self);
 }
+
+// TODO figure this out
+/*
+impl dyn Monitor + Sized {
+    pub fn as_monitor(self: Box<Self>) -> Box<dyn Monitor> {
+        Box::new(*self)
+    }
+}
+*/
