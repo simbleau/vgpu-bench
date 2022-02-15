@@ -1,14 +1,14 @@
 use log::LevelFilter;
 use simplelog::{ColorChoice, Config, TermLogger, TerminalMode};
 use vgpu_bench::driver::Driver;
-use vgpu_bench::models::{Monitor, MonitorFrequency, Unit};
+use vgpu_bench::models::{Benchmark, Monitor, MonitorFrequency};
 use vgpu_bench::monitors::HeartbeatMonitor;
 
 use std::thread;
 use std::time::Duration;
 
 pub fn main() {
-    let mut benchmark = Unit::from("Benchmark-1", |_| {
+    let mut benchmark = Benchmark::from("Benchmark-1", |_| {
         // Some expensive operation...
         Ok(thread::sleep(Duration::from_secs(5)))
     });

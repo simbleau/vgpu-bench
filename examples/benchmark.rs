@@ -5,14 +5,14 @@ use log::LevelFilter;
 use rand::Rng;
 use simplelog::{ColorChoice, Config, TermLogger, TerminalMode};
 use vgpu_bench::driver::Driver;
-use vgpu_bench::models::Unit;
+use vgpu_bench::models::Benchmark;
 
 pub fn main() {
     let items = Rc::new(Mutex::new(vec![]));
 
     let items_ref = items.clone();
     let mut generator = rand::thread_rng();
-    let insert_benchmark = Unit::from("Bm-Push", move |_| {
+    let insert_benchmark = Benchmark::from("Bm-Push", move |_| {
         let mut items = items_ref.try_lock().unwrap();
         // Benchmark Vec's push algorithm
         for _ in 0..10_000_000 {
@@ -22,7 +22,7 @@ pub fn main() {
     });
 
     let items_ref = items.clone();
-    let sort_benchmark = Unit::from("Bm-Sort", move |_| {
+    let sort_benchmark = Benchmark::from("Bm-Sort", move |_| {
         let mut items = items_ref.try_lock().unwrap();
         // Benchmark Vec's sorting algorithm
         items.sort();
