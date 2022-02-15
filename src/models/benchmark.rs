@@ -52,6 +52,8 @@ impl Benchmark {
     }
 
     pub fn run(&mut self, options: &DriverOptions) -> Result<()> {
+        log_assert!(self.func.is_some(), "this benchmark has already run");
+
         let bm_name = self.metadata().name.to_owned();
         let num_mon = self.monitors.len();
         info!("{bm_name}: starting with {num_mon} monitors");
@@ -83,7 +85,6 @@ impl Benchmark {
         // Prepare buffers for measurables
         let barrier = Barrier::new(self.monitors.len() + 1);
         let complete = AtomicBool::new(false);
-        log_assert!(self.func.is_some(), "this benchmark has already run");
         let func = self.func.take().unwrap();
         let start_time = Instant::now();
         crossbeam::scope(|scope| {
