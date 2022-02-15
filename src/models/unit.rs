@@ -26,6 +26,19 @@ impl Unit {
         }
     }
 
+    pub fn from<F>(name: &'static str, func: F) -> Self
+    where
+        F: FnOnce(&DriverOptions) -> Result<()> + 'static,
+    {
+        let bfn = BenchmarkFn::from(func);
+        let metadata = BenchmarkMetadata { name };
+        Unit {
+            data: metadata,
+            func: Some(bfn),
+            monitors: Vec::new(),
+        }
+    }
+
     pub fn monitors(&self) -> &Vec<Box<dyn Monitor + Send + Sync>> {
         &self.monitors
     }
