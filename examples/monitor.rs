@@ -1,39 +1,34 @@
 use log::LevelFilter;
 use simplelog::{ColorChoice, Config, TermLogger, TerminalMode};
 use vgpu_bench::driver::Driver;
-use vgpu_bench::models::{
-    BenchmarkFn, BenchmarkMetadata, MonitorFrequency, Unit,
-};
-use vgpu_bench::monitors::{CpuUtilizationMonitor, HeartbeatMonitor};
+use vgpu_bench::models::{Monitor, MonitorFrequency, Unit};
+use vgpu_bench::monitors::HeartbeatMonitor;
 
 use std::thread;
 use std::time::Duration;
 
 pub fn main() {
-    let benchmark_data = BenchmarkMetadata { name: "test" };
-    let benchmark_fn = BenchmarkFn::from(|_| {
-        thread::sleep(Duration::from_secs(5));
-        Ok(())
+    let mut benchmark = Unit::from("Benchmark-1", |_| {
+        // Some expensive operation...
+        Ok(thread::sleep(Duration::from_secs(5)))
     });
 
-    let mut unit = Unit::new(benchmark_data, benchmark_fn);
-    unit.monitors_mut().push(Box::new(HeartbeatMonitor::new(
-        "Mon1",
-        MonitorFrequency::Hertz(3),
+    // Add monitors to the benchmark
+    let mut monitors: Vec<Box<(dyn Monitor + Send + Sync + 'static)>> = vec![];
+    monitors.push(Box::new(HeartbeatMonitor::new(
+        "Mon-1",
+        MonitorFrequency::Hertz(1),
     )));
-    unit.monitors_mut()
-        .push(Box::new(CpuUtilizationMonitor::default()));
+    benchmark.monitors_mut().extend(monitors);
 
     Driver::builder()
         .logger(TermLogger::new(
-            LevelFilter::Trace,
+            LevelFilter::Debug,
             Config::default(),
             TerminalMode::Mixed,
             ColorChoice::Auto,
         ))
-        .add(unit)
+        .add(benchmark)
         .build()
         .run();
-
-    // TODO display monitoring and results
 }
