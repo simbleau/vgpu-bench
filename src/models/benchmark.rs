@@ -54,7 +54,7 @@ impl Benchmark {
     pub fn run(&mut self, options: &DriverOptions) -> Result<()> {
         let bm_name = self.metadata().name.to_owned();
         let num_mon = self.monitors.len();
-        info!("{bm_name} is starting with {num_mon} monitors");
+        info!("{bm_name}: starting with {num_mon} monitors");
 
         // Lifecycle hook - 'on_start'
         let barrier = Barrier::new(self.monitors.len());
@@ -117,14 +117,14 @@ impl Benchmark {
                             let missed_polls = next_poll_id - this_poll_id;
 
                             // Processing time overflowed next poll
-                            warn!("{mon_name} missed ~{missed_polls} poll(s) due to expensive computation overrunning frequency time allotment" );
+                            warn!("{mon_name}: missed {missed_polls} poll trigger(s)" );
                         }
 
                         if complete.load(Ordering::Relaxed) == true {
                             trace!("{mon_name}: completed monitoring");
                             break;
                         } else {
-                            debug!("{mon_name}: Polled {measurement:?} in {elapsed:?}");
+                            debug!("{mon_name}: polled {measurement:?} in {elapsed:?}");
                             // TODO save measurement
                         }
                     }
