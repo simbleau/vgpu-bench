@@ -42,7 +42,7 @@ impl<'a> Driver<'a> {
                 "Logged failed to initialize... Was it already initialized?";
             eprintln!("{err_msg}\n{e}");
         }
-        info!("logging initialized");
+        trace!("logging initialized");
 
         // Run all benchmarks
         nvtx::mark("benchmark-stage");
