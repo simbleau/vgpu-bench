@@ -42,18 +42,9 @@ path = "src/bin/drivers/external_rendering.rs"
 name = "pathfinder_rendering_driver"
 path = "src/bin/drivers/pathfinder_rendering/bin.rs"
 
-
 [[bin]]
 name = "nvidia_monitor"
 path = "src/bin/monitors/nvidia_monitor.rs"
-
-[[bin]]
-name = "memory_monitor"
-path = "src/bin/monitors/memory_monitor.rs"
-
-[[bin]]
-name = "cpu_monitor"
-path = "src/bin/monitors/cpu_monitor.rs"
 
 [workspace]
 members = [
