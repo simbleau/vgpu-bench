@@ -9,22 +9,22 @@ pub fn main() {
         .author("Spencer C. Imbleau <spencer@imbleau.com>")
         .about("Runs an input program under NVIDIA Nsight Systems and consolidates output.")
         .arg(
-            Arg::with_name("output")
-                .short("o")
+            Arg::new("output")
+                .short('o')
                 .help("Select an output directory (ex: ./output/)")
                 .takes_value(true)
                 .required(true),
         )
         .arg(
-            Arg::with_name("input")
-                .short("i")
+            Arg::new("input")
+                .short('i')
                 .help("Select an input program (ex: ./program.sh)")
                 .takes_value(true)
                 .required(true),
         )
         .arg(
-             Arg::with_name("app_args")
-                .multiple(true)
+             Arg::new("app_args")
+                .multiple_occurrences(true)
         )
         .get_matches();
 

@@ -16,15 +16,15 @@ pub fn main() -> Result<()> {
         .version("1.0")
         .author("Spencer C. Imbleau <spencer@imbleau.com>")
         .arg(
-            Arg::with_name("output")
-                .short("o")
+            Arg::new("output")
+                .short('o')
                 .help("Select an output directory (ex: ./output/)")
                 .takes_value(true)
                 .required(true),
         )
         .arg(
-            Arg::with_name("renderer")
-                .short("r")
+            Arg::new("renderer")
+                .short('r')
                 .help(
                     "Select a compliant rendering library (ex: ./renderer.so)",
                 )
@@ -32,8 +32,8 @@ pub fn main() -> Result<()> {
                 .required(true),
         )
         .arg(
-            Arg::with_name("input")
-                .short("i")
+            Arg::new("input")
+                .short('i')
                 .help("Select a folder of assets as input (ex: ./input/)")
                 .takes_value(true)
                 .required(true),

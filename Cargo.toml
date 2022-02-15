@@ -63,19 +63,19 @@ tessellation-util = { package = "tessellation-util", path = "crates/tessellation
 rendering-util = { package = "rendering-util", path = "crates/rendering-util" }
 naive-renderer = { package = "naive-renderer", path = "crates/naive-renderer" }
 svg-generator = { package = "svg-generator", path = "crates/svg-generator" }
-nvtx = { package = "nvtx-rs", version = "0.11" }
 pathfinder_vgpu_glue = { git="https://github.com/simbleau/pathfinder.git" }
 
+nvtx = { package = "nvtx-rs", version = "0.11" }
 crossbeam = "0.8"
 systemstat = "0.1.10"
-clap = "2.33.3"
-const_format = "0.2.21"
+clap = "3.0.14"
+const_format = "0.2.22"
 lyon = { version ="0.17.5", features = ["extra"] }
-usvg = "0.19.0"
+usvg = "0.21.0"
 walkdir = "2"
 csv = "1.1"
 log = "0.4"
-simplelog = { version = "^0.10.0" }
+simplelog = { version = "0.11.2" }
 serde = "1.0.130"
 erased-serde = "0.3"
 chrono = "0.4.19"
