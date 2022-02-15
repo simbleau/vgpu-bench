@@ -3,8 +3,8 @@ use std::sync::Barrier;
 use std::thread;
 use std::time::{Duration, Instant};
 
-use crate::driver::DriverOptions;
 use crate::log_assert;
+use crate::models::driver::DriverOptions;
 
 use super::benchmark_metadata::BenchmarkMetadata;
 use super::{monitor::Monitor, BenchmarkFn};

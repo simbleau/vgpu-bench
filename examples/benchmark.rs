@@ -4,8 +4,8 @@ use std::sync::Mutex;
 use log::LevelFilter;
 use rand::Rng;
 use simplelog::{ColorChoice, Config, TermLogger, TerminalMode};
-use vgpu_bench::driver::Driver;
-use vgpu_bench::models::Benchmark;
+use vgpu_bench::Benchmark;
+use vgpu_bench::Driver;
 
 pub fn main() {
     let items = Rc::new(Mutex::new(vec![]));

@@ -1,3 +1,9 @@
+// Driver
+mod driver;
+pub use driver::Driver;
+pub use driver::DriverBuilder;
+pub use driver::DriverOptions;
+
 // Benchmark Models
 mod benchmark_fn;
 pub use benchmark_fn::BenchmarkFn;

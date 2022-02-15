@@ -1,4 +1,4 @@
-use crate::driver::DriverOptions;
+use crate::models::DriverOptions;
 use anyhow::Result;
 
 pub struct BenchmarkFn(Box<dyn FnOnce(&DriverOptions) -> Result<()>>);

@@ -5,8 +5,8 @@ use simplelog::{ColorChoice, Config, TermLogger, TerminalMode, WriteLogger};
 use std::path::Path;
 use vgpu_bench::{
     benchmarks::tessellation::ProfileSVGFiles,
-    driver::Driver,
     util::{self, create_or_append},
+    Driver,
 };
 
 pub fn main() -> Result<()> {

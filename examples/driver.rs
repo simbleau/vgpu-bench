@@ -1,7 +1,7 @@
 use log::LevelFilter;
 use simplelog::{ColorChoice, Config, TermLogger, TerminalMode};
-use vgpu_bench::driver::Driver;
-use vgpu_bench::models::Benchmark;
+use vgpu_bench::Benchmark;
+use vgpu_bench::Driver;
 
 use std::thread;
 use std::time::Duration;

@@ -7,8 +7,8 @@ use vgpu_bench::{
     benchmarks::rendering::{
         TimeNaiveSVGFileRendering, TimeNaiveSVGPrimitiveRendering,
     },
-    driver::Driver,
     util::{self, create_or_append},
+    Driver,
 };
 
 pub fn main() -> Result<()> {

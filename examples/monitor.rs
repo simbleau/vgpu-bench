@@ -1,8 +1,8 @@
 use log::LevelFilter;
 use simplelog::{ColorChoice, Config, TermLogger, TerminalMode};
-use vgpu_bench::driver::Driver;
-use vgpu_bench::models::{Benchmark, Monitor, MonitorFrequency};
 use vgpu_bench::monitors::HeartbeatMonitor;
+use vgpu_bench::Driver;
+use vgpu_bench::{Benchmark, Monitor, MonitorFrequency};
 
 use std::thread;
 use std::time::Duration;
