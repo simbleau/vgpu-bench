@@ -15,8 +15,10 @@ pub fn main() {
 
     // Add monitors to the benchmark
     let mut monitors: Vec<Box<(dyn Monitor + Send + Sync + 'static)>> = vec![];
+    // The 'Heartbeat' Monitor polls the (int) amount of heartbeats over time.
+    // It can be used for time tracking but is just a placeholder here.
     monitors.push(Box::new(HeartbeatMonitor::new(
-        "Mon-1",
+        "Monitor-1",
         MonitorFrequency::Hertz(1),
     )));
     benchmark.monitors_mut().extend(monitors);
