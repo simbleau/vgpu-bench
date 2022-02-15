@@ -1,6 +1,6 @@
 use crate::{
     log_assert,
-    models::{BenchmarkFn, BenchmarkMetadata, Unit},
+    models::{Benchmark, BenchmarkFn, BenchmarkMetadata},
     util, Result,
 };
 use erased_serde::Serialize;
@@ -65,11 +65,11 @@ impl ProfileSVGFiles {
 pub const DEFAULT_METADATA: BenchmarkMetadata = BenchmarkMetadata {
     name: "Profile SVG Files",
 };
-impl TryFrom<ProfileSVGFiles> for Unit {
+impl TryFrom<ProfileSVGFiles> for Benchmark {
     type Error = anyhow::Error;
 
     fn try_from(value: ProfileSVGFiles) -> Result<Self, Self::Error> {
-        Ok(Unit::new(DEFAULT_METADATA, value.build()?))
+        Ok(Benchmark::new(DEFAULT_METADATA, value.build()?))
     }
 }
 

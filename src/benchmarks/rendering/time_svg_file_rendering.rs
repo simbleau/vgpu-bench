@@ -1,5 +1,5 @@
 use crate::benchmarks::rendering::output::FileRenderTime;
-use crate::models::{BenchmarkFn, BenchmarkMetadata, Unit};
+use crate::models::{Benchmark, BenchmarkFn, BenchmarkMetadata};
 use crate::Result;
 use crate::{log_assert, util};
 use erased_serde::Serialize;
@@ -69,11 +69,11 @@ impl TimeSVGFileRendering {
 pub const DEFAULT_METADATA: BenchmarkMetadata = BenchmarkMetadata {
     name: "Time SVG File Rendering",
 };
-impl TryFrom<TimeSVGFileRendering> for Unit {
+impl TryFrom<TimeSVGFileRendering> for Benchmark {
     type Error = anyhow::Error;
 
     fn try_from(value: TimeSVGFileRendering) -> Result<Self, Self::Error> {
-        Ok(Unit::new(DEFAULT_METADATA, value.build()?))
+        Ok(Benchmark::new(DEFAULT_METADATA, value.build()?))
     }
 }
 

@@ -1,6 +1,6 @@
 use crate::{
     log_assert,
-    models::{BenchmarkFn, BenchmarkMetadata, Unit},
+    models::{Benchmark, BenchmarkFn, BenchmarkMetadata},
     util, Result,
 };
 
@@ -77,11 +77,11 @@ impl ProfileSVGPrimitives {
 pub const DEFAULT_METADATA: BenchmarkMetadata = BenchmarkMetadata {
     name: "Profile SVG Primitives",
 };
-impl TryFrom<ProfileSVGPrimitives> for Unit {
+impl TryFrom<ProfileSVGPrimitives> for Benchmark {
     type Error = anyhow::Error;
 
     fn try_from(value: ProfileSVGPrimitives) -> Result<Self, Self::Error> {
-        Ok(Unit::new(DEFAULT_METADATA, value.build()?))
+        Ok(Benchmark::new(DEFAULT_METADATA, value.build()?))
     }
 }
 

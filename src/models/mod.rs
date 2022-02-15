@@ -3,8 +3,8 @@ mod benchmark_fn;
 pub use benchmark_fn::BenchmarkFn;
 mod benchmark_metadata;
 pub use benchmark_metadata::BenchmarkMetadata;
-mod unit;
-pub use unit::Unit;
+mod benchmark;
+pub use benchmark::Benchmark;
 
 // Monitor Models
 mod monitor;

@@ -1,6 +1,6 @@
 use crate::{
     log_assert,
-    models::{BenchmarkFn, BenchmarkMetadata, Unit},
+    models::{Benchmark, BenchmarkFn, BenchmarkMetadata},
     util, Result,
 };
 use erased_serde::Serialize;
@@ -83,13 +83,13 @@ impl TimeSVGPrimitiveTessellation {
 pub const DEFAULT_METADATA: BenchmarkMetadata = BenchmarkMetadata {
     name: "Time SVG Primitive Tessellation",
 };
-impl TryFrom<TimeSVGPrimitiveTessellation> for Unit {
+impl TryFrom<TimeSVGPrimitiveTessellation> for Benchmark {
     type Error = anyhow::Error;
 
     fn try_from(
         value: TimeSVGPrimitiveTessellation,
     ) -> Result<Self, Self::Error> {
-        Ok(Unit::new(DEFAULT_METADATA, value.build()?))
+        Ok(Benchmark::new(DEFAULT_METADATA, value.build()?))
     }
 }
 

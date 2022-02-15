@@ -1,4 +1,4 @@
-use crate::models::{BenchmarkFn, BenchmarkMetadata, Unit};
+use crate::models::{Benchmark, BenchmarkFn, BenchmarkMetadata};
 use crate::Result;
 use crate::{log_assert, util};
 use erased_serde::Serialize;
@@ -69,11 +69,11 @@ impl TimeNaiveSVGFileRendering {
 pub const DEFAULT_METADATA: BenchmarkMetadata = BenchmarkMetadata {
     name: "Time Naive SVG File Rendering",
 };
-impl TryFrom<TimeNaiveSVGFileRendering> for Unit {
+impl TryFrom<TimeNaiveSVGFileRendering> for Benchmark {
     type Error = anyhow::Error;
 
     fn try_from(value: TimeNaiveSVGFileRendering) -> Result<Self, Self::Error> {
-        Ok(Unit::new(DEFAULT_METADATA, value.build()?))
+        Ok(Benchmark::new(DEFAULT_METADATA, value.build()?))
     }
 }
 

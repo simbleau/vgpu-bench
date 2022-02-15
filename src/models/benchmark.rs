@@ -11,15 +11,15 @@ use super::{monitor::Monitor, BenchmarkFn};
 use anyhow::{anyhow, Result};
 use log::{debug, info, trace, warn};
 
-pub struct Unit {
+pub struct Benchmark {
     pub data: BenchmarkMetadata,
     pub func: Option<BenchmarkFn>,
     pub monitors: Vec<Box<dyn Monitor + Send + Sync>>,
 }
 
-impl Unit {
+impl Benchmark {
     pub fn new(data: BenchmarkMetadata, func: BenchmarkFn) -> Self {
-        Unit {
+        Benchmark {
             data,
             func: Some(func),
             monitors: vec![],
@@ -32,7 +32,7 @@ impl Unit {
     {
         let bfn = BenchmarkFn::from(func);
         let metadata = BenchmarkMetadata { name };
-        Unit {
+        Benchmark {
             data: metadata,
             func: Some(bfn),
             monitors: Vec::new(),

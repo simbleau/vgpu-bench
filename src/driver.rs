@@ -1,4 +1,4 @@
-use crate::models::Unit;
+use crate::models::Benchmark;
 use log::{error, info, trace};
 use simplelog::{CombinedLogger, SharedLogger};
 use std::path::{Path, PathBuf};
@@ -26,7 +26,7 @@ impl DriverOptions<'_> {
 pub struct Driver<'a> {
     options: DriverOptions<'a>,
     loggers: Vec<Box<dyn SharedLogger>>,
-    benchmarks: Vec<Unit>,
+    benchmarks: Vec<Benchmark>,
     on_error_panic: bool,
 }
 
@@ -68,7 +68,7 @@ impl<'a> Driver<'a> {
 pub struct DriverBuilder<'a> {
     pub options: DriverOptions<'a>,
     loggers: Vec<Box<dyn SharedLogger>>,
-    benchmarks: Vec<Unit>,
+    benchmarks: Vec<Benchmark>,
     on_error_panic: bool,
 }
 
@@ -97,7 +97,7 @@ impl<'a> DriverBuilder<'a> {
         self
     }
 
-    pub fn add(mut self, benchmark: Unit) -> Self {
+    pub fn add(mut self, benchmark: Benchmark) -> Self {
         self.benchmarks.push(benchmark);
         self
     }
