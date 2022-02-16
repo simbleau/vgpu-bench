@@ -1,15 +1,17 @@
+use std::path::Path;
 use std::sync::atomic::{AtomicBool, Ordering};
-use std::sync::Barrier;
+use std::sync::{Arc, Barrier, Mutex};
 use std::thread;
 use std::time::{Duration, Instant};
 
-use crate::log_assert;
 use crate::models::driver::DriverOptions;
+use crate::{log_assert, MonitorHistory};
 
 use super::benchmark_metadata::BenchmarkMetadata;
 use super::{monitor::Monitor, BenchmarkFn};
 use anyhow::{anyhow, Result};
-use log::{debug, info, trace, warn};
+use crossbeam::thread::ScopedJoinHandle;
+use log::{debug, error, info, trace, warn};
 
 pub struct Benchmark {
     pub data: BenchmarkMetadata,
@@ -60,28 +62,8 @@ impl Benchmark {
         info!("{bm_name}: starting with {num_mon} monitors");
 
         // Lifecycle hook - 'on_start'
-        let barrier = Barrier::new(self.monitors.len());
-        crossbeam::scope(|scope| {
-            for mon in self.monitors.iter_mut() {
-                scope.spawn(|_| {
-                    trace!(
-                        "{mon_name}: waiting on lifecycle 'on_start' barrier",
-                        mon_name = mon.metadata().name
-                    );
-                    barrier.wait();
-                    trace!(
-                        "{mon_name}: released from lifecycle 'on_start' barrier",
-                        mon_name = mon.metadata().name
-                    );
-                    mon.on_start();
-                    trace!(
-                        "{mon_name}: started monitor",
-                        mon_name = mon.metadata().name
-                    );
-                });
-            }
-        })
-        .map_err(|thread_ex| anyhow!("Unit thread exception: {thread_ex:?}"))?;
+        self.monitor_lifecycle_hook("on_start", |mon| Ok(mon.on_start()))?;
+        trace!("{bm_name}: started all monitors");
 
         // Prepare buffers for measurables
         let barrier = Barrier::new(self.monitors.len() + 1);
@@ -90,12 +72,14 @@ impl Benchmark {
         crossbeam::scope(|scope| {
             for mon in self.monitors.iter_mut() {
                 scope.spawn(|_| {
+                    let mut history = MonitorHistory::new();
                     let mon_name = mon.metadata().name.clone();
                     let freq_nanos = mon.metadata().frequency.as_duration().as_nanos();
 
                     trace!("{mon_name}: waiting to poll");
                     barrier.wait();
                     trace!("{mon_name}: starting polling");
+
                     // Spinlock on completion of Benchmark
                     loop {
                         // Sleep until next poll time
@@ -122,15 +106,23 @@ impl Benchmark {
                         }
 
                         if complete.load(Ordering::Relaxed) == true {
-                            trace!("{mon_name}: completed monitoring");
                             break;
                         } else {
-                            debug!("{mon_name}: polled {measurement:?} in {elapsed:?}");
-                            // TODO save measurement
+                            match measurement {
+                                Ok(measurable) => {
+                                    debug!("{mon_name}: polled {measurable:?} in {elapsed:?}");
+                                    history.push(measurable);
+                                },
+                                Err(e) => error!("{mon_name}: failed to poll with error '{e}'")
+                            }
                         }
                     }
-                });
-            }
+
+                    // Write results
+                    history.write(Path::new("ex"))
+                }
+            );
+}
             trace!("{bm_name}: waiting to execute");
             barrier.wait();
             trace!("{bm_name}: starting execution");
@@ -141,30 +133,60 @@ impl Benchmark {
         .map_err(|thread_ex| anyhow!("Unit thread exception: {thread_ex:?}"))?;
 
         // Lifecycle hook - 'on_stop'
-        let barrier = Barrier::new(self.monitors.len());
-        crossbeam::scope(|scope| {
-            for mon in self.monitors.iter_mut() {
-                scope.spawn(|_| {
-                    trace!(
-                        "{mon_name}: waiting on lifecycle 'on_stop' barrier",
-                        mon_name = mon.metadata().name
-                    );
-                    barrier.wait();
-                    trace!(
-                        "{mon_name}: released from lifecycle 'on_stop' barrier",
-                        mon_name = mon.metadata().name
-                    );
-                    mon.on_stop();
-                    trace!(
-                        "{mon_name}: stopped monitor",
-                        mon_name = mon.metadata().name
-                    );
-                });
-            }
-        })
-        .map_err(|thread_ex| anyhow!("Unit thread exception: {thread_ex:?}"))?;
+        self.monitor_lifecycle_hook("on_stop", |mon| Ok(mon.on_stop()))?;
+        trace!("{bm_name}: stopped all monitors");
 
         info!("{bm_name}: finished execution");
         Ok(())
+    }
+
+    fn monitor_lifecycle_hook<F, T>(
+        &mut self,
+        lifecycle_name: &'static str,
+        func: F,
+    ) -> Result<Vec<T>>
+    where
+        F: Fn(&mut Box<dyn Monitor + Send + Sync + 'static>) -> Result<T>
+            + 'static,
+        F: Send,
+        F: Sync,
+        T: Send + Sync,
+        T: std::fmt::Debug,
+    {
+        // Buffer for monitor lifecycle hook results
+        let results = Arc::new(Mutex::new(Vec::new()));
+        {
+            // Run monitor lifecycle hook
+            let results_ref = results.clone();
+            let barrier = Barrier::new(self.monitors.len());
+            crossbeam::scope(|scope| {
+            // Spawn threads
+            for mon in self.monitors.iter_mut() {
+                let _: ScopedJoinHandle<'_, Result<(), anyhow::Error>> = scope.spawn(|_| {
+                                    let mon_name = &mon.metadata().name;
+                    // Wait for all threads
+                    trace!(
+                        "{mon_name}: blocking on '{lifecycle_name}' lifecycle barrier"
+                    );
+                    barrier.wait();
+                    trace!(
+                        "{mon_name}: released from '{lifecycle_name}' lifecycle barrier"
+                    );
+                    // Get result from given logic
+                    let result = func(mon)?;
+                    // Append results
+                    let mut results_lock = results_ref.lock().unwrap();
+                    results_lock.push(result);
+                    Ok(())
+                });
+            }
+        })
+        .map_err(|ex| anyhow!("lifecycle hook exception: {ex:?}"))?;
+        }
+
+        // SAFETY: Threads are finished, no one has a reference to results
+        // anymore.
+        let results = Arc::try_unwrap(results).unwrap().into_inner().unwrap();
+        Ok(results)
     }
 }
