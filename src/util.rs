@@ -1,5 +1,5 @@
 use super::Result;
-use anyhow::bail;
+use anyhow::{bail, ensure};
 use csv::Writer;
 use log::{error, trace, warn};
 use renderer::targets::{SVGDocument, SVGFile};
@@ -97,11 +97,12 @@ where
     P: Into<PathBuf>,
 {
     let path = relative_path.into();
-    if path.is_relative() {
-        Ok(csv_writer(path)?)
-    } else {
-        bail!("Argument '{}' is not a relative path", path.display())
-    }
+    ensure!(
+        path.is_relative(),
+        "Argument '{}' is not a relative path",
+        path.display()
+    );
+    Ok(csv_writer(path)?)
 }
 
 pub fn csv_writer<P>(path: P) -> Result<Writer<File>>
