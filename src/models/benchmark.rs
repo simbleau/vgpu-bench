@@ -119,6 +119,7 @@ impl Benchmark {
                     }
 
                     // Write results
+                    // TODO fix me
                     history.write(Path::new("ex"))
                 }
             );
