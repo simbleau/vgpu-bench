@@ -61,8 +61,6 @@ impl<'a> Driver<'a> {
             }
         }
         trace!("completed benchmarks");
-
-        // TODO stop logging
     }
 }
 
