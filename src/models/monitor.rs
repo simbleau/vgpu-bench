@@ -1,15 +1,7 @@
-use super::MonitorMetadata;
-use anyhow::Result;
+use crate::Measurable;
+use crate::MonitorMetadata;
+use crate::Result;
 use std::time::Duration;
-
-#[derive(Debug)]
-pub enum Measurable {
-    Integer(i64),
-    Float(f64),
-    Bool(bool),
-    Illegal,
-    Uninitialized,
-}
 
 #[derive(Debug, Clone, Copy)]
 pub enum MonitorFrequency {
