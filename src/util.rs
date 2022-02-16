@@ -1,4 +1,5 @@
 use super::Result;
+use anyhow::bail;
 use csv::Writer;
 use log::{error, trace, warn};
 use renderer::targets::{SVGDocument, SVGFile};
@@ -58,12 +59,12 @@ where
                 output.status.to_string(),
                 &String::from_utf8_lossy(&output.stderr)
             );
-            return Err(anyhow::anyhow!(
+            bail!(
                 "'{}' exited with failure ({}, err: '{}')",
                 program_path.to_string_lossy(),
                 output.status.to_string(),
                 &String::from_utf8_lossy(&output.stderr)
-            ));
+            );
         }
     };
 
@@ -99,10 +100,7 @@ where
     if path.is_relative() {
         Ok(csv_writer(path)?)
     } else {
-        Err(anyhow::anyhow!(
-            "Argument '{}' is not a relative path",
-            path.display()
-        ))
+        bail!("Argument '{}' is not a relative path", path.display())
     }
 }
 
