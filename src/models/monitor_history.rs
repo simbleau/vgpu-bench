@@ -17,6 +17,10 @@ impl MonitorHistory {
         }
     }
 
+    pub fn len(&self) -> usize {
+        self.history.len()
+    }
+
     pub fn push(&mut self, measurable: Measurable) {
         self.history.push(measurable);
     }
