@@ -16,7 +16,7 @@ pub fn time_svg_file<P: Into<PathBuf>>(
 ) -> Result<Vec<SVGFileTessellationTime>> {
     let file_path: PathBuf = file_path.into();
     let svg_file = SVGFile::from(&file_path.clone().into());
-    let mut svg_doc = SVGDocument::from(svg_file);
+    let mut svg_doc = SVGDocument::try_from(svg_file)?;
 
     Ok(time_svg_doc(backend, &mut svg_doc, trials)?
         .into_iter()

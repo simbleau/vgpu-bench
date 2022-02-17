@@ -43,7 +43,7 @@ where
 
     let svg_path: PathBuf = svg_path.into();
     let svg_file = SVGFile::from(&svg_path);
-    let svg = SVGDocument::from(svg_file);
+    let svg = SVGDocument::try_from(svg_file)?;
 
     backend.init(&svg);
     let profile = backend.get_tessellation_profile()?;

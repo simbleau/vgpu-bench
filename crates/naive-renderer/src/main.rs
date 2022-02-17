@@ -20,7 +20,7 @@ fn main() {
     // Get file
     let file_path: &PathBuf = &app.value_of("file path").unwrap().into();
     let file = SVGFile::from(file_path);
-    let svg = SVGDocument::from(file);
+    let svg = SVGDocument::try_from(file).unwrap(); // TODO use expect
 
     // Run demo
     let mut tessellator = tessellation_util::backends::default();

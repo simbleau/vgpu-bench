@@ -14,7 +14,7 @@ pub fn get_file_profile<P: Into<PathBuf>>(
 ) -> Result<SVGFileProfile> {
     let path: PathBuf = file_path.into();
     let svg_file = SVGFile::from(&path);
-    let svg_doc = SVGDocument::from(svg_file);
+    let svg_doc = SVGDocument::try_from(svg_file)?;
 
     backend.init(&svg_doc);
     let profile = backend.get_tessellation_profile()?;
