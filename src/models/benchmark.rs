@@ -1,3 +1,4 @@
+use std::collections::HashMap;
 use std::path::Path;
 use std::sync::atomic::{AtomicBool, Ordering};
 use std::sync::{Arc, Barrier, Mutex};
@@ -153,7 +154,7 @@ impl Benchmark {
         &mut self,
         lifecycle_name: &'static str,
         func: F,
-    ) -> Result<Vec<T>>
+    ) -> Result<HashMap<String, T>>
     where
         F: Fn(&mut Box<dyn Monitor + Send + Sync + 'static>) -> Result<T>
             + 'static
@@ -163,7 +164,7 @@ impl Benchmark {
         T: std::fmt::Debug,
     {
         // Buffer for monitor lifecycle hook results
-        let results = Arc::new(Mutex::new(Vec::new()));
+        let results = Arc::new(Mutex::new(HashMap::new()));
 
         // Run monitor lifecycle hook
         let results_ref = results.clone();
@@ -172,7 +173,7 @@ impl Benchmark {
             // Spawn threads
             for mon in self.monitors.iter_mut() {
                 let _: ScopedJoinHandle<'_, Result<(), anyhow::Error>> = scope.spawn(|_| {
-                    let mon_name = &mon.metadata().name;
+                    let mon_name = mon.metadata().name.clone();
                     // Wait for all threads
                     trace!(
                         "{mon_name}: blocking on '{lifecycle_name}' lifecycle barrier"
@@ -185,7 +186,7 @@ impl Benchmark {
                     let result = func(mon)?;
                     // Append results
                     let mut results_lock = results_ref.lock().unwrap();
-                    results_lock.push(result);
+                    results_lock.insert(mon_name, result);
                     Ok(())
                 });
             }
