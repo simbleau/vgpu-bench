@@ -195,8 +195,7 @@ impl Benchmark {
         // Release the last reference
         drop(results_ref);
 
-        // SAFETY: Threads are finished, no one has a reference to results
-        // anymore.
+        // SAFETY: No one has a reference to results anymore.
         let results = Arc::try_unwrap(results).unwrap().into_inner().unwrap();
         Ok(results)
     }
