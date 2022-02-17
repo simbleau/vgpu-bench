@@ -54,15 +54,17 @@ impl Benchmark {
     }
 
     pub fn run(&mut self, options: &DriverOptions) -> Result<()> {
-        // Check if run is clean
+        // Check conditions for run
         log_assert!(self.func.is_some(), "this benchmark has already run");
+        let bm_dir = options.benchmark_dir();
         log_assert!(
-            util::io::dir_is_empty(options.benchmark_dir())
-                || util::io::dir_create_all(options.benchmark_dir()).is_ok(),
-            "benchmark dir is not empty"
+            util::io::dir_is_empty(&bm_dir)
+                || util::io::dir_create_all(&bm_dir).is_ok(),
+            "{bm_dir:?} is not permissive or empty"
         );
-        let func = self.func.take().unwrap();
 
+        // Start run
+        let func = self.func.take().unwrap();
         let bm_name = self.metadata().name.to_owned();
         let num_mon = self.monitors.len();
         info!("{bm_name}: starting with {num_mon} monitors");
@@ -154,19 +156,19 @@ impl Benchmark {
     ) -> Result<Vec<T>>
     where
         F: Fn(&mut Box<dyn Monitor + Send + Sync + 'static>) -> Result<T>
-            + 'static,
-        F: Send,
-        F: Sync,
-        T: Send + Sync,
+            + 'static
+            + Send
+            + Sync,
+        T: Send,
         T: std::fmt::Debug,
     {
         // Buffer for monitor lifecycle hook results
         let results = Arc::new(Mutex::new(Vec::new()));
-        {
-            // Run monitor lifecycle hook
-            let results_ref = results.clone();
-            let barrier = Barrier::new(self.monitors.len());
-            crossbeam::scope(|scope| {
+
+        // Run monitor lifecycle hook
+        let results_ref = results.clone();
+        let barrier = Barrier::new(self.monitors.len());
+        crossbeam::scope(|scope| {
             // Spawn threads
             for mon in self.monitors.iter_mut() {
                 let _: ScopedJoinHandle<'_, Result<(), anyhow::Error>> = scope.spawn(|_| {
@@ -189,7 +191,9 @@ impl Benchmark {
             }
         })
         .map_err(|ex| anyhow!("lifecycle hook exception: {ex:?}"))?;
-        }
+
+        // Release the last reference
+        drop(results_ref);
 
         // SAFETY: Threads are finished, no one has a reference to results
         // anymore.
