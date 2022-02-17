@@ -2,6 +2,7 @@
 
 use clap::{App, Arg};
 use std::{io::Write, path::Path};
+use vgpu_bench::util;
 
 pub fn main() {
     let matches = App::new("NVIDIA Nsight Systems Monitor")
@@ -70,7 +71,7 @@ pub fn main() {
         args.extend(app_args);
     }
 
-    vgpu_bench::util::call_program("nsys", args).unwrap();
+    util::exec::call_program("nsys", args).unwrap();
     println!("Done");
 
     print!("Converting output...");
@@ -96,7 +97,7 @@ pub fn main() {
             .display()
             .to_string(),
     ];
-    vgpu_bench::util::call_program("nsys", args).unwrap();
+    util::exec::call_program("nsys", args).unwrap();
     println!("Done");
 
     println!("Execution finished. Exiting...");

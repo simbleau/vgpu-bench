@@ -7,7 +7,7 @@ use simplelog::{ColorChoice, Config, TermLogger, TerminalMode, WriteLogger};
 use std::path::Path;
 use vgpu_bench::{
     benchmarks::rendering::TimeSVGFileRendering,
-    util::{self, create_or_append},
+    util::{self, io::create_or_append},
     Driver,
 };
 
@@ -46,7 +46,7 @@ pub fn main() -> Result<()> {
     // Run driver
     // Due to very complex reasons currently with Pathfinder, we can only handle
     // 1 SVG per renderer instance as it is arduous to re-use the renderer.
-    for asset in util::get_files(input_dir, false) {
+    for asset in util::io::get_files(input_dir, false) {
         {
             Driver::builder()
                 .on_error_panic(true)
@@ -79,7 +79,7 @@ pub fn main() -> Result<()> {
     {
         let benchmark_dir = output_dir.join("benchmarks");
         let csv_path = benchmark_dir.join("file_frametimes_pathfinder.csv");
-        let _proc_output = vgpu_bench::util::call_program(
+        let _proc_output = util::exec::call_program(
             "python3",
             [
                 "tools/plotter/plot_frametimes_files.py",

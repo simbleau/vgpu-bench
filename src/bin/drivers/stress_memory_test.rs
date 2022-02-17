@@ -5,7 +5,7 @@ use simplelog::{ColorChoice, Config, TermLogger, TerminalMode, WriteLogger};
 use std::path::Path;
 use vgpu_bench::{
     benchmarks::tessellation::ProfileSVGFiles,
-    util::{self, create_or_append},
+    util::{self, io::create_or_append},
     Driver,
 };
 
@@ -60,7 +60,7 @@ pub fn main() -> Result<()> {
             ProfileSVGFiles::new()
                 .to_csv("stress_profiles")
                 .backend(tessellation_util::backends::default())
-                .assets(util::get_files(input_dir, false))
+                .assets(util::io::get_files(input_dir, false))
                 .try_into()?,
         )
         .build()

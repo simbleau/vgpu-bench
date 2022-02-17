@@ -7,7 +7,7 @@ use vgpu_bench::{
     benchmarks::rendering::{
         TimeNaiveSVGFileRendering, TimeNaiveSVGPrimitiveRendering,
     },
-    util::{self, create_or_append},
+    util::{self, io::create_or_append},
     Driver,
 };
 
@@ -64,7 +64,7 @@ pub fn main() -> Result<()> {
                 .to_plot("naive_file_frametimes")
                 .frames(500)
                 .backend(tessellation_util::backends::default())
-                .assets(util::get_files(input_dir, false))
+                .assets(util::io::get_files(input_dir, false))
                 .try_into()?,
         )
         .add(

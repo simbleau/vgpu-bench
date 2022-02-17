@@ -21,11 +21,15 @@ pub fn main() {
         "Monitor-1",
         MonitorFrequency::Hertz(1),
     )));
+    monitors.push(Box::new(HeartbeatMonitor::new(
+        "Monitor-2",
+        MonitorFrequency::Hertz(2),
+    )));
     benchmark.monitors_mut().extend(monitors);
 
     Driver::builder()
         .logger(TermLogger::new(
-            LevelFilter::Debug,
+            LevelFilter::Trace,
             Config::default(),
             TerminalMode::Mixed,
             ColorChoice::Auto,

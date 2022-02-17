@@ -36,6 +36,6 @@ impl MonitorHistory {
             .into_iter()
             .map(|x| -> Box<dyn Serialize> { Box::new(x) })
             .collect();
-        Ok(util::write_csv(&path, &rows)?)
+        Ok(util::io::write_csv(&path, &rows)?)
     }
 }

@@ -80,7 +80,7 @@ impl TryFrom<TimeNaiveSVGFileRendering> for Benchmark {
 impl TimeNaiveSVGFileRendering {
     pub fn build(self) -> Result<BenchmarkFn> {
         // Sanitize input assets
-        let assets = util::files_with_extension(&self.assets, "svg");
+        let assets = util::io::files_with_extension(&self.assets, "svg");
         // Input check
         if let Some(path) = self.csv_output {
             log_assert!(
@@ -139,7 +139,7 @@ impl TimeNaiveSVGFileRendering {
                     .into_iter()
                     .map(|x| -> Box<dyn Serialize> { Box::new(x) })
                     .collect();
-                util::write_csv(&path, &rows)?;
+                util::io::write_csv(&path, &rows)?;
                 info!("output CSV data to '{}'", &path.display());
             }
 
@@ -149,7 +149,7 @@ impl TimeNaiveSVGFileRendering {
                     options.benchmark_dir().join(self.csv_output.unwrap());
                 csv_path.set_extension("csv");
 
-                let _proc_output = util::call_program(
+                let _proc_output = util::exec::call_program(
                     "python3",
                     [
                         "tools/plotter/plot_naive_frametimes_files.py",

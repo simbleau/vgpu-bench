@@ -80,7 +80,7 @@ impl TryFrom<TimeSVGFileRendering> for Benchmark {
 impl TimeSVGFileRendering {
     fn build(self) -> Result<BenchmarkFn> {
         // Sanitize input assets
-        let assets = util::files_with_extension(&self.assets, "svg");
+        let assets = util::io::files_with_extension(&self.assets, "svg");
         // Input check
         log_assert!(self.renderer.is_some(), "a renderer must be set");
         if let Some(path) = self.csv_output {
@@ -122,7 +122,7 @@ impl TimeSVGFileRendering {
             for file_path in &assets {
                 let result = rendering_util::benching::timing::time_svg(
                     renderer,
-                    &util::path_to_svg(file_path),
+                    &util::convert::path_to_svg(file_path)?,
                     self.frames,
                 )?;
                 for (frame, dur) in result.frame_times.iter().enumerate() {
@@ -143,7 +143,7 @@ impl TimeSVGFileRendering {
                     .into_iter()
                     .map(|x| -> Box<dyn Serialize> { Box::new(x) })
                     .collect();
-                util::write_csv(&path, &rows)?;
+                util::io::write_csv(&path, &rows)?;
                 info!("output CSV data to '{}'", &path.display());
             }
 
@@ -153,7 +153,7 @@ impl TimeSVGFileRendering {
                     options.benchmark_dir().join(self.csv_output.unwrap());
                 csv_path.set_extension("csv");
 
-                let _proc_output = util::call_program(
+                let _proc_output = util::exec::call_program(
                     "python3",
                     [
                         "tools/plotter/plot_frametimes_files.py",

@@ -5,7 +5,7 @@ use std::thread;
 use std::time::{Duration, Instant};
 
 use crate::models::driver::DriverOptions;
-use crate::{log_assert, MonitorHistory};
+use crate::{log_assert, util, MonitorHistory};
 
 use super::benchmark_metadata::BenchmarkMetadata;
 use super::{monitor::Monitor, BenchmarkFn};
@@ -54,7 +54,13 @@ impl Benchmark {
     }
 
     pub fn run(&mut self, options: &DriverOptions) -> Result<()> {
+        // Check if run is clean
         log_assert!(self.func.is_some(), "this benchmark has already run");
+        log_assert!(
+            util::io::dir_is_empty(options.benchmark_dir())
+                || util::io::dir_create_all(options.benchmark_dir()).is_ok(),
+            "benchmark dir is not empty"
+        );
         let func = self.func.take().unwrap();
 
         let bm_name = self.metadata().name.to_owned();

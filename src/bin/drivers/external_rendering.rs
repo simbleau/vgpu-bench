@@ -6,7 +6,7 @@ use simplelog::{ColorChoice, Config, TermLogger, TerminalMode, WriteLogger};
 use std::path::Path;
 use vgpu_bench::{
     benchmarks::rendering::TimeSVGFileRendering,
-    util::{self, create_or_append},
+    util::{self, io::create_or_append},
     Driver,
 };
 
@@ -78,7 +78,7 @@ pub fn main() -> Result<()> {
                 .renderer(Box::new(unsafe {
                     ExternalRenderer::from(renderer_path).unwrap()
                 }))
-                .assets(util::get_files(input_dir, false))
+                .assets(util::io::get_files(input_dir, false))
                 .frames(100)
                 .try_into()?,
         )

@@ -14,3 +14,9 @@ impl From<&PathBuf> for SVGFile {
         SVGFile(item.to_path_buf())
     }
 }
+
+impl From<PathBuf> for SVGFile {
+    fn from(item: PathBuf) -> Self {
+        SVGFile(item)
+    }
+}

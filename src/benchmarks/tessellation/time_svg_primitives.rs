@@ -153,7 +153,7 @@ impl TimeSVGPrimitiveTessellation {
                     .into_iter()
                     .map(|x| -> Box<dyn Serialize> { Box::new(x) })
                     .collect();
-                util::write_csv(&path, &rows)?;
+                util::io::write_csv(&path, &rows)?;
                 info!("output CSV data to '{}'", &path.display());
             }
 
@@ -163,7 +163,7 @@ impl TimeSVGPrimitiveTessellation {
                     options.benchmark_dir().join(self.csv_output.unwrap());
                 csv_path.set_extension("csv");
 
-                let _proc_output = util::call_program(
+                let _proc_output = util::exec::call_program(
                     "python3",
                     [
                         "tools/plotter/plot_tessellation_time_svg_primitives.py",
