@@ -172,7 +172,7 @@ impl Benchmark {
             // Spawn threads
             for mon in self.monitors.iter_mut() {
                 let _: ScopedJoinHandle<'_, Result<(), anyhow::Error>> = scope.spawn(|_| {
-                                    let mon_name = &mon.metadata().name;
+                    let mon_name = &mon.metadata().name;
                     // Wait for all threads
                     trace!(
                         "{mon_name}: blocking on '{lifecycle_name}' lifecycle barrier"
