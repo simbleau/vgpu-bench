@@ -3,7 +3,6 @@ use crate::{
     models::{Benchmark, BenchmarkFn, BenchmarkMetadata},
     util, Result,
 };
-use erased_serde::Serialize;
 use log::{debug, info, trace, warn};
 use std::path::PathBuf;
 use svg_generator::Primitive;
@@ -148,11 +147,8 @@ impl TimeSVGPrimitiveTessellation {
 
             // Write results
             if let Some(path) = self.csv_output {
-                let path = options.benchmark_dir().join(path);
-                let rows: Vec<Box<dyn Serialize>> = results
-                    .into_iter()
-                    .map(|x| -> Box<dyn Serialize> { Box::new(x) })
-                    .collect();
+                let path = options.output_dir().join(path);
+                let rows = util::convert::to_serializable(results);
                 util::io::write_csv(&path, &rows)?;
                 info!("output CSV data to '{}'", &path.display());
             }
@@ -160,7 +156,7 @@ impl TimeSVGPrimitiveTessellation {
             // Plot results
             if let Some(plot_output) = self.plot_output {
                 let mut csv_path =
-                    options.benchmark_dir().join(self.csv_output.unwrap());
+                    options.output_dir().join(self.csv_output.unwrap());
                 csv_path.set_extension("csv");
 
                 let _proc_output = util::exec::call_program(
@@ -168,13 +164,13 @@ impl TimeSVGPrimitiveTessellation {
                     [
                         "tools/plotter/plot_tessellation_time_svg_primitives.py",
                         csv_path.to_str().unwrap(),
-                        options.benchmark_dir().to_str().unwrap(),
+                        options.output_dir().to_str().unwrap(),
                         plot_output,
                     ],
                 )?;
                 info!(
                     "output plot to '{}'",
-                    options.benchmark_dir().join(plot_output).display()
+                    options.output_dir().join(plot_output).display()
                 );
             }
 

@@ -5,10 +5,10 @@ use std::thread;
 use std::time::{Duration, Instant};
 
 use crate::models::driver::DriverOptions;
-use crate::{util, MonitorHistory};
+use crate::{util, BenchmarkOptions, MonitorHistory};
 
 use super::benchmark_metadata::BenchmarkMetadata;
-use super::{monitor::Monitor, BenchmarkFn};
+use crate::models::{BenchmarkFn, Monitor};
 use anyhow::{anyhow, Result};
 use crossbeam::thread::ScopedJoinHandle;
 use log::{debug, error, info, trace, warn};
@@ -30,7 +30,7 @@ impl Benchmark {
 
     pub fn from<F>(name: &'static str, func: F) -> Self
     where
-        F: FnOnce(&DriverOptions) -> Result<()> + 'static,
+        F: FnOnce(&BenchmarkOptions) -> Result<()> + 'static,
     {
         let bfn = BenchmarkFn::from(func);
         let metadata = BenchmarkMetadata { name };
@@ -56,11 +56,12 @@ impl Benchmark {
     pub fn run(&mut self, options: &DriverOptions) -> Result<()> {
         // Collect info
         let bm_name = self.metadata().name.to_owned();
-        let bm_dir = options.benchmark_dir().join(&bm_name);
+        let bm_options =
+            BenchmarkOptions::new(options.benchmarks_dir, &bm_name);
         let num_mon = self.monitors.len();
 
         // Check conditions for run
-        util::io::create_data_landing(&bm_dir)?;
+        util::io::create_data_landing(bm_options.output_dir())?;
 
         // Start run
         info!("{bm_name}: starting with {num_mon} monitors");
@@ -134,7 +135,7 @@ impl Benchmark {
             barrier.wait();
             trace!("{bm_name}: starting execution");
             // TODO eliminate unwrap here
-            self.func.take().expect("How was this taken?").call(options).unwrap();
+            self.func.take().expect("How was this taken?").run(&bm_options).unwrap();
             trace!("{bm_name}: completed execution");
             complete.store(true, Ordering::Release);
         })
@@ -148,8 +149,7 @@ impl Benchmark {
         if num_mon > 0 {
             trace!("{bm_name}: waiting to write monitor history");
             for (mon_name, history) in histories.lock().unwrap().iter() {
-                util::io::dir_create_all(&bm_dir)?;
-                let mut mon_file_path = bm_dir.join(mon_name);
+                let mut mon_file_path = bm_options.output_dir().join(mon_name);
                 mon_file_path.set_extension("csv");
                 history.write(&mon_file_path)?;
                 trace!(
