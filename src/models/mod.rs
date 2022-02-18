@@ -7,5 +7,5 @@ pub use benchmark::*;
 mod monitor;
 pub use monitor::*;
 
-mod measurable;
-pub use measurable::Measurable;
+mod plotting;
+pub use plotting::*;
