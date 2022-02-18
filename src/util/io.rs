@@ -34,6 +34,20 @@ where
     }
 }
 
+pub fn dir_is_permissive<P>(path: P) -> bool
+where
+    P: AsRef<Path>,
+{
+    let path = path.as_ref();
+    if dir_exists(path)
+        && path.metadata().unwrap().permissions().readonly() == false
+    {
+        true
+    } else {
+        false
+    }
+}
+
 pub fn dir_create_all<P>(path: P) -> Result<()>
 where
     P: AsRef<Path>,
