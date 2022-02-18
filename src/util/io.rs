@@ -14,7 +14,7 @@ where
     P: AsRef<Path>,
 {
     let path = path.as_ref();
-    if path.is_dir() && path.exists() {
+    if path.is_dir() {
         true
     } else {
         false

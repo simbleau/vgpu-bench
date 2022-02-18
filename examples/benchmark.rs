@@ -31,7 +31,7 @@ pub fn main() {
 
     Driver::builder()
         .logger(TermLogger::new(
-            LevelFilter::Info,
+            LevelFilter::Trace,
             Config::default(),
             TerminalMode::Mixed,
             ColorChoice::Auto,

@@ -61,11 +61,10 @@ impl Benchmark {
 
         // Check conditions for run
         log_assert!(self.func.is_some(), "this benchmark has already run");
-        log_assert!(
-            util::io::dir_is_empty(&bm_dir)
-                || util::io::dir_create_all(&bm_dir).is_ok(),
-            "{bm_dir:?} is not empty or able to be created"
-        );
+        if !util::io::dir_exists(&bm_dir) {
+            util::io::dir_create_all(&bm_dir)?;
+        }
+        log_assert!(util::io::dir_is_empty(&bm_dir), "{bm_dir:?} is not empty");
         log_assert!(
             util::io::dir_is_permissive(&bm_dir),
             "{bm_dir:?} is not permissive"

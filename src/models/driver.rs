@@ -1,4 +1,4 @@
-use crate::models::Benchmark;
+use crate::{log_assert, models::Benchmark, util};
 use log::{error, trace};
 use simplelog::{CombinedLogger, SharedLogger};
 use std::path::{Path, PathBuf};
@@ -43,6 +43,20 @@ impl<'a> Driver<'a> {
             eprintln!("{err_msg}\n{e}");
         }
         trace!("logging initialized");
+
+        // Check conditions
+        let output_dir = self.options.output_dir;
+        if !util::io::dir_exists(output_dir) {
+            util::io::dir_create_all(output_dir).unwrap();
+        }
+        log_assert!(
+            util::io::dir_is_empty(self.options.output_dir),
+            "{output_dir:?} is not empty"
+        );
+        log_assert!(
+            util::io::dir_is_permissive(&output_dir),
+            "{output_dir:?} is not permissive"
+        );
 
         // Run all benchmarks
         nvtx::mark("benchmark-stage");
