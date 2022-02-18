@@ -57,23 +57,22 @@ where
 
 pub fn create_or_append<P>(path: P) -> Result<File>
 where
-    P: Into<PathBuf>,
+    P: AsRef<Path>,
 {
     // Make sure path can exist by making parent directories if they are missing
-    let output_path: PathBuf = path.into();
-    let parent_dir = output_path.parent().expect("Path must have a parent");
+    let parent_dir = path.as_ref().parent().expect("Path must have a parent");
     std::fs::create_dir_all(parent_dir)?;
     Ok(std::fs::OpenOptions::new()
         .append(true)
         .create(true)
-        .open(output_path)?)
+        .open(path)?)
 }
 
 pub fn get_files<P>(dir: P, recursive: bool) -> Vec<PathBuf>
 where
-    P: Into<PathBuf>,
+    P: AsRef<Path>,
 {
-    let mut walkdir = WalkDir::new(dir.into());
+    let mut walkdir = WalkDir::new(dir);
     if !recursive {
         walkdir = walkdir.max_depth(1);
     }
@@ -93,7 +92,7 @@ pub fn get_files_with_extension<P, S>(
     ext: &S,
 ) -> Vec<PathBuf>
 where
-    P: Into<PathBuf>,
+    P: AsRef<Path>,
     S: AsRef<OsStr> + ?Sized,
 {
     get_files(dir, recursive)
@@ -133,9 +132,9 @@ pub fn write_csv<P>(
     rows: &Vec<Box<dyn erased_serde::Serialize>>,
 ) -> Result<()>
 where
-    P: Into<PathBuf>,
+    P: AsRef<Path>,
 {
-    let mut output_path = path.into();
+    let mut output_path = path.as_ref().to_owned();
     output_path.set_extension("csv");
     let mut writer = csv_writer(&output_path)?;
     for row in rows {
@@ -147,9 +146,9 @@ where
 
 pub fn csv_writer_relative<P>(relative_path: P) -> Result<Writer<File>>
 where
-    P: Into<PathBuf>,
+    P: AsRef<Path>,
 {
-    let path = relative_path.into();
+    let path = relative_path.as_ref();
     ensure!(
         path.is_relative(),
         "Argument '{}' is not a relative path",
@@ -160,7 +159,7 @@ where
 
 pub fn csv_writer<P>(path: P) -> Result<Writer<File>>
 where
-    P: Into<PathBuf>,
+    P: AsRef<Path>,
 {
     let output_file = create_or_append(path)?;
     let mut write_header = true;

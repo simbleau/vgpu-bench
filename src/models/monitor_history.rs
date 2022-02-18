@@ -29,13 +29,15 @@ impl MonitorHistory {
         self.history.clear();
     }
 
-    pub fn write(self, path: &Path) -> Result<()> {
-        // TODO this fn doesn't need to consume self
+    pub fn write<P>(&self, path: P) -> Result<()>
+    where
+        P: AsRef<Path>,
+    {
         let rows: Vec<Box<dyn Serialize>> = self
             .history
-            .into_iter()
-            .map(|x| -> Box<dyn Serialize> { Box::new(x) })
+            .iter()
+            .map(|x| -> Box<dyn Serialize> { Box::new(x.clone()) })
             .collect();
-        Ok(util::io::write_csv(&path, &rows)?)
+        Ok(util::io::write_csv(path, &rows)?)
     }
 }

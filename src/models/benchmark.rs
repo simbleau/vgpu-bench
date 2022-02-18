@@ -1,5 +1,4 @@
 use std::collections::HashMap;
-use std::path::Path;
 use std::sync::atomic::{AtomicBool, Ordering};
 use std::sync::{Arc, Barrier, Mutex};
 use std::thread;
@@ -55,19 +54,24 @@ impl Benchmark {
     }
 
     pub fn run(&mut self, options: &DriverOptions) -> Result<()> {
+        // Collect info
+        let bm_name = self.metadata().name.to_owned();
+        let bm_dir = options.benchmark_dir().join(&bm_name);
+        let num_mon = self.monitors.len();
+
         // Check conditions for run
         log_assert!(self.func.is_some(), "this benchmark has already run");
-        let bm_dir = options.benchmark_dir();
         log_assert!(
             util::io::dir_is_empty(&bm_dir)
                 || util::io::dir_create_all(&bm_dir).is_ok(),
-            "{bm_dir:?} is not permissive or empty"
+            "{bm_dir:?} is not empty or able to be created"
+        );
+        log_assert!(
+            util::io::dir_is_permissive(&bm_dir),
+            "{bm_dir:?} is not permissive"
         );
 
         // Start run
-        let func = self.func.take().unwrap();
-        let bm_name = self.metadata().name.to_owned();
-        let num_mon = self.monitors.len();
         info!("{bm_name}: starting with {num_mon} monitors");
 
         // Lifecycle hook - 'on_start'
@@ -78,6 +82,9 @@ impl Benchmark {
         let barrier = Barrier::new(self.monitors.len() + 1);
         let complete = AtomicBool::new(false);
         let start_time = Instant::now();
+
+        let histories: Arc<Mutex<HashMap<String, MonitorHistory>>> =
+            Arc::new(Mutex::new(HashMap::new()));
         crossbeam::scope(|scope| {
             for mon in self.monitors.iter_mut() {
                 scope.spawn(|_| {
@@ -127,16 +134,16 @@ impl Benchmark {
                         }
                     }
 
-                    // Write results
-                    // TODO fix me
-                    history.write(Path::new("ex"))
+                    let mut histories = histories.lock().unwrap();
+                    histories.insert(mon_name, history);
                 }
             );
 }
             trace!("{bm_name}: waiting to execute");
             barrier.wait();
             trace!("{bm_name}: starting execution");
-            func.call(options).unwrap();
+            // TODO eliminate unwrap here
+            self.func.take().expect("How was this taken?").call(options).unwrap();
             trace!("{bm_name}: completed execution");
             complete.store(true, Ordering::Release);
         })
@@ -145,6 +152,22 @@ impl Benchmark {
         // Lifecycle hook - 'on_stop'
         self.monitor_lifecycle_hook("on_stop", |mon| Ok(mon.on_stop()))?;
         trace!("{bm_name}: stopped all monitors");
+
+        // Write monitor history
+        if num_mon > 0 {
+            trace!("{bm_name}: waiting to write monitor history");
+            for (mon_name, history) in histories.lock().unwrap().iter() {
+                util::io::dir_create_all(&bm_dir)?;
+                let mut mon_file_path = bm_dir.join(mon_name);
+                mon_file_path.set_extension("csv");
+                history.write(&mon_file_path)?;
+                trace!(
+                    "{bm_name}: finished writing {mon_name} to {mon_file}",
+                    mon_file = mon_file_path.display()
+                );
+            }
+            trace!("{bm_name}: finished writing all monitor history");
+        }
 
         info!("{bm_name}: finished execution");
         Ok(())
