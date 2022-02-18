@@ -55,6 +55,29 @@ where
     Ok(std::fs::create_dir_all(path)?)
 }
 
+/// Create the specified directory, ensuring it is a writeable directory and
+/// empty for future data to be saved in the given path
+pub fn create_data_landing<P>(path: P) -> Result<()>
+where
+    P: AsRef<Path>,
+{
+    let path = path.as_ref();
+    // If the dir doesn't exist, create it or ensure it is permissive
+    if !dir_exists(path) {
+        dir_create_all(path)?;
+    } else {
+        if !dir_is_permissive(path) {
+            return Err(anyhow::anyhow!("{path:?} is not permissive"));
+        }
+    }
+    // Ensure the dir is empty
+    if !dir_is_empty(path) {
+        return Err(anyhow::anyhow!("{path:?} is not empty"));
+    }
+    // Good to go
+    Ok(())
+}
+
 pub fn create_or_append<P>(path: P) -> Result<File>
 where
     P: AsRef<Path>,

@@ -64,7 +64,8 @@ pub fn main() -> Result<()> {
                 .try_into()?,
         )
         .build()
-        .run();
+        .run()
+        .unwrap();
 
     Ok(())
 }

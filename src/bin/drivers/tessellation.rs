@@ -88,7 +88,8 @@ pub fn main() -> Result<()> {
         )
         // TODO TimeSVGFileTessellation
         .build()
-        .run();
+        .run()
+        .unwrap();
 
     Ok(())
 }

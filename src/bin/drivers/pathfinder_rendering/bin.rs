@@ -71,7 +71,8 @@ pub fn main() -> Result<()> {
                         .try_into()?,
                 )
                 .build()
-                .run();
+                .run()
+                .unwrap();
         }
     }
     // We must call the plotter manually after due to aforementioned complex

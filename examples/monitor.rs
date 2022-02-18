@@ -36,5 +36,6 @@ pub fn main() {
         ))
         .add(benchmark)
         .build()
-        .run();
+        .run()
+        .unwrap();
 }

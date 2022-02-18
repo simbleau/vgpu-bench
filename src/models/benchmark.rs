@@ -5,7 +5,7 @@ use std::thread;
 use std::time::{Duration, Instant};
 
 use crate::models::driver::DriverOptions;
-use crate::{log_assert, util, MonitorHistory};
+use crate::{util, MonitorHistory};
 
 use super::benchmark_metadata::BenchmarkMetadata;
 use super::{monitor::Monitor, BenchmarkFn};
@@ -60,15 +60,7 @@ impl Benchmark {
         let num_mon = self.monitors.len();
 
         // Check conditions for run
-        log_assert!(self.func.is_some(), "this benchmark has already run");
-        if !util::io::dir_exists(&bm_dir) {
-            util::io::dir_create_all(&bm_dir)?;
-        }
-        log_assert!(util::io::dir_is_empty(&bm_dir), "{bm_dir:?} is not empty");
-        log_assert!(
-            util::io::dir_is_permissive(&bm_dir),
-            "{bm_dir:?} is not permissive"
-        );
+        util::io::create_data_landing(&bm_dir)?;
 
         // Start run
         info!("{bm_name}: starting with {num_mon} monitors");
