@@ -48,7 +48,6 @@ path = "src/bin/monitors/nvidia_monitor.rs"
 
 [workspace]
 members = [
-    "crates/benchmark-macro-derive",
     "crates/renderer",
     "crates/svg-generator",
     "crates/tessellation-util",
