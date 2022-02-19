@@ -57,7 +57,6 @@ members = [
 ]
 
 [dependencies]
-benchmark_macro_derive = { package = "benchmark-macro-derive", path = "crates/benchmark-macro-derive" }
 renderer = { package = "renderer", path = "crates/renderer" }
 tessellation-util = { package = "tessellation-util", path = "crates/tessellation-util" }
 rendering-util = { package = "rendering-util", path = "crates/rendering-util" }
@@ -65,11 +64,12 @@ naive-renderer = { package = "naive-renderer", path = "crates/naive-renderer" }
 svg-generator = { package = "svg-generator", path = "crates/svg-generator" }
 pathfinder_vgpu_glue = { git="https://github.com/simbleau/pathfinder.git" }
 
-nvtx = { package = "nvtx-rs", version = "0.11" }
+
+nvtx = {  version = "0.11", package = "nvtx-rs" }
+pyo3 = { version = "0.15.1", features = ["auto-initialize"]}
 crossbeam = "0.8"
 systemstat = "0.1.10"
 clap = "3.0.14"
-const_format = "0.2.22"
 lyon = { version ="0.17.5", features = ["extra"] }
 usvg = "0.21.0"
 walkdir = "2"

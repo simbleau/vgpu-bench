@@ -38,3 +38,7 @@ impl Plotter for BooleanPlotter {
         }
     }
 }
+
+fn plot_stepper() {
+    //
+}
