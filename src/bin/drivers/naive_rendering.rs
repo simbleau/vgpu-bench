@@ -1,4 +1,4 @@
-use clap::{App, Arg};
+use clap::{Arg, Command};
 use log::LevelFilter;
 use simplelog::{ColorChoice, Config, TermLogger, TerminalMode, WriteLogger};
 use std::path::Path;
@@ -12,7 +12,7 @@ use vgpu_bench::{
 
 pub fn main() {
     // Get arguments
-    let matches = App::new("Naive Rendering Benchmark Driver")
+    let matches = Command::new("Naive Rendering Benchmark Driver")
         .version("1.0")
         .author("Spencer C. Imbleau <spencer@imbleau.com>")
         .arg(

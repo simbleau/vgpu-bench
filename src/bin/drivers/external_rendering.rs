@@ -1,4 +1,4 @@
-use clap::{App, Arg};
+use clap::{Arg, Command};
 use log::LevelFilter;
 use renderer::ffi::ExternalRenderer;
 use simplelog::{ColorChoice, Config, TermLogger, TerminalMode, WriteLogger};
@@ -11,7 +11,7 @@ use vgpu_bench::{
 
 pub fn main() {
     // Get arguments
-    let matches = App::new("External Library Rendering Benchmark Driver")
+    let matches = Command::new("External Library Rendering Benchmark Driver")
         .version("1.0")
         .author("Spencer C. Imbleau <spencer@imbleau.com>")
         .arg(

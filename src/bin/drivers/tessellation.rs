@@ -1,5 +1,5 @@
 use anyhow::Result;
-use clap::{App, Arg};
+use clap::{Arg, Command};
 use log::LevelFilter;
 use simplelog::{ColorChoice, Config, TermLogger, TerminalMode, WriteLogger};
 use std::path::Path;
@@ -13,7 +13,7 @@ use vgpu_bench::{
 
 pub fn main() -> Result<()> {
     // Get arguments
-    let matches = App::new("Tessellation Benchmark Driver")
+    let matches = Command::new("Tessellation Benchmark Driver")
         .version("1.0")
         .author("Spencer C. Imbleau <spencer@imbleau.com>")
         .arg(

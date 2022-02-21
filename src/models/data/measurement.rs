@@ -14,7 +14,6 @@ impl ToPyObject for Measurable {
             Measurable::Integer(i) => i.into_py(py),
             Measurable::Float(f) => f.into_py(py),
             Measurable::Bool(b) => b.into_py(py),
-            _ => py.NotImplemented(),
         }
     }
 }

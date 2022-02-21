@@ -1,6 +1,6 @@
 mod render_glue;
 use anyhow::Result;
-use clap::{App, Arg};
+use clap::{Arg, Command};
 use log::LevelFilter;
 use render_glue::PathfinderImpl;
 use simplelog::{ColorChoice, Config, TermLogger, TerminalMode, WriteLogger};
@@ -13,7 +13,7 @@ use vgpu_bench::{
 
 pub fn main() -> Result<()> {
     // Get arguments
-    let matches = App::new("Pathfinder Rendering Benchmark Driver")
+    let matches = Command::new("Pathfinder Rendering Benchmark Driver")
         .version("1.0")
         .author("Spencer C. Imbleau <spencer@imbleau.com>")
         .arg(

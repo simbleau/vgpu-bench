@@ -1,11 +1,11 @@
 #![feature(iter_intersperse)]
 
-use clap::{App, Arg};
+use clap::{Arg, Command};
 use std::{io::Write, path::Path};
 use vgpu_bench::util;
 
 pub fn main() {
-    let matches = App::new("NVIDIA Nsight Systems Monitor")
+    let matches = Command::new("NVIDIA Nsight Systems Monitor")
         .version("1.0")
         .author("Spencer C. Imbleau <spencer@imbleau.com>")
         .about("Runs an input program under NVIDIA Nsight Systems and consolidates output.")

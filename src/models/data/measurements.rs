@@ -2,10 +2,8 @@ use std::path::Path;
 
 use csv::Writer;
 use erased_serde::Serialize;
-use pyo3::ffi;
 use pyo3::prelude::*;
 use pyo3::types::PyString;
-use pyo3::AsPyPointer;
 
 use crate::util;
 use crate::Measurable;
