@@ -1,3 +1,20 @@
+import pandas as pd
+import numpy as np
+import matplotlib.pyplot as plt
+import io
+import csv
+
+
+def save(plot, path):
+    print("Saving plot")
+    # Todo
+    pass
+
+
+def show(plot):
+    plt.show()
+
+
 def ns_to_ms(nanos, rounding=True, decimals=3):
     """
     Converts nanoseconds to milliseconds, with optional rounding.
@@ -11,3 +28,15 @@ def ns_to_ms(nanos, rounding=True, decimals=3):
         return round(nanos / 1000000, decimals)
     else:
         return nanos / 1000000
+
+
+def dataframe(columns, data):
+    buf = io.StringIO(data)
+    df = pd.read_csv(buf, sep=",", names=columns)
+    return df
+
+
+if __name__ == "__main__":
+    columns = ['value']
+    data = "true\nfalse"
+    df = dataframe(columns, data)

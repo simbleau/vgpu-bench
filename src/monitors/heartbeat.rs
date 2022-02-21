@@ -4,6 +4,8 @@ use std::time::Instant;
 use crate::models::{Measurable, Monitor, MonitorFrequency, MonitorMetadata};
 use crate::monitors::heartbeat::MonitorFrequency::Hertz;
 
+use super::MonitorError;
+
 pub struct HeartbeatMonitor {
     metadata: MonitorMetadata,
     beating: bool,
@@ -56,7 +58,11 @@ impl Monitor for HeartbeatMonitor {
                     .div_duration_f64(self.metadata.frequency.as_duration());
                 Ok(Measurable::Integer(beats as i64))
             }
-            false => Ok(Measurable::Illegal),
+            false => Err(MonitorError::Polling(format!(
+                "{name} is not beating. Was this monitor initialized?",
+                name = self.metadata.name
+            ))
+            .into()),
         }
     }
 

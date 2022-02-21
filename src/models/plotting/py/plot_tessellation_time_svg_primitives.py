@@ -1,7 +1,7 @@
 import os
 import matplotlib.pyplot as plt
 import pandas as pd
-import helper_methods
+import models.plotting.py.util as util
 
 # Get CLI args
 import sys
@@ -49,10 +49,10 @@ for primitive in primitives:
         tess_time_std = amt_rows["tess_time"].std()
         # Append chart data
         chart_labels.append(amount)
-        chart_init_means.append(helper_methods.ns_to_ms(init_time_mean))
-        chart_init_stds.append(helper_methods.ns_to_ms(init_time_std))
-        chart_tess_means.append(helper_methods.ns_to_ms(tess_time_mean))
-        chart_tess_stds.append(helper_methods.ns_to_ms(tess_time_std))
+        chart_init_means.append(util.ns_to_ms(init_time_mean))
+        chart_init_stds.append(util.ns_to_ms(init_time_std))
+        chart_tess_means.append(util.ns_to_ms(tess_time_mean))
+        chart_tess_stds.append(util.ns_to_ms(tess_time_std))
 
     # Plot data
     import numpy as np

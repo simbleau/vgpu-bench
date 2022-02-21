@@ -1,5 +1,12 @@
-mod measurable;
-pub use measurable::Measurable;
+use pyo3::prelude::*;
+pub fn plot_utils<'p>(py: Python<'p>) -> PyResult<&'p PyModule> {
+    Ok(PyModule::from_code(
+        py,
+        include_str!("py/util.py"),
+        "util",
+        "util",
+    )?)
+}
 
 mod plotter;
 pub use plotter::Plotter;

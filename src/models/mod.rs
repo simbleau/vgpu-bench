@@ -9,3 +9,6 @@ pub use monitor::*;
 
 mod plotting;
 pub use plotting::*;
+
+mod data;
+pub use data::*;

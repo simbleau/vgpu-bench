@@ -5,7 +5,7 @@ use std::thread;
 use std::time::{Duration, Instant};
 
 use crate::models::driver::DriverOptions;
-use crate::{util, BenchmarkOptions, MonitorHistory};
+use crate::{util, BenchmarkOptions, Measurements};
 
 use super::benchmark_metadata::BenchmarkMetadata;
 use crate::models::{BenchmarkFn, Monitor};
@@ -75,12 +75,12 @@ impl Benchmark {
         let complete = AtomicBool::new(false);
         let start_time = Instant::now();
 
-        let histories: Arc<Mutex<HashMap<String, MonitorHistory>>> =
+        let histories: Arc<Mutex<HashMap<String, Measurements>>> =
             Arc::new(Mutex::new(HashMap::new()));
         crossbeam::scope(|scope| {
             for mon in self.monitors.iter_mut() {
                 scope.spawn(|_| {
-                    let mut history = MonitorHistory::new();
+                    let mut history = Measurements::new();
                     let mon_name = mon.metadata().name.clone();
                     let freq_nanos = mon.metadata().frequency.as_duration().as_nanos();
 

@@ -63,7 +63,6 @@ naive-renderer = { package = "naive-renderer", path = "crates/naive-renderer" }
 svg-generator = { package = "svg-generator", path = "crates/svg-generator" }
 pathfinder_vgpu_glue = { git="https://github.com/simbleau/pathfinder.git" }
 
-
 nvtx = {  version = "0.11", package = "nvtx-rs" }
 pyo3 = { version = "0.15.1", features = ["auto-initialize"]}
 crossbeam = "0.8"

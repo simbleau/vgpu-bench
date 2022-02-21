@@ -2,7 +2,7 @@ import os
 import matplotlib.pyplot as plt
 import pandas as pd
 import numpy as np
-import helper_methods
+import models.plotting.py.util as util
 
 # Get CLI args
 import sys
@@ -34,7 +34,7 @@ for filename in filenames:
     frame_times = []
     for frame in range(num_rows):
         frame_time_nanos = rows['frame_time'].values[frame]
-        frame_time_ms = helper_methods.ns_to_ms(
+        frame_time_ms = util.ns_to_ms(
             frame_time_nanos, rounding=False)
         frame_times.append(frame_time_ms)
 

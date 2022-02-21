@@ -1,3 +1,6 @@
+mod error;
+pub use error::MonitorError;
+
 mod heartbeat;
 pub use heartbeat::HeartbeatMonitor;
 
