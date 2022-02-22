@@ -47,21 +47,3 @@ impl Plotter for BooleanPlotter {
         })?)
     }
 }
-
-#[cfg(test)]
-#[test]
-fn test_run() {
-    use crate::Measurable;
-
-    let mut data = Measurements::new();
-    data.push(Measurable::Bool(true));
-    data.push(Measurable::Bool(false));
-    data.push(Measurable::Bool(false));
-    let plotter = BooleanPlotter {
-        plot_type: BooleanPlotType::Pie,
-        title: "My title".to_string(),
-        true_label: "The truths".to_string(),
-        false_label: "Falz".to_string(),
-    };
-    plotter.show_plot(&data).unwrap();
-}
