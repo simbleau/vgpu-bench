@@ -20,7 +20,7 @@ pub struct BooleanPlotter {
 impl Plotter for BooleanPlotter {
     fn plot(&self, data: &Measurements) -> Result<PyObject> {
         let script = match self.plot_type {
-            BooleanPlotType::Pie => include_str!("py/boolean.py"),
+            BooleanPlotType::Pie => include_str!("py/boolean_pie.py"),
             BooleanPlotType::Stepper => unimplemented!(),
         };
 
