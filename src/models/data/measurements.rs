@@ -11,7 +11,7 @@ use crate::Result;
 
 #[derive(Debug, Clone)]
 pub struct Measurements {
-    measurables: Vec<Measurable>,
+    measurables: HashMap<String, Vec<Measurable>>,
 }
 
 impl Measurements {

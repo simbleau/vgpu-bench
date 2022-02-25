@@ -30,9 +30,11 @@ def ns_to_ms(nanos, rounding=True, decimals=3):
         return nanos / 1000000
 
 
-def dataframe(columns, data):
-    buf = io.StringIO(data)
+def dataframe(columns, rows, sort=False, by=None, ascending=True):
+    buf = io.StringIO(rows)
     df = pd.read_csv(buf, sep=",", names=columns)
+    if sort:
+        df = df.sort_values(by=by, ascending=ascending)
     return df
 
 

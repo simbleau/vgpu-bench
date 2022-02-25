@@ -33,6 +33,7 @@ impl Plotter for BooleanPlotter {
             let py_data_columns = PyList::new(py, &["value"]);
             let py_data = data.to_pystring(py);
             let df = df_func.call1(py, (py_data_columns, py_data))?;
+            
             debug!("Boolean plotter dataframe:\n{df}");
 
             // Plot

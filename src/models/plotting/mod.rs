@@ -14,3 +14,7 @@ pub use plotter::Plotter;
 mod boolean_plotter;
 pub use boolean_plotter::BooleanPlotType;
 pub use boolean_plotter::BooleanPlotter;
+
+mod numeric_plotter;
+pub use numeric_plotter::NumericPlotType;
+pub use numeric_plotter::NumericPlotter;
