@@ -12,7 +12,7 @@ use std::time::Duration;
 type Init = fn() -> ::std::os::raw::c_int;
 type Stage = fn(input: *const ::std::os::raw::c_char) -> ::std::os::raw::c_int;
 type Render = fn(
-    frame_times: *mut ::std::os::raw::c_ulong,
+    frame_times: *mut ::std::os::raw::c_ulonglong,
     frames: ::std::os::raw::c_size_t,
 ) -> ::std::os::raw::c_int;
 
