@@ -53,8 +53,16 @@ impl TriangleRenderer {
         scene: SceneGlobals,
         data: TessellationData,
     ) -> Result<()> {
-        let event_loop_thread: EventLoop<()> =
-            winit::platform::unix::EventLoopExtUnix::new_any_thread();
+        let event_loop_thread: EventLoop<()>;
+        if cfg!(windows) {
+            event_loop_thread =
+                winit::platform::windows::EventLoopExtWindows::new_any_thread();
+        } else if cfg!(unix) {
+            event_loop_thread =
+                winit::platform::unix::EventLoopExtUnix::new_any_thread();
+        } else {
+            unimplemented!();
+        }
         let window = WindowBuilder::new().build(&event_loop_thread)?;
         window.set_resizable(true);
         let state = pollster::block_on(State::new(&window, scene, data));
