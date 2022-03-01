@@ -119,7 +119,7 @@ impl Benchmark {
                             match measurement {
                                 Ok(measurable) => {
                                     debug!("{mon_name}: polled {measurable:?} in {elapsed:?}");
-                                    history.push(measurable);
+                                    history.insert(&mon_name, measurable);
                                 },
                                 Err(e) => error!("{mon_name}: failed to poll with error '{e}'")
                             }
@@ -151,7 +151,7 @@ impl Benchmark {
             for (mon_name, history) in histories.lock().unwrap().iter() {
                 let mut mon_file_path = bm_options.output_dir().join(mon_name);
                 mon_file_path.set_extension("csv");
-                history.write(&mon_file_path)?;
+                history.write_csv(&mon_file_path)?;
                 trace!(
                     "{bm_name}: finished writing {mon_name} to {mon_file}",
                     mon_file = mon_file_path.display()

@@ -13,8 +13,11 @@ pub enum NumericPlotType {
 pub struct NumericPlotter {
     pub plot_type: NumericPlotType,
     pub title: String,
+    pub x_column: String,
+    pub y_column: String,
     pub x_label: String,
     pub y_label: String,
+    pub plot_by: Option<String>,
     pub sort_by: Option<String>,
     pub sort_ascending: bool,
     pub show_stats: bool,
@@ -34,27 +37,47 @@ impl Plotter for NumericPlotter {
 
             // Make dataframe
             let df_func: PyObject = utils.getattr("dataframe")?.into();
-            let py_data_columns = PyList::new(py, &["value"]);
-            let py_data = data.to_pystring(py);
+            let py_data_columns = PyList::new(py, data.columns());
+            let py_data = data.to_pystring(py)?;
+            let py_args = (py_data_columns, py_data);
             let py_kwargs = vec![
-                ("columns", py_data_columns.into_py(py)),
-                ("rows", py_data.into_py(py)),
                 ("sort", self.sort_by.is_some().into_py(py)),
                 (
-                    "by",
+                    "sort_by",
                     self.sort_by.as_ref().map_or(py.None(), |v| v.into_py(py)),
                 ),
                 ("ascending", self.sort_ascending.into_py(py)),
             ]
             .into_py_dict(py);
-            let df = df_func.call(py, (), Some(py_kwargs))?;
+            let df = df_func.call(py, py_args, Some(py_kwargs))?;
             debug!("Numeric plotter dataframe:\n{df}");
 
             // Plot
             let plotter = PyModule::from_code(py, script, "", "")?;
             let plot_func: PyObject = plotter.getattr("plot")?.into();
-            let plot: PyObject = plot_func
-                .call1(py, (df, &self.title, &self.x_label, &self.y_label))?;
+            let py_args = (
+                df,
+                &self.x_column,
+                &self.y_column,
+                &self.title,
+                &self.x_label,
+                &self.y_label,
+            );
+            let py_kwargs = vec![
+                (
+                    "plot_by",
+                    self.plot_by
+                        .as_ref()
+                        .map_or(py.None(), |v| v.into_py(py))
+                        .into_py(py),
+                ),
+                ("show_stats", self.show_stats.into_py(py)),
+                ("show_stats_table", self.show_stats_table.into_py(py)),
+            ]
+            .into_py_dict(py);
+
+            let plot: PyObject =
+                plot_func.call(py, py_args, Some(py_kwargs))?;
 
             Ok(plot)
         })?)

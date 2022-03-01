@@ -4,7 +4,6 @@ import numpy as np
 
 
 def plot(df, x_col, y_col, title, x_label, y_label, plot_by=None, show_stats=False, show_stats_table=False):
-
     if show_stats_table:
         fig = plt.figure()
         p_ax = plt.subplot2grid((3, 1), (0, 0), rowspan=2)
@@ -36,7 +35,6 @@ def plot(df, x_col, y_col, title, x_label, y_label, plot_by=None, show_stats=Fal
                 y_value = round(np.mean(y_rows[y_col]), decimals)
                 xy_values.append(y_value)
                 # Plot frame times
-            print(f"plot item: {plot_item}\nx: {x_values}\ny: {xy_values}")
             p_ax.plot(x_values, xy_values, label=plot_item,
                       linewidth=3)
     else:
@@ -48,8 +46,6 @@ def plot(df, x_col, y_col, title, x_label, y_label, plot_by=None, show_stats=Fal
             y_rows = rows.loc[rows[x_col] == x_value]
             y_value = round(np.mean(y_rows[y_col]), decimals)
             xy_values.append(y_value)
-            # Plot frame times
-        print(f"x: {x_values}\ny: {xy_values}")
         p_ax.plot(x_values, xy_values,
                   linewidth=3)
 
@@ -80,15 +76,3 @@ def plot(df, x_col, y_col, title, x_label, y_label, plot_by=None, show_stats=Fal
 
     p_ax.legend(loc='best')
     return fig
-
-
-if __name__ == "__main__":
-    columns = ["asset", "time", "amplitude"]
-    rows = "1, 10, 3\n1, 11, 5\n1, 11, 4\n2, 10, 3\n2, 10, 5\n2, 9, 4\n2, 9, 4.5\n1,7,4"
-df = util.dataframe(columns, rows, sort=True, by=columns[1], ascending=True)
-print(df)
-show_stats = True
-show_stats_table = False
-plot = plot(df, columns[1], columns[2], "Time vs. Amplitude",
-            "Time (ms)", "Amplitude (nm)", plot_by=None, show_stats=show_stats, show_stats_table=show_stats_table)
-util.show(plot)
