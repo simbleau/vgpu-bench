@@ -9,7 +9,7 @@ pub fn main() {
     let benchmark = Benchmark::from("Benchmark-1", |_| {
         let mut measurements = Measurements::new();
         // Some real benchmarking would happen here
-        #[derive(Serialize)]
+        #[derive(Serialize, Debug)]
         struct ExampleMeasurement {
             time: i32,
             amplitude: i32,

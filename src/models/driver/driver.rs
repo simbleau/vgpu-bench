@@ -45,7 +45,9 @@ where
             let result = benchmark.run(&self.options);
             nvtx::range_pop();
             match result {
-                Ok(measurements) => todo!(),
+                Ok(measurements) => {
+                    println!("{:?}", measurements);
+                }
                 Err(e) => {
                     error!("benchmark failed: {}", e);
                     if self.on_error_panic {

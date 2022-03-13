@@ -7,6 +7,7 @@ use crate::util;
 use crate::Measurable;
 use crate::Result;
 
+#[derive(Debug)]
 pub struct Measurements<T>
 where
     T: Measurable,

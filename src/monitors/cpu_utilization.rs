@@ -7,7 +7,7 @@ use crate::monitors::cpu_utilization::MonitorFrequency::Hertz;
 use crate::{util, Measurement};
 use std::{thread, time::Duration};
 
-#[derive(Serialize)]
+#[derive(Serialize, Debug)]
 struct CpuMeasurement {
     idle: f32,
     interrupt: f32,
@@ -15,6 +15,8 @@ struct CpuMeasurement {
     system: f32,
     user: f32,
 }
+unsafe impl Send for CpuMeasurement {}
+unsafe impl Sync for CpuMeasurement {}
 pub struct CpuUtilizationMonitor {
     metadata: MonitorMetadata,
 }
@@ -50,11 +52,7 @@ impl Monitor for CpuUtilizationMonitor {
             system: load.system,
             user: load.user,
         };
-        // TODO make this cleaner. Bandaid fix
-        let measurement = Measurement {
-            inner: Box::new(util::convert::erase(cpu_measurement)),
-        };
-        Ok(measurement)
+        Ok(Measurement::from(cpu_measurement))
     }
 
     fn on_stop(&mut self) {}

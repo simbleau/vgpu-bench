@@ -7,11 +7,13 @@ use crate::monitors::heartbeat::MonitorFrequency::Hertz;
 use crate::monitors::MonitorError;
 use crate::{util, Measurement};
 
-#[derive(Serialize)]
+#[derive(Serialize, Debug)]
 struct HeartbeatMeasurement {
     beat: u32,
     elapsed_ns: u128,
 }
+unsafe impl Send for HeartbeatMeasurement {}
+unsafe impl Sync for HeartbeatMeasurement {}
 
 pub struct HeartbeatMonitor {
     metadata: MonitorMetadata,
@@ -68,13 +70,7 @@ impl Monitor for HeartbeatMonitor {
                     beat,
                     elapsed_ns: elapsed.as_nanos(),
                 };
-                // TODO make this cleaner. Bandaid fix
-                let measurement = Measurement {
-                    inner: Box::new(util::convert::erase(
-                        heartbeat_measurement,
-                    )),
-                };
-                Ok(measurement)
+                Ok(Measurement::from(heartbeat_measurement))
             }
             false => Err(MonitorError::Polling(format!(
                 "{name} is not beating. Was this monitor initialized?",
