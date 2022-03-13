@@ -1,33 +1,20 @@
-use crate::models::{Benchmark, BenchmarkFn, BenchmarkMetadata};
-use crate::Result;
-use crate::{log_assert, util};
-use log::{debug, info, trace, warn};
-use rendering_util::benching::output::NaiveSVGFileRenderTime;
-use std::path::PathBuf;
-use tessellation_util::backends::Tessellator;
-
-#[derive(Debug)]
-pub struct TimeNaiveSVGFileRendering {
-    backends: Vec<Box<dyn Tessellator>>,
+pub struct TimeFileRendering {
+    renderer: Option<dyn Renderer>,
     assets: Vec<PathBuf>,
     frames: usize,
-    csv_output: Option<&'static str>,
-    plot_output: Option<&'static str>,
 }
 
-impl TimeNaiveSVGFileRendering {
+impl TimeFileRendering {
     pub fn new() -> Self {
-        TimeNaiveSVGFileRendering {
-            backends: Vec::new(),
+        TimeFileRendering {
+            renderer: None,
             assets: Vec::new(),
             frames: 0,
-            csv_output: None,
-            plot_output: None,
         }
     }
 
-    pub fn backend(mut self, backend: Box<dyn Tessellator>) -> Self {
-        self.backends.push(backend);
+    pub fn renderer(mut self, backend: Box<dyn Renderer>) -> Self {
+        self.renderer = Some(backend.into_inner());
         self
     }
 
@@ -51,16 +38,6 @@ impl TimeNaiveSVGFileRendering {
 
     pub fn frames(mut self, frames: usize) -> Self {
         self.frames = frames;
-        self
-    }
-
-    pub fn to_csv(mut self, path: &'static str) -> Self {
-        self.csv_output = Some(path);
-        self
-    }
-
-    pub fn to_plot(mut self, path: &'static str) -> Self {
-        self.plot_output = Some(path);
         self
     }
 }
@@ -115,53 +92,42 @@ impl TimeNaiveSVGFileRendering {
             let prev_level = log::max_level();
             log::set_max_level(log::LevelFilter::Off);
             // Collect results
-            let mut results: Vec<NaiveSVGFileRenderTime> = Vec::new();
+            let mut measurements = Measurements2D::new(&[
+                "tessellator",
+                "filename",
+                "frame",
+                "frame_time",
+                "triangles",
+            ]);
             for mut backend in self.backends {
                 let backend: &mut dyn Tessellator = backend.as_mut();
                 for file_path in &assets {
-                    results.extend(
+                    let results =
                         rendering_util::benching::timing::time_naive_svg(
                             backend,
                             file_path,
                             self.frames,
-                        )?,
-                    );
+                        )?;
+                    for result in results {
+                        measurements.insert(
+                            "tessellator",
+                            Box::new(result.tessellator),
+                        );
+                        measurements
+                            .insert("filename", Box::new(result.filename));
+                        measurements.insert("frame", Box::new(result.frame));
+                        measurements
+                            .insert("frame_time", Box::new(result.frame_time));
+                        measurements
+                            .insert("triangles", Box::new(result.triangles));
+                    }
                 }
             }
             // Bandaid removal
             log::set_max_level(prev_level);
 
-            // Write results
-            if let Some(path) = self.csv_output {
-                let path = options.output_dir().join(path);
-                let rows = util::convert::to_serializable(results);
-                util::io::write_csv(&path, &rows)?;
-                info!("output CSV data to '{}'", &path.display());
-            }
-
-            // Plot results
-            if let Some(plot_output) = self.plot_output {
-                let mut csv_path =
-                    options.output_dir().join(self.csv_output.unwrap());
-                csv_path.set_extension("csv");
-
-                let _proc_output = util::exec::call_program(
-                    "python3",
-                    [
-                        "tools/plotter/plot_naive_frametimes_files.py",
-                        csv_path.to_str().unwrap(),
-                        options.output_dir().to_str().unwrap(),
-                        plot_output,
-                    ],
-                )?;
-                info!(
-                    "output plot to '{}'",
-                    options.output_dir().join(plot_output).display()
-                );
-            }
-
             trace!("completed naive SVG file rendering frametime capture");
-            Ok(())
+            Ok(measurements.into())
         });
 
         Ok(bfn)

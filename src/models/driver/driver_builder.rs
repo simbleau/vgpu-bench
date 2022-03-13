@@ -2,17 +2,23 @@ use std::path::Path;
 
 use simplelog::SharedLogger;
 
-use crate::{Benchmark, Driver, DriverOptions};
+use crate::{Benchmark, Driver, DriverOptions, Measurable};
 
 // Driver builder
-pub struct DriverBuilder<'a> {
+pub struct DriverBuilder<'a, T>
+where
+    T: Measurable,
+{
     pub options: DriverOptions<'a>,
     loggers: Vec<Box<dyn SharedLogger>>,
-    benchmarks: Vec<Benchmark>,
+    benchmarks: Vec<Benchmark<T>>,
     on_error_panic: bool,
 }
 
-impl<'a> DriverBuilder<'a> {
+impl<'a, T> DriverBuilder<'a, T>
+where
+    T: Measurable,
+{
     pub fn new() -> Self {
         Self {
             options: DriverOptions::default(),
@@ -37,12 +43,12 @@ impl<'a> DriverBuilder<'a> {
         self
     }
 
-    pub fn add(mut self, benchmark: Benchmark) -> Self {
+    pub fn add(mut self, benchmark: Benchmark<T>) -> Self {
         self.benchmarks.push(benchmark);
         self
     }
 
-    pub fn build(self) -> Driver<'a> {
+    pub fn build(self) -> Driver<'a, T> {
         Driver {
             options: self.options,
             loggers: self.loggers,

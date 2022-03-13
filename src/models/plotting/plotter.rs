@@ -1,14 +1,17 @@
 use pyo3::{prelude::*, types::PyTuple};
 
-use crate::{Measurements, Result};
+use crate::{Measurable, Measurements, Result};
 use std::path::Path;
 
 pub trait Plotter {
-    fn plot(&self, data: &Measurements) -> Result<PyObject>;
+    fn plot<T>(&self, data: &Measurements<T>) -> Result<PyObject>
+    where
+        T: Measurable;
 
-    fn save_plot<P>(&self, data: &Measurements, path: P) -> Result<()>
+    fn save_plot<P, T>(&self, data: &Measurements<T>, path: P) -> Result<()>
     where
         P: AsRef<Path>,
+        T: Measurable,
     {
         let fig = self.plot(data)?;
         let path = path.as_ref().as_os_str();
@@ -27,7 +30,10 @@ pub trait Plotter {
         Ok(())
     }
 
-    fn show_plot(&self, data: &Measurements) -> Result<()> {
+    fn show_plot<T>(&self, data: &Measurements<T>) -> Result<()>
+    where
+        T: Measurable,
+    {
         let fig = self.plot(data)?;
 
         Python::with_gil(|py| -> PyResult<Py<PyAny>> {

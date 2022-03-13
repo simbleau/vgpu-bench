@@ -1,17 +1,25 @@
-use crate::{models::Benchmark, util, DriverBuilder, DriverOptions, Result};
+use crate::{
+    models::Benchmark, util, DriverBuilder, DriverOptions, Measurable, Result,
+};
 use log::{error, trace};
 use simplelog::{CombinedLogger, SharedLogger};
 
 // Driver fields
-pub struct Driver<'a> {
+pub struct Driver<'a, T>
+where
+    T: Measurable,
+{
     pub(crate) options: DriverOptions<'a>,
     pub(crate) loggers: Vec<Box<dyn SharedLogger>>,
-    pub(crate) benchmarks: Vec<Benchmark>,
+    pub(crate) benchmarks: Vec<Benchmark<T>>,
     pub(crate) on_error_panic: bool,
 }
 
-impl<'a> Driver<'a> {
-    pub fn builder() -> DriverBuilder<'a> {
+impl<'a, T> Driver<'a, T>
+where
+    T: Measurable,
+{
+    pub fn builder() -> DriverBuilder<'a, T> {
         DriverBuilder::new()
     }
 

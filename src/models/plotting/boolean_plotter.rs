@@ -2,6 +2,8 @@ use log::debug;
 use pyo3::prelude::*;
 use pyo3::types::*;
 
+use crate::log_assert;
+use crate::Measurable;
 use crate::Measurements;
 use crate::{Plotter, Result};
 
@@ -18,7 +20,10 @@ pub struct BooleanPlotter {
 }
 
 impl Plotter for BooleanPlotter {
-    fn plot(&self, data: &Measurements) -> Result<PyObject> {
+    fn plot<T>(&self, data: &Measurements<T>) -> Result<PyObject>
+    where
+        T: Measurable,
+    {
         let script = match self.plot_type {
             BooleanPlotType::Pie => include_str!("py/boolean_pie.py"),
             BooleanPlotType::Stepper => unimplemented!(),
@@ -33,7 +38,7 @@ impl Plotter for BooleanPlotter {
             let py_data_columns = PyList::new(py, &["value"]);
             let py_data = data.to_pystring(py);
             let df = df_func.call1(py, (py_data_columns, py_data))?;
-            
+
             debug!("Boolean plotter dataframe:\n{df}");
 
             // Plot

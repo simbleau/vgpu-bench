@@ -5,7 +5,7 @@ use std::thread;
 use std::time::{Duration, Instant};
 
 use crate::models::driver::DriverOptions;
-use crate::{util, BenchmarkOptions, Measurements};
+use crate::{util, BenchmarkOptions, Measurable, Measurement, Measurements};
 
 use super::benchmark_metadata::BenchmarkMetadata;
 use crate::models::{BenchmarkFn, Monitor};
@@ -13,14 +13,20 @@ use anyhow::{anyhow, Result};
 use crossbeam::thread::ScopedJoinHandle;
 use log::{debug, error, info, trace, warn};
 
-pub struct Benchmark {
+pub struct Benchmark<T>
+where
+    T: Measurable,
+{
     pub data: BenchmarkMetadata,
-    pub func: Option<BenchmarkFn>,
+    pub func: Option<BenchmarkFn<T>>,
     pub monitors: Vec<Box<dyn Monitor + Send + Sync>>,
 }
 
-impl Benchmark {
-    pub fn new(data: BenchmarkMetadata, func: BenchmarkFn) -> Self {
+impl<T> Benchmark<T>
+where
+    T: Measurable,
+{
+    pub fn new(data: BenchmarkMetadata, func: BenchmarkFn<T>) -> Self {
         Benchmark {
             data,
             func: Some(func),
@@ -30,13 +36,13 @@ impl Benchmark {
 
     pub fn from<F>(name: &'static str, func: F) -> Self
     where
-        F: FnOnce(&BenchmarkOptions) -> Result<()> + 'static,
+        F: FnOnce(&BenchmarkOptions) -> Result<Measurements<T>> + 'static,
     {
-        let bfn = BenchmarkFn::from(func);
+        let func = BenchmarkFn::from(func);
         let metadata = BenchmarkMetadata { name };
         Benchmark {
             data: metadata,
-            func: Some(bfn),
+            func: Some(func),
             monitors: Vec::new(),
         }
     }
@@ -75,15 +81,15 @@ impl Benchmark {
         let complete = AtomicBool::new(false);
         let start_time = Instant::now();
 
-        let histories: Arc<Mutex<HashMap<String, Measurements>>> =
-            Arc::new(Mutex::new(HashMap::new()));
-        crossbeam::scope(|scope| {
+        let _mon_measurements = HashMap::<String, Measurements<Measurement>>::new();
+        let _mon_measurements_mut = Arc::new(Mutex::new(_mon_measurements));
+        let _measurements = crossbeam::scope(|scope| {
             for mon in self.monitors.iter_mut() {
                 scope.spawn(|_| {
-                    let mut history = Measurements::new();
                     let mon_name = mon.metadata().name.clone();
                     let freq_nanos = mon.metadata().frequency.as_duration().as_nanos();
-
+                    let mut mon_measurements = Measurements::new();
+                    
                     trace!("{mon_name}: waiting to poll");
                     barrier.wait();
                     trace!("{mon_name}: starting polling");
@@ -98,7 +104,7 @@ impl Benchmark {
 
                         // Poll
                         let poll_start_time = Instant::now();
-                        let measurement = mon.poll();
+                        let measurable = mon.poll();
                         let poll_end_time = Instant::now();
                         let elapsed = poll_end_time - poll_start_time;
 
@@ -116,28 +122,31 @@ impl Benchmark {
                         if complete.load(Ordering::Relaxed) == true {
                             break;
                         } else {
-                            match measurement {
+                            match measurable {
                                 Ok(measurable) => {
-                                    debug!("{mon_name}: polled {measurable:?} in {elapsed:?}");
-                                    history.push(measurable);
+                                    debug!("{mon_name}: polled in {elapsed:?}");
+                                    mon_measurements.push(measurable);
                                 },
                                 Err(e) => error!("{mon_name}: failed to poll with error '{e}'")
                             }
                         }
                     }
 
-                    let mut histories = histories.lock().unwrap();
-                    histories.insert(mon_name, history);
-                }
-            );
-}
+                    let mut histories = _mon_measurements_mut.lock().unwrap();
+                    histories.insert(mon_name, mon_measurements);
+                });
+            }
+
             trace!("{bm_name}: waiting to execute");
             barrier.wait();
             trace!("{bm_name}: starting execution");
             // TODO eliminate unwrap here
-            self.func.take().expect("How was this taken?").run(&bm_options).unwrap();
+            let results = self.func.take().expect("How was this taken?").run(&bm_options).unwrap();
             trace!("{bm_name}: completed execution");
             complete.store(true, Ordering::Release);
+
+            // Return results
+            results
         })
         .map_err(|thread_ex| anyhow!("Unit thread exception: {thread_ex:?}"))?;
 
@@ -145,10 +154,13 @@ impl Benchmark {
         self.monitor_lifecycle_hook("on_stop", |mon| Ok(mon.on_stop()))?;
         trace!("{bm_name}: stopped all monitors");
 
+        // TODO write results
+        info!("Collected results");
+
         // Write monitor history
         if num_mon > 0 {
             trace!("{bm_name}: waiting to write monitor history");
-            for (mon_name, history) in histories.lock().unwrap().iter() {
+            for (mon_name, history) in _mon_measurements_mut.lock().unwrap().iter() {
                 let mut mon_file_path = bm_options.output_dir().join(mon_name);
                 mon_file_path.set_extension("csv");
                 history.write(&mon_file_path)?;
@@ -164,18 +176,18 @@ impl Benchmark {
         Ok(())
     }
 
-    fn monitor_lifecycle_hook<F, T>(
+    fn monitor_lifecycle_hook<F, Any>(
         &mut self,
         lifecycle_name: &'static str,
         func: F,
-    ) -> Result<HashMap<String, T>>
+    ) -> Result<HashMap<String, Any>>
     where
-        F: Fn(&mut Box<dyn Monitor + Send + Sync + 'static>) -> Result<T>
+        F: Fn(&mut Box<dyn Monitor + Send + Sync + 'static>) -> Result<Any>
             + 'static
             + Send
             + Sync,
-        T: Send,
-        T: std::fmt::Debug,
+        Any: Send,
+        Any: std::fmt::Debug,
     {
         // Buffer for monitor lifecycle hook results
         let results = Arc::new(Mutex::new(HashMap::new()));

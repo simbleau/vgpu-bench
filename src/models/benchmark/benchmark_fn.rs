@@ -1,16 +1,21 @@
-use crate::BenchmarkOptions;
-use anyhow::Result;
+use crate::{BenchmarkOptions, Measurements};
+use crate::{Measurable, Result};
 
-pub struct BenchmarkFn(Box<dyn FnOnce(&BenchmarkOptions) -> Result<()>>);
+pub struct BenchmarkFn<T: Measurable>(
+    Box<dyn FnOnce(&BenchmarkOptions) -> Result<Measurements<T>>>,
+);
 
-impl BenchmarkFn {
-    pub fn run(self, options: &BenchmarkOptions) -> Result<()> {
+impl<T> BenchmarkFn<T>
+where
+    T: Measurable,
+{
+    pub fn run(self, options: &BenchmarkOptions) -> Result<Measurements<T>> {
         Ok(self.0(options)?)
     }
 
     pub fn from<F>(func: F) -> Self
     where
-        F: FnOnce(&BenchmarkOptions) -> Result<()> + 'static,
+        F: FnOnce(&BenchmarkOptions) -> Result<Measurements<T>> + 'static,
     {
         BenchmarkFn(Box::new(func))
     }

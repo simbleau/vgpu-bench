@@ -2,6 +2,8 @@ use log::debug;
 use pyo3::prelude::*;
 use pyo3::types::*;
 
+use crate::log_assert;
+use crate::Measurable;
 use crate::Measurements;
 use crate::{Plotter, Result};
 
@@ -22,7 +24,10 @@ pub struct NumericPlotter {
 }
 
 impl Plotter for NumericPlotter {
-    fn plot(&self, data: &Measurements) -> Result<PyObject> {
+    fn plot<T>(&self, data: &Measurements<T>) -> Result<PyObject>
+    where
+        T: Measurable,
+    {
         let script = match self.plot_type {
             NumericPlotType::Line => include_str!("py/numeric_line.py"),
             NumericPlotType::Bar => unimplemented!(),

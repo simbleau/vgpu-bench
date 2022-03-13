@@ -194,3 +194,10 @@ where
         .from_writer(output_file);
     Ok(writer)
 }
+
+pub fn csv_string_writer() -> Writer<Vec<u8>> {
+    let writer = csv::WriterBuilder::default()
+        .has_headers(true)
+        .from_writer(vec![]);
+    writer
+}

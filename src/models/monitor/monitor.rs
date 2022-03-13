@@ -1,4 +1,5 @@
 use crate::Measurable;
+use crate::Measurement;
 use crate::MonitorMetadata;
 use crate::Result;
 use std::time::Duration;
@@ -25,7 +26,7 @@ pub trait Monitor {
 
     fn on_start(&mut self);
 
-    fn poll(&self) -> Result<Measurable>;
+    fn poll(&self) -> Result<Measurement>;
 
     fn on_stop(&mut self);
 }

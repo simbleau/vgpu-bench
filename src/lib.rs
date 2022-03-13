@@ -10,7 +10,6 @@ extern crate tessellation_util;
 
 pub use anyhow::Result;
 
-pub mod benchmarks;
 pub mod macros;
 pub mod monitors;
 pub mod util;

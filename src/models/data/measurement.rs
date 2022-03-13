@@ -1,19 +1,18 @@
-use pyo3::prelude::*;
-use serde::Serialize;
+use serde::{Serialize, Serializer};
 
-#[derive(Debug, Serialize, Clone, Copy)]
-pub enum Measurable {
-    Integer(i64),
-    Float(f64),
-    Bool(bool),
+use crate::{util, Measurable};
+
+pub struct Measurement {
+    pub inner: Box<dyn erased_serde::Serialize>,
 }
+unsafe impl Send for Measurement {}
+unsafe impl Sync for Measurement {}
 
-impl ToPyObject for Measurable {
-    fn to_object(&self, py: Python) -> PyObject {
-        match self {
-            Measurable::Integer(i) => i.into_py(py),
-            Measurable::Float(f) => f.into_py(py),
-            Measurable::Bool(b) => b.into_py(py),
-        }
+impl Serialize for Measurement {
+    fn serialize<S>(&self, serializer: S) -> Result<S::Ok, S::Error>
+    where
+        S: Serializer,
+    {
+        Ok(self.inner.serialize(serializer)?)
     }
 }

@@ -1,10 +1,17 @@
 use anyhow::Result;
+use serde::Serialize;
 use std::time::Instant;
 
-use crate::models::{Measurable, Monitor, MonitorFrequency, MonitorMetadata};
+use crate::models::{Monitor, MonitorFrequency, MonitorMetadata};
 use crate::monitors::heartbeat::MonitorFrequency::Hertz;
+use crate::monitors::MonitorError;
+use crate::{util, Measurement};
 
-use super::MonitorError;
+#[derive(Serialize)]
+struct HeartbeatMeasurement {
+    beat: u32,
+    elapsed_ns: u128,
+}
 
 pub struct HeartbeatMonitor {
     metadata: MonitorMetadata,
@@ -48,15 +55,26 @@ impl Monitor for HeartbeatMonitor {
         self.beating_since = Some(Instant::now());
     }
 
-    fn poll(&self) -> Result<Measurable> {
+    fn poll(&self) -> Result<Measurement> {
         match self.beating {
             true => {
                 let elapsed = Instant::now().duration_since(
                     self.beating_since.expect("Was this monitor initialized?"),
                 );
-                let beats = elapsed
-                    .div_duration_f64(self.metadata.frequency.as_duration());
-                Ok(Measurable::Integer(beats as i64))
+                let beat = elapsed
+                    .div_duration_f64(self.metadata.frequency.as_duration())
+                    as u32;
+                let heartbeat_measurement = HeartbeatMeasurement {
+                    beat,
+                    elapsed_ns: elapsed.as_nanos(),
+                };
+                // TODO make this cleaner. Bandaid fix
+                let measurement = Measurement {
+                    inner: Box::new(util::convert::erase(
+                        heartbeat_measurement,
+                    )),
+                };
+                Ok(measurement)
             }
             false => Err(MonitorError::Polling(format!(
                 "{name} is not beating. Was this monitor initialized?",

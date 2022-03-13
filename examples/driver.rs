@@ -1,15 +1,27 @@
 use log::LevelFilter;
+use serde::Serialize;
 use simplelog::{ColorChoice, Config, TermLogger, TerminalMode};
 use vgpu_bench::Benchmark;
 use vgpu_bench::Driver;
-
-use std::thread;
-use std::time::Duration;
+use vgpu_bench::Measurements;
 
 pub fn main() {
     let benchmark = Benchmark::from("Benchmark-1", |_| {
-        // Some expensive operation...
-        Ok(thread::sleep(Duration::from_secs(5)))
+        let mut measurements = Measurements::new();
+        // Some real benchmarking would happen here
+        #[derive(Serialize)]
+        struct Measurement {
+            time: i32,
+            amplitude: i32,
+        }
+        for i in 0..10 {
+            measurements.push(Box::new(Measurement {
+                time: i,
+                amplitude: i * i,
+            }));
+        }
+        // Benchmarking done!
+        Ok(measurements.into())
     });
 
     Driver::builder()
