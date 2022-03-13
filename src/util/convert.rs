@@ -1,4 +1,4 @@
-use crate::Result;
+use crate::{Measurement, Result};
 use renderer::targets::{SVGDocument, SVGFile};
 use std::path::PathBuf;
 
@@ -16,6 +16,15 @@ where
 {
     let x: Box<dyn erased_serde::Serialize> = { Box::new(y) };
     x
+}
+
+pub fn to_measurement<T: 'static>(y: T) -> Measurement
+where
+    T: serde::Serialize,
+{
+    Measurement {
+        inner: Box::new(erase(y)),
+    }
 }
 
 pub fn to_serializable<T>(vec: Vec<T>) -> Vec<Box<dyn erased_serde::Serialize>>
