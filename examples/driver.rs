@@ -10,15 +10,15 @@ pub fn main() {
         let mut measurements = Measurements::new();
         // Some real benchmarking would happen here
         #[derive(Serialize)]
-        struct Measurement {
+        struct ExampleMeasurement {
             time: i32,
             amplitude: i32,
         }
         for i in 0..10 {
-            measurements.push(Box::new(Measurement {
+            measurements.push(ExampleMeasurement {
                 time: i,
                 amplitude: i * i,
-            }));
+            });
         }
         // Benchmarking done!
         Ok(measurements.into())

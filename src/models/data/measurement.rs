@@ -1,7 +1,5 @@
 use serde::{Serialize, Serializer};
 
-use crate::{util, Measurable};
-
 pub struct Measurement {
     pub inner: Box<dyn erased_serde::Serialize>,
 }

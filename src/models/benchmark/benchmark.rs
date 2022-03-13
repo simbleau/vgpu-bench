@@ -59,7 +59,7 @@ where
         &self.data
     }
 
-    pub fn run(&mut self, options: &DriverOptions) -> Result<()> {
+    pub fn run(&mut self, options: &DriverOptions) -> Result<Measurements<T>> {
         // Collect info
         let bm_name = self.metadata().name.to_owned();
         let bm_options =
@@ -81,15 +81,16 @@ where
         let complete = AtomicBool::new(false);
         let start_time = Instant::now();
 
-        let _mon_measurements = HashMap::<String, Measurements<Measurement>>::new();
+        let _mon_measurements =
+            HashMap::<String, Measurements<Measurement>>::new();
         let _mon_measurements_mut = Arc::new(Mutex::new(_mon_measurements));
-        let _measurements = crossbeam::scope(|scope| {
+        let measurements = crossbeam::scope(|scope| {
             for mon in self.monitors.iter_mut() {
                 scope.spawn(|_| {
                     let mon_name = mon.metadata().name.clone();
                     let freq_nanos = mon.metadata().frequency.as_duration().as_nanos();
                     let mut mon_measurements = Measurements::new();
-                    
+
                     trace!("{mon_name}: waiting to poll");
                     barrier.wait();
                     trace!("{mon_name}: starting polling");
@@ -141,12 +142,12 @@ where
             barrier.wait();
             trace!("{bm_name}: starting execution");
             // TODO eliminate unwrap here
-            let results = self.func.take().expect("How was this taken?").run(&bm_options).unwrap();
+            let measurements = self.func.take().expect("How was this taken?").run(&bm_options).unwrap();
             trace!("{bm_name}: completed execution");
             complete.store(true, Ordering::Release);
 
             // Return results
-            results
+            measurements
         })
         .map_err(|thread_ex| anyhow!("Unit thread exception: {thread_ex:?}"))?;
 
@@ -160,7 +161,9 @@ where
         // Write monitor history
         if num_mon > 0 {
             trace!("{bm_name}: waiting to write monitor history");
-            for (mon_name, history) in _mon_measurements_mut.lock().unwrap().iter() {
+            for (mon_name, history) in
+                _mon_measurements_mut.lock().unwrap().iter()
+            {
                 let mut mon_file_path = bm_options.output_dir().join(mon_name);
                 mon_file_path.set_extension("csv");
                 history.write(&mon_file_path)?;
@@ -173,7 +176,7 @@ where
         }
 
         info!("{bm_name}: finished execution");
-        Ok(())
+        Ok(measurements)
     }
 
     fn monitor_lifecycle_hook<F, Any>(

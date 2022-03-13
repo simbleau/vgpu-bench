@@ -2,7 +2,7 @@ use anyhow::Result;
 use serde::Serialize;
 use systemstat::{Platform, System};
 
-use crate::models::{Measurable, Monitor, MonitorFrequency, MonitorMetadata};
+use crate::models::{Monitor, MonitorFrequency, MonitorMetadata};
 use crate::monitors::cpu_utilization::MonitorFrequency::Hertz;
 use crate::{util, Measurement};
 use std::{thread, time::Duration};

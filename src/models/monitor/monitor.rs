@@ -1,4 +1,3 @@
-use crate::Measurable;
 use crate::Measurement;
 use crate::MonitorMetadata;
 use crate::Result;

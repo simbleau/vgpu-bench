@@ -2,7 +2,6 @@ use log::debug;
 use pyo3::prelude::*;
 use pyo3::types::*;
 
-use crate::log_assert;
 use crate::Measurable;
 use crate::Measurements;
 use crate::{Plotter, Result};
