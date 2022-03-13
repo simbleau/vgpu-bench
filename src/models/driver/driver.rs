@@ -44,10 +44,13 @@ where
             );
             let result = benchmark.run(&self.options);
             nvtx::range_pop();
-            if let Err(e) = result {
-                error!("benchmark failed: {}", e);
-                if self.on_error_panic {
-                    panic!("{}", e);
+            match result {
+                Ok(measurements) => todo!(),
+                Err(e) => {
+                    error!("benchmark failed: {}", e);
+                    if self.on_error_panic {
+                        panic!("{}", e);
+                    }
                 }
             }
         }
