@@ -48,6 +48,7 @@ path = "src/bin/monitors/nvidia_monitor.rs"
 
 [workspace]
 members = [
+    "crates/proc-macro-measurable",
     "crates/renderer",
     "crates/svg-generator",
     "crates/tessellation-util",
@@ -56,6 +57,7 @@ members = [
 ]
 
 [dependencies]
+proc_macro_measurable = { package = "proc-macro-measurable", path = "crates/proc-macro-measurable" }
 renderer = { package = "renderer", path = "crates/renderer" }
 tessellation-util = { package = "tessellation-util", path = "crates/tessellation-util" }
 rendering-util = { package = "rendering-util", path = "crates/rendering-util" }

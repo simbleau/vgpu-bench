@@ -1,0 +1,18 @@
+[package]
+name = "proc-macro-measurable"
+description = "A derive procedural macro which serves the traits of Measurable"
+version = "0.1.0"
+authors = ["Spencer Imbleau <spencer@imbleau.com>"]
+edition = "2021"
+license = "MIT OR Apache-2.0"
+repository = "https://github.com/simbleau/vgpu-bench"
+workspace = "../.."
+
+[lib]
+proc-macro = true
+name = "proc_macro_measurable"
+path = "src/lib.rs"
+
+[dependencies]
+syn = "1.0.87"
+quote = "1.0.15"
