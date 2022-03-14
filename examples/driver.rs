@@ -1,19 +1,23 @@
 use log::LevelFilter;
-use serde::Serialize;
+use proc_macro_measurable::measurable_attribute;
 use simplelog::{ColorChoice, Config, TermLogger, TerminalMode};
 use vgpu_bench::Benchmark;
 use vgpu_bench::Driver;
 use vgpu_bench::Measurements;
 
+// TODO #[measurable_attribute]
+unsafe impl Send for ExampleMeasurement {}
+unsafe impl Sync for ExampleMeasurement {}
+#[derive(serde::Serialize, Debug)]
+struct ExampleMeasurement {
+    time: i32,
+    amplitude: i32,
+}
+
 pub fn main() {
     let benchmark = Benchmark::from("Benchmark-1", |_| {
         let mut measurements = Measurements::new();
         // Some real benchmarking would happen here
-        #[derive(Serialize, Debug)]
-        struct ExampleMeasurement {
-            time: i32,
-            amplitude: i32,
-        }
         for i in 0..10 {
             measurements.push(ExampleMeasurement {
                 time: i,
