@@ -5,17 +5,17 @@ use simplelog::SharedLogger;
 use crate::{Benchmark, Driver, DriverOptions, Measurable};
 
 // Driver builder
-pub struct DriverBuilder<'a, T>
+pub struct DriverBuilder<T>
 where
     T: Measurable,
 {
-    pub options: DriverOptions<'a>,
-    loggers: Vec<Box<dyn SharedLogger>>,
-    benchmarks: Vec<Benchmark<T>>,
-    on_error_panic: bool,
+    pub(crate) options: DriverOptions,
+    pub(crate) loggers: Vec<Box<dyn SharedLogger>>,
+    pub(crate) benchmarks: Vec<Benchmark<T>>,
+    pub(crate) on_error_panic: bool,
 }
 
-impl<'a, T> DriverBuilder<'a, T>
+impl<T> DriverBuilder<T>
 where
     T: Measurable,
 {
@@ -33,8 +33,17 @@ where
         self
     }
 
-    pub fn output_dir(mut self, output_dir: &'a Path) -> Self {
-        self.options.output_dir = output_dir;
+    pub fn output_dir(mut self, output_dir: &Path) -> Self {
+        self.options.output_dir = output_dir.to_owned();
+        self
+    }
+
+    pub fn benchmark_dir_name<S>(mut self, dir_name: S) -> Self
+    where
+        S: Into<String>,
+    {
+        self.options.benchmarks_dir =
+            self.options.output_dir.join(dir_name.into());
         self
     }
 
@@ -48,7 +57,7 @@ where
         self
     }
 
-    pub fn build(self) -> Driver<'a, T> {
+    pub fn build(self) -> Driver<T> {
         Driver {
             options: self.options,
             loggers: self.loggers,

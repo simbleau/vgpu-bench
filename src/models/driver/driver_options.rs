@@ -1,24 +1,36 @@
-use std::path::Path;
+use std::path::{Path, PathBuf};
 
-pub struct DriverOptions<'a> {
-    pub(crate) output_dir: &'a Path,
-    pub(crate) benchmarks_dir: &'a Path,
+#[derive(Debug, Clone)]
+pub struct DriverOptions {
+    pub(crate) output_dir: PathBuf,
+    pub(crate) benchmarks_dir: PathBuf,
 }
 
-impl Default for DriverOptions<'_> {
+impl Default for DriverOptions {
     fn default() -> Self {
         DriverOptions {
-            output_dir: Path::new("output"),
-            benchmarks_dir: Path::new("output/benchmarks"),
+            output_dir: PathBuf::from("output"),
+            benchmarks_dir: PathBuf::from("output/benchmarks"),
         }
     }
 }
 
-impl DriverOptions<'_> {
+impl DriverOptions {
+    pub fn new(output_dir_name: &str, benchmarks_dir_name: &str) -> Self {
+        let output_dir = PathBuf::from(output_dir_name);
+        let benchmarks_dir = output_dir.join(benchmarks_dir_name);
+        DriverOptions {
+            output_dir,
+            benchmarks_dir,
+        }
+    }
+}
+
+impl DriverOptions {
     pub fn output_dir(&self) -> &Path {
-        &self.output_dir
+        &self.output_dir.as_path()
     }
     pub fn benchmarks_dir(&self) -> &Path {
-        &self.benchmarks_dir
+        &self.benchmarks_dir.as_path()
     }
 }

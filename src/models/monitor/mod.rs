@@ -1,6 +1,8 @@
-// Monitor Models
 mod monitor;
 pub use monitor::Monitor;
-pub use monitor::MonitorFrequency;
+
+mod monitor_frequency;
+pub use monitor_frequency::MonitorFrequency;
+
 mod monitor_metadata;
 pub use monitor_metadata::MonitorMetadata;

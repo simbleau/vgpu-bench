@@ -17,7 +17,7 @@ impl Measurement {
     }
 }
 
-impl<T: Measurable + 'static> From<Box<T>> for Measurement {
+impl<T: Measurable> From<Box<T>> for Measurement {
     fn from(item: Box<T>) -> Self {
         Measurement::from(*item)
     }

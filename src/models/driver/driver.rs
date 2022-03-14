@@ -5,21 +5,21 @@ use log::{error, trace};
 use simplelog::{CombinedLogger, SharedLogger};
 
 // Driver fields
-pub struct Driver<'a, T>
+pub struct Driver<T>
 where
     T: Measurable,
 {
-    pub(crate) options: DriverOptions<'a>,
+    pub(crate) options: DriverOptions,
     pub(crate) loggers: Vec<Box<dyn SharedLogger>>,
     pub(crate) benchmarks: Vec<Benchmark<T>>,
     pub(crate) on_error_panic: bool,
 }
 
-impl<'a, T> Driver<'a, T>
+impl<T> Driver<T>
 where
     T: Measurable,
 {
-    pub fn builder() -> DriverBuilder<'a, T> {
+    pub fn builder() -> DriverBuilder<T> {
         DriverBuilder::new()
     }
 
@@ -33,14 +33,14 @@ where
         trace!("logging initialized");
 
         // Check conditions
-        util::io::create_data_landing(self.options.output_dir)?;
+        util::io::create_data_landing(self.options.output_dir())?;
 
         // Run all benchmarks
         nvtx::mark("benchmark-stage");
         trace!("commencing benchmarks");
         for mut benchmark in self.benchmarks {
             nvtx::range_push(
-                format!("benching {}", benchmark.metadata().name).as_str(),
+                format!("benching {}", benchmark.metadata().name()).as_str(),
             );
             let result = benchmark.run(&self.options);
             nvtx::range_pop();

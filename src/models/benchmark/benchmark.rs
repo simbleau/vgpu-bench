@@ -17,9 +17,9 @@ pub struct Benchmark<T>
 where
     T: Measurable,
 {
-    pub data: BenchmarkMetadata,
-    pub func: Option<BenchmarkFn<T>>,
-    pub monitors: Vec<Box<dyn Monitor + Send + Sync>>,
+    metadata: BenchmarkMetadata,
+    func: Option<BenchmarkFn<T>>,
+    monitors: Vec<Box<dyn Monitor + Send + Sync>>,
 }
 
 impl<T> Benchmark<T>
@@ -28,7 +28,7 @@ where
 {
     pub fn new(data: BenchmarkMetadata, func: BenchmarkFn<T>) -> Self {
         Benchmark {
-            data,
+            metadata: data,
             func: Some(func),
             monitors: vec![],
         }
@@ -39,9 +39,9 @@ where
         F: FnOnce(&BenchmarkOptions) -> Result<Measurements<T>> + 'static,
     {
         let func = BenchmarkFn::from(func);
-        let metadata = BenchmarkMetadata { name };
+        let metadata = BenchmarkMetadata::new(name);
         Benchmark {
-            data: metadata,
+            metadata,
             func: Some(func),
             monitors: Vec::new(),
         }
@@ -56,14 +56,14 @@ where
     }
 
     pub fn metadata(&self) -> &BenchmarkMetadata {
-        &self.data
+        &self.metadata
     }
 
     pub fn run(&mut self, options: &DriverOptions) -> Result<Measurements<T>> {
         // Collect info
-        let bm_name = self.metadata().name.to_owned();
+        let bm_name = self.metadata().name().to_owned();
         let bm_options =
-            BenchmarkOptions::new(options.benchmarks_dir, &bm_name);
+            BenchmarkOptions::new(options.benchmarks_dir(), &bm_name);
         let num_mon = self.monitors.len();
 
         // Check conditions for run
