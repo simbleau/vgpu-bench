@@ -19,7 +19,7 @@ where
 {
     metadata: BenchmarkMetadata,
     func: Option<BenchmarkFn<T>>,
-    monitors: Vec<Box<dyn Monitor + Send + Sync>>,
+    monitors: Vec<Box<dyn Monitor>>,
 }
 
 impl<T> Benchmark<T>
@@ -47,11 +47,11 @@ where
         }
     }
 
-    pub fn monitors(&self) -> &Vec<Box<dyn Monitor + Send + Sync>> {
+    pub fn monitors(&self) -> &Vec<Box<dyn Monitor>> {
         &self.monitors
     }
 
-    pub fn monitors_mut(&mut self) -> &mut Vec<Box<dyn Monitor + Send + Sync>> {
+    pub fn monitors_mut(&mut self) -> &mut Vec<Box<dyn Monitor>> {
         &mut self.monitors
     }
 
@@ -185,7 +185,7 @@ where
         func: F,
     ) -> Result<HashMap<String, Any>>
     where
-        F: Fn(&mut Box<dyn Monitor + Send + Sync + 'static>) -> Result<Any>
+        F: Fn(&mut Box<dyn Monitor + 'static>) -> Result<Any>
             + 'static
             + Send
             + Sync,

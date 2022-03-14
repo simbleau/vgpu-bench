@@ -2,7 +2,7 @@ use crate::Measurement;
 use crate::MonitorMetadata;
 use crate::Result;
 
-pub trait Monitor {
+pub trait Monitor: Send + Sync {
     fn metadata(&self) -> &MonitorMetadata;
 
     fn on_start(&mut self);
