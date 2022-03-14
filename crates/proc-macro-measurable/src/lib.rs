@@ -12,7 +12,7 @@ pub fn measurable_attribute(
         unsafe impl Sync for Measurable {{}}
         unsafe impl Send for Measurable {{}}
         #[derive(serde::Serialize, Debug)]
-        #annotated_item
+        $annotated_item
     }
     .into()
 }
