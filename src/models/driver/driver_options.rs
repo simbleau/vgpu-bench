@@ -8,15 +8,15 @@ pub struct DriverOptions {
 
 impl Default for DriverOptions {
     fn default() -> Self {
-        DriverOptions {
-            output_dir: PathBuf::from("output"),
-            benchmarks_dir: PathBuf::from("output/benchmarks"),
-        }
+        DriverOptions::new("output", "benchmarks")
     }
 }
 
 impl DriverOptions {
-    pub fn new(output_dir_name: &str, benchmarks_dir_name: &str) -> Self {
+    pub(crate) fn new(
+        output_dir_name: &str,
+        benchmarks_dir_name: &str,
+    ) -> Self {
         let output_dir = PathBuf::from(output_dir_name);
         let benchmarks_dir = output_dir.join(benchmarks_dir_name);
         DriverOptions {

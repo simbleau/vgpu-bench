@@ -4,7 +4,7 @@ use systemstat::{Platform, System};
 
 use crate::models::{Monitor, MonitorFrequency, MonitorMetadata};
 use crate::monitors::cpu_utilization::MonitorFrequency::Hertz;
-use crate::{util, Measurement};
+use crate::Measurement;
 use std::{thread, time::Duration};
 
 #[derive(Serialize, Debug)]

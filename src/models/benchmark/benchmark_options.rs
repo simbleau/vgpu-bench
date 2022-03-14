@@ -5,12 +5,12 @@ pub struct BenchmarkOptions {
 }
 
 impl BenchmarkOptions {
-    pub(crate) fn new<P, S>(parent: P, name: S) -> Self
+    pub(crate) fn new<P, S>(benchmark_dir: P, benchmark_name: S) -> Self
     where
         P: AsRef<Path>,
         S: Into<String>,
     {
-        let output_dir = parent.as_ref().join(name.into());
+        let output_dir = benchmark_dir.as_ref().join(benchmark_name.into());
         BenchmarkOptions { output_dir }
     }
 }

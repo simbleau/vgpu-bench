@@ -5,7 +5,7 @@ use std::time::Instant;
 use crate::models::{Monitor, MonitorFrequency, MonitorMetadata};
 use crate::monitors::heartbeat::MonitorFrequency::Hertz;
 use crate::monitors::MonitorError;
-use crate::{util, Measurement};
+use crate::Measurement;
 
 #[derive(Serialize, Debug)]
 struct HeartbeatMeasurement {

@@ -1,4 +1,4 @@
-use crate::{Measurable, Measurement, Result};
+use crate::{Measurable, Result};
 use renderer::targets::{SVGDocument, SVGFile};
 use std::path::PathBuf;
 
