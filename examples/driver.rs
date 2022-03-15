@@ -5,10 +5,7 @@ use vgpu_bench::Benchmark;
 use vgpu_bench::Driver;
 use vgpu_bench::Measurements;
 
-// TODO #[measurable_attribute]
-unsafe impl Send for ExampleMeasurement {}
-unsafe impl Sync for ExampleMeasurement {}
-#[derive(serde::Serialize, Debug)]
+#[measurable_attribute]
 struct ExampleMeasurement {
     time: i32,
     amplitude: i32,
