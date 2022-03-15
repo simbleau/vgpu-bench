@@ -7,7 +7,7 @@ use quote::ToTokens;
 use syn::{parse_macro_input, DeriveInput};
 
 #[proc_macro_attribute]
-pub fn measurable_attribute(
+pub fn measurement(
     _input: TokenStream,
     annotated_item: TokenStream,
 ) -> TokenStream {

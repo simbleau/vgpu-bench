@@ -1,11 +1,11 @@
 use log::LevelFilter;
-use proc_macro_measurable::measurable_attribute;
 use simplelog::{ColorChoice, Config, TermLogger, TerminalMode};
+use vgpu_bench::macros::measurement;
 use vgpu_bench::Benchmark;
 use vgpu_bench::Driver;
 use vgpu_bench::Measurements;
 
-#[measurable_attribute]
+#[measurement]
 struct ExampleMeasurement {
     time: i32,
     amplitude: i32,

@@ -1,3 +1,5 @@
+pub use proc_macro_measurable::measurement;
+
 #[macro_export]
 macro_rules! log_assert {
     (
