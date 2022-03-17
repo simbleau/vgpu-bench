@@ -1,5 +1,7 @@
 use crate::{
-    models::Benchmark, util, DriverBuilder, DriverOptions, Measurable, Result,
+    log_assert,
+    models::{driver::driver_options::DriverWriteMode, Benchmark},
+    util, DriverBuilder, DriverOptions, Measurable, Result,
 };
 use log::{error, trace};
 use simplelog::{CombinedLogger, SharedLogger};
@@ -32,8 +34,21 @@ where
         }
         trace!("logging initialized");
 
-        // Check conditions
+        // Check data landing
         util::io::create_data_landing(self.options.output_dir())?;
+        match self.options.write_mode() {
+            DriverWriteMode::NoMash => {
+                log_assert!(
+                    util::io::dir_is_empty(self.options.output_dir()),
+                    "Driver enforces output directory is empty: {dir}",
+                    dir = self.options.output_dir().display()
+                );
+            }
+            DriverWriteMode::Purge => {
+                util::io::dir_purge(self.options.output_dir())?
+            }
+            DriverWriteMode::Relaxed => {}
+        }
 
         // Run all benchmarks
         nvtx::mark("benchmark-stage");

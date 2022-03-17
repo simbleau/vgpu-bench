@@ -4,6 +4,8 @@ use simplelog::SharedLogger;
 
 use crate::{Benchmark, Driver, DriverOptions, Measurable};
 
+use super::driver_options::DriverWriteMode;
+
 // Driver builder
 pub struct DriverBuilder<T>
 where
@@ -30,6 +32,11 @@ where
 
     pub fn on_error_panic(mut self, should_panic: bool) -> Self {
         self.on_error_panic = should_panic;
+        self
+    }
+
+    pub fn write_mode(mut self, write_mode: DriverWriteMode) -> Self {
+        self.options.write_mode = write_mode;
         self
     }
 

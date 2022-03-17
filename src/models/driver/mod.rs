@@ -7,3 +7,4 @@ pub use driver_builder::DriverBuilder;
 
 mod driver_options;
 pub use driver_options::DriverOptions;
+pub use driver_options::DriverWriteMode;
