@@ -1,7 +1,6 @@
 use vgpu_bench::macros::measurement;
 use vgpu_bench::Benchmark;
 use vgpu_bench::BenchmarkFn;
-use vgpu_bench::BenchmarkOptions;
 use vgpu_bench::Driver;
 use vgpu_bench::Measurements;
 use vgpu_bench::Result;
