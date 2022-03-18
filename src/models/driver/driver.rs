@@ -3,8 +3,10 @@ use crate::{
     models::{driver::driver_options::DriverWriteMode, Benchmark},
     util, DriverBuilder, DriverOptions, Measurable, Result,
 };
-use log::{error, trace};
-use simplelog::{CombinedLogger, SharedLogger};
+use log::{error, trace, LevelFilter};
+use simplelog::{
+    ColorChoice, CombinedLogger, Config, SharedLogger, TermLogger, TerminalMode,
+};
 
 // Driver fields
 pub struct Driver<T>
@@ -15,6 +17,23 @@ where
     pub(crate) loggers: Vec<Box<dyn SharedLogger>>,
     pub(crate) benchmarks: Vec<Benchmark<T>>,
     pub(crate) on_error_panic: bool,
+}
+
+impl<T> From<Benchmark<T>> for Driver<T>
+where
+    T: Measurable,
+{
+    fn from(benchmark: Benchmark<T>) -> Self {
+        Driver::builder()
+            .logger(TermLogger::new(
+                LevelFilter::Debug,
+                Config::default(),
+                TerminalMode::default(),
+                ColorChoice::Auto,
+            ))
+            .add(benchmark)
+            .build()
+    }
 }
 
 impl<T> Driver<T>

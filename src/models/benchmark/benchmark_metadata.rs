@@ -3,7 +3,7 @@ pub struct BenchmarkMetadata {
 }
 
 impl BenchmarkMetadata {
-    pub(crate) fn new(name: &'static str) -> Self {
+    pub fn new(name: &'static str) -> Self {
         BenchmarkMetadata { name }
     }
 

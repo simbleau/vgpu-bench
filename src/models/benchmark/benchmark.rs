@@ -5,16 +5,13 @@ use std::thread;
 use std::time::{Duration, Instant};
 
 use crate::models::driver::DriverOptions;
-use crate::{
-    util, BenchmarkOptions, Driver, Measurable, Measurement, Measurements,
-};
+use crate::{util, BenchmarkOptions, Measurable, Measurement, Measurements};
 
 use super::benchmark_metadata::BenchmarkMetadata;
 use crate::models::{BenchmarkFn, Monitor};
 use anyhow::{anyhow, Result};
 use crossbeam::thread::ScopedJoinHandle;
-use log::{debug, error, info, trace, warn, LevelFilter};
-use simplelog::{ColorChoice, Config, TermLogger, TerminalMode};
+use log::{debug, error, info, trace, warn};
 
 pub struct Benchmark<T>
 where
@@ -25,20 +22,13 @@ where
     monitors: Vec<Box<dyn Monitor>>,
 }
 
-impl<T> From<Benchmark<T>> for Driver<T>
+impl<T> From<BenchmarkFn<T>> for Benchmark<T>
 where
     T: Measurable,
 {
-    fn from(benchmark: Benchmark<T>) -> Driver<T> {
-        Driver::builder()
-            .logger(TermLogger::new(
-                LevelFilter::Debug,
-                Config::default(),
-                TerminalMode::default(),
-                ColorChoice::Auto,
-            ))
-            .add(benchmark)
-            .build()
+    fn from(func: BenchmarkFn<T>) -> Self {
+        let metadata = BenchmarkMetadata::new("Unnamed");
+        Benchmark::new(metadata, func)
     }
 }
 
@@ -51,19 +41,6 @@ where
             metadata: data,
             func: Some(func),
             monitors: vec![],
-        }
-    }
-
-    pub fn from<F>(name: &'static str, func: F) -> Self
-    where
-        F: FnOnce(&BenchmarkOptions) -> Result<Measurements<T>> + 'static,
-    {
-        let func = BenchmarkFn::from(func);
-        let metadata = BenchmarkMetadata::new(name);
-        Benchmark {
-            metadata,
-            func: Some(func),
-            monitors: Vec::new(),
         }
     }
 

@@ -2,6 +2,8 @@ use log::LevelFilter;
 use simplelog::{ColorChoice, Config, TermLogger, TerminalMode};
 use vgpu_bench::macros::measurement;
 use vgpu_bench::Benchmark;
+use vgpu_bench::BenchmarkFn;
+use vgpu_bench::BenchmarkMetadata;
 use vgpu_bench::Driver;
 use vgpu_bench::Measurements;
 
@@ -12,7 +14,8 @@ struct ExampleMeasurement {
 }
 
 pub fn main() {
-    let benchmark = Benchmark::from("Benchmark-1", |_| {
+    let metadata = BenchmarkMetadata::new("My Benchmark");
+    let func = BenchmarkFn::from(|_| {
         let mut measurements = Measurements::new();
         // Some real benchmarking would happen here
         for i in 0..10 {
@@ -22,8 +25,9 @@ pub fn main() {
             });
         }
         // Benchmarking done!
-        Ok(measurements.into())
+        Ok(measurements)
     });
+    let benchmark = Benchmark::new(metadata, func);
 
     Driver::builder()
         .logger(TermLogger::new(
