@@ -5,13 +5,16 @@ use std::thread;
 use std::time::{Duration, Instant};
 
 use crate::models::driver::DriverOptions;
-use crate::{util, BenchmarkOptions, Measurable, Measurement, Measurements};
+use crate::{
+    util, BenchmarkOptions, Driver, Measurable, Measurement, Measurements,
+};
 
 use super::benchmark_metadata::BenchmarkMetadata;
 use crate::models::{BenchmarkFn, Monitor};
 use anyhow::{anyhow, Result};
 use crossbeam::thread::ScopedJoinHandle;
-use log::{debug, error, info, trace, warn};
+use log::{debug, error, info, trace, warn, LevelFilter};
+use simplelog::{ColorChoice, Config, TermLogger, TerminalMode};
 
 pub struct Benchmark<T>
 where
@@ -20,6 +23,23 @@ where
     metadata: BenchmarkMetadata,
     func: Option<BenchmarkFn<T>>,
     monitors: Vec<Box<dyn Monitor>>,
+}
+
+impl<T> From<Benchmark<T>> for Driver<T>
+where
+    T: Measurable,
+{
+    fn from(benchmark: Benchmark<T>) -> Driver<T> {
+        Driver::builder()
+            .logger(TermLogger::new(
+                LevelFilter::Debug,
+                Config::default(),
+                TerminalMode::default(),
+                ColorChoice::Auto,
+            ))
+            .add(benchmark)
+            .build()
+    }
 }
 
 impl<T> Benchmark<T>
