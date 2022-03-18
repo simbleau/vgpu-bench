@@ -22,27 +22,6 @@ name = "vgpu_bench"
 path = "src/lib.rs"
 
 [[bin]]
-name = "tessellation_driver"
-path = "src/bin/drivers/tessellation.rs"
-
-[[bin]]
-name = "stress_test"
-path = "src/bin/drivers/stress_memory_test.rs"
-
-[[bin]]
-name = "naive_rendering_driver"
-path = "src/bin/drivers/naive_rendering.rs"
-
-[[bin]]
-name = "external_rendering_driver"
-path = "src/bin/drivers/external_rendering.rs"
-
-
-[[bin]]
-name = "pathfinder_rendering_driver"
-path = "src/bin/drivers/pathfinder_rendering/bin.rs"
-
-[[bin]]
 name = "nvidia_monitor"
 path = "src/bin/monitors/nvidia_monitor.rs"
 
