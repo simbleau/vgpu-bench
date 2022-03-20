@@ -24,11 +24,17 @@ pub struct DriverOptions {
     pub(crate) output_dir: PathBuf,
     pub(crate) benchmarks_dir: PathBuf,
     pub(crate) write_mode: DriverWriteMode,
+    pub(crate) on_error_continue: bool,
 }
 
 impl Default for DriverOptions {
     fn default() -> Self {
-        DriverOptions::new("output", "benchmarks", DriverWriteMode::default())
+        DriverOptions::new(
+            "output",
+            "benchmarks",
+            DriverWriteMode::default(),
+            false,
+        )
     }
 }
 
@@ -37,6 +43,7 @@ impl DriverOptions {
         output_dir_name: &str,
         benchmarks_dir_name: &str,
         write_mode: DriverWriteMode,
+        on_error_continue: bool,
     ) -> Self {
         let output_dir = PathBuf::from(output_dir_name);
         let benchmarks_dir = output_dir.join(benchmarks_dir_name);
@@ -44,6 +51,7 @@ impl DriverOptions {
             output_dir,
             benchmarks_dir,
             write_mode,
+            on_error_continue,
         }
     }
 }
@@ -57,5 +65,8 @@ impl DriverOptions {
     }
     pub fn write_mode(&self) -> &DriverWriteMode {
         &self.write_mode
+    }
+    pub fn on_error_continue(&self) -> &bool {
+        &self.on_error_continue
     }
 }

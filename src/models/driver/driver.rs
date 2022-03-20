@@ -3,7 +3,7 @@ use crate::{
     models::{driver::driver_options::DriverWriteMode, Benchmark},
     util, DriverBuilder, DriverOptions, Measurable, Result,
 };
-use log::{error, trace, LevelFilter};
+use log::{error, info, trace, LevelFilter};
 use simplelog::{
     ColorChoice, CombinedLogger, Config, SharedLogger, TermLogger, TerminalMode,
 };
@@ -16,7 +16,6 @@ where
     pub(crate) options: DriverOptions,
     pub(crate) loggers: Vec<Box<dyn SharedLogger>>,
     pub(crate) benchmarks: Vec<Benchmark<T>>,
-    pub(crate) on_error_panic: bool,
 }
 
 impl<T> From<Benchmark<T>> for Driver<T>
@@ -73,19 +72,22 @@ where
         nvtx::mark("benchmark-stage");
         trace!("commencing benchmarks");
         for mut benchmark in self.benchmarks {
-            nvtx::range_push(
-                format!("benching {}", benchmark.metadata().name()).as_str(),
-            );
+            let benchmark_name = benchmark.metadata().name();
+            info!("{benchmark_name}: commencing");
+            nvtx::range_push(format!("benching {benchmark_name}").as_str());
             let result = benchmark.run(&self.options);
             nvtx::range_pop();
             match result {
                 Ok(measurements) => {
+                    info!("{benchmark_name}: completed");
                     println!("{:?}", measurements);
                 }
                 Err(e) => {
-                    error!("benchmark failed: {}", e);
-                    if self.on_error_panic {
-                        panic!("{}", e);
+                    error!("{benchmark_name} failed: {e}");
+                    if self.options.on_error_continue {
+                        trace!("continuing to next benchmark...")
+                    } else {
+                        panic!("{e}");
                     }
                 }
             }

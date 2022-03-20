@@ -14,7 +14,6 @@ where
     pub(crate) options: DriverOptions,
     pub(crate) loggers: Vec<Box<dyn SharedLogger>>,
     pub(crate) benchmarks: Vec<Benchmark<T>>,
-    pub(crate) on_error_panic: bool,
 }
 
 impl<T> DriverBuilder<T>
@@ -26,12 +25,11 @@ where
             options: DriverOptions::default(),
             loggers: Vec::new(),
             benchmarks: Vec::new(),
-            on_error_panic: true,
         }
     }
 
-    pub fn on_error_panic(mut self, should_panic: bool) -> Self {
-        self.on_error_panic = should_panic;
+    pub fn on_error_contune(mut self, should_continue: bool) -> Self {
+        self.options.on_error_continue = should_continue;
         self
     }
 
@@ -69,7 +67,6 @@ where
             options: self.options,
             loggers: self.loggers,
             benchmarks: self.benchmarks,
-            on_error_panic: self.on_error_panic,
         }
     }
 }

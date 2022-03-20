@@ -67,7 +67,7 @@ where
         util::io::create_data_landing(bm_options.output_dir())?;
 
         // Start run
-        info!("{bm_name}: starting with {num_mon} monitors");
+        debug!("{bm_name}: augmented with {num_mon} monitors");
 
         // Lifecycle hook - 'on_start'
         self.monitor_lifecycle_hook("on_start", |mon| Ok(mon.on_start()))?;
@@ -81,9 +81,10 @@ where
         let _mon_measurements =
             HashMap::<String, Measurements<Measurement>>::new();
         let _mon_measurements_mut = Arc::new(Mutex::new(_mon_measurements));
-        let measurements = crossbeam::scope(|scope| {
-            for mon in self.monitors.iter_mut() {
-                scope.spawn(|_| {
+        let scope_collection: Result<Measurements<T>, anyhow::Error> =
+            crossbeam::scope(|scope| {
+                for mon in self.monitors.iter_mut() {
+                    scope.spawn(|_| {
                     let mon_name = mon.metadata().name.clone();
                     let freq_nanos = mon.metadata().frequency.as_duration().as_nanos();
                     let mut mon_measurements = Measurements::new();
@@ -133,20 +134,23 @@ where
                     let mut histories = _mon_measurements_mut.lock().unwrap();
                     histories.insert(mon_name, mon_measurements);
                 });
-            }
+                }
 
-            trace!("{bm_name}: waiting to execute");
-            barrier.wait();
-            trace!("{bm_name}: starting execution");
-            // TODO eliminate unwrap here
-            let measurements = self.func.take().expect("How was this taken?").run(&bm_options).unwrap();
-            trace!("{bm_name}: completed execution");
-            complete.store(true, Ordering::Release);
+                trace!("{bm_name}: waiting to execute");
+                barrier.wait();
+                trace!("{bm_name}: starting execution");
+                // TODO eliminate unwrap here
+                let func = self.func.take().expect("How was this taken?");
+                let measurements = func.run(&bm_options)?;
+                trace!("{bm_name}: completed execution");
+                complete.store(true, Ordering::Release);
 
-            // Return results
-            measurements
-        })
-        .map_err(|thread_ex| anyhow!("Unit thread exception: {thread_ex:?}"))?;
+                // Return results
+                Ok(measurements)
+            }).map_err(|thread_ex| {
+            anyhow!("Unit thread exception: {thread_ex:?}")
+        })?;
+        let measurements = scope_collection?;
 
         // Lifecycle hook - 'on_stop'
         self.monitor_lifecycle_hook("on_stop", |mon| Ok(mon.on_stop()))?;
