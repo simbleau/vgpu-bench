@@ -1,13 +1,19 @@
 use crate::Measurement;
-use crate::MonitorMetadata;
+use crate::MonitorFrequency;
 use crate::Result;
 
 pub trait Monitor: Send + Sync {
-    fn metadata(&self) -> &MonitorMetadata;
+    fn name(&self) -> &'static str;
 
-    fn on_start(&mut self);
+    fn frequency(&self) -> MonitorFrequency;
+
+    fn on_start(&mut self) {
+        // Do nothing
+    }
 
     fn poll(&self) -> Result<Measurement>;
 
-    fn on_stop(&mut self);
+    fn on_stop(&mut self) {
+        // Do nothing
+    }
 }

@@ -2,8 +2,7 @@ use anyhow::Result;
 use serde::Serialize;
 use std::time::Instant;
 
-use crate::models::{Monitor, MonitorFrequency, MonitorMetadata};
-use crate::monitors::heartbeat::MonitorFrequency::Hertz;
+use crate::models::{Monitor, MonitorFrequency};
 use crate::monitors::MonitorError;
 use crate::Measurement;
 
@@ -16,19 +15,14 @@ unsafe impl Send for HeartbeatMeasurement {}
 unsafe impl Sync for HeartbeatMeasurement {}
 
 pub struct HeartbeatMonitor {
-    metadata: MonitorMetadata,
     beating: bool,
     beating_since: Option<Instant>,
 }
 unsafe impl Send for HeartbeatMonitor {}
 
 impl HeartbeatMonitor {
-    pub fn new<S: Into<String>>(name: S, frequency: MonitorFrequency) -> Self {
+    pub fn new<S: Into<String>>() -> Self {
         HeartbeatMonitor {
-            metadata: MonitorMetadata {
-                name: name.into(),
-                frequency,
-            },
             beating: false,
             beating_since: None,
         }
@@ -37,10 +31,6 @@ impl HeartbeatMonitor {
 impl Default for HeartbeatMonitor {
     fn default() -> Self {
         Self {
-            metadata: MonitorMetadata {
-                name: "Heartbeat Monitor".to_string(),
-                frequency: Hertz(1),
-            },
             beating: false,
             beating_since: None,
         }
@@ -48,8 +38,12 @@ impl Default for HeartbeatMonitor {
 }
 
 impl Monitor for HeartbeatMonitor {
-    fn metadata(&self) -> &MonitorMetadata {
-        &self.metadata
+    fn name(&self) -> &'static str {
+        "Heartbeat"
+    }
+
+    fn frequency(&self) -> MonitorFrequency {
+        MonitorFrequency::Hertz(2)
     }
 
     fn on_start(&mut self) {
@@ -64,7 +58,7 @@ impl Monitor for HeartbeatMonitor {
                     self.beating_since.expect("Was this monitor initialized?"),
                 );
                 let beat = elapsed
-                    .div_duration_f64(self.metadata.frequency.as_duration())
+                    .div_duration_f64(self.frequency().as_duration())
                     as u32;
                 let heartbeat_measurement = HeartbeatMeasurement {
                     beat,
@@ -74,7 +68,7 @@ impl Monitor for HeartbeatMonitor {
             }
             false => Err(MonitorError::Polling(format!(
                 "{name} is not beating. Was this monitor initialized?",
-                name = self.metadata.name
+                name = self.name()
             ))
             .into()),
         }

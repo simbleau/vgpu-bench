@@ -2,8 +2,7 @@ use anyhow::Result;
 use serde::Serialize;
 use systemstat::{Platform, System};
 
-use crate::models::{Monitor, MonitorFrequency, MonitorMetadata};
-use crate::monitors::cpu_utilization::MonitorFrequency::Hertz;
+use crate::models::{Monitor, MonitorFrequency};
 use crate::Measurement;
 use std::{thread, time::Duration};
 
@@ -17,28 +16,17 @@ struct CpuMeasurement {
 }
 unsafe impl Send for CpuMeasurement {}
 unsafe impl Sync for CpuMeasurement {}
-pub struct CpuUtilizationMonitor {
-    metadata: MonitorMetadata,
-}
+pub struct CpuUtilizationMonitor {}
 unsafe impl Send for CpuUtilizationMonitor {}
 
-impl Default for CpuUtilizationMonitor {
-    fn default() -> Self {
-        Self {
-            metadata: MonitorMetadata {
-                name: String::from("CPU Utilization"),
-                frequency: Hertz(1),
-            },
-        }
-    }
-}
-
 impl Monitor for CpuUtilizationMonitor {
-    fn metadata(&self) -> &MonitorMetadata {
-        &self.metadata
+    fn name(&self) -> &'static str {
+        "CPU Utilization"
     }
 
-    fn on_start(&mut self) {}
+    fn frequency(&self) -> MonitorFrequency {
+        MonitorFrequency::Hertz(1)
+    }
 
     fn poll(&self) -> Result<Measurement> {
         let sys = System::new();
@@ -54,6 +42,4 @@ impl Monitor for CpuUtilizationMonitor {
         };
         Ok(Measurement::from(cpu_measurement))
     }
-
-    fn on_stop(&mut self) {}
 }

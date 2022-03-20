@@ -91,8 +91,8 @@ where
             crossbeam::scope(|scope| {
                 for mon in self.monitors.iter_mut() {
                     scope.spawn(|_| {
-                    let mon_name = mon.metadata().name.clone();
-                    let freq_nanos = mon.metadata().frequency.as_duration().as_nanos();
+                    let mon_name = mon.name().to_owned();
+                    let freq_nanos = mon.frequency().as_duration().as_nanos();
                     let mut monitor_measurements = Measurements::new();
 
                     trace!("{mon_name}: waiting to poll");
@@ -114,7 +114,7 @@ where
                         let elapsed = poll_end_time - poll_start_time;
 
                         // Check runtime elapsed time
-                        if elapsed > mon.metadata().frequency.as_duration() {
+                        if elapsed > mon.frequency().as_duration() {
                             // Calculate amount of polls missed
                             let this_poll_id = (poll_start_time - start_time).as_nanos() / freq_nanos;
                             let next_poll_id = (poll_end_time - start_time).as_nanos() / freq_nanos;
@@ -200,7 +200,7 @@ where
             // Spawn threads
             for mon in self.monitors.iter_mut() {
                 let _: ScopedJoinHandle<'_, Result<(), anyhow::Error>> = scope.spawn(|_| {
-                    let mon_name = mon.metadata().name.clone();
+                    let mon_name = mon.name().to_owned();
                     // Wait for all threads
                     trace!(
                         "{mon_name}: blocking on '{lifecycle_name}' lifecycle barrier"
