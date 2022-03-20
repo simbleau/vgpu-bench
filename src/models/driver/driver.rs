@@ -97,7 +97,6 @@ where
             match benchmark_result {
                 Ok(bundle) => {
                     info!("{benchmark_name}: completed");
-                    println!("{:?}", bundle);
                     bundles.insert(benchmark_name.to_owned(), bundle);
                 }
                 Err(e) => {
