@@ -1,10 +1,7 @@
+use simplelog::SharedLogger;
 use std::path::Path;
 
-use simplelog::SharedLogger;
-
-use crate::{Benchmark, Driver, DriverOptions, Measurable};
-
-use super::driver_options::DriverWriteMode;
+use crate::{Benchmark, Driver, DriverOptions, DriverWriteMode, Measurable};
 
 // Driver builder
 pub struct DriverBuilder<T>
@@ -40,15 +37,6 @@ where
 
     pub fn output_dir(mut self, output_dir: &Path) -> Self {
         self.options.output_dir = output_dir.to_owned();
-        self
-    }
-
-    pub fn benchmark_dir_name<S>(mut self, dir_name: S) -> Self
-    where
-        S: Into<String>,
-    {
-        self.options.benchmarks_dir =
-            self.options.output_dir.join(dir_name.into());
         self
     }
 

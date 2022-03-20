@@ -22,34 +22,25 @@ impl Default for DriverWriteMode {
 #[derive(Debug, Clone)]
 pub struct DriverOptions {
     pub(crate) output_dir: PathBuf,
-    pub(crate) benchmarks_dir: PathBuf,
     pub(crate) write_mode: DriverWriteMode,
     pub(crate) on_error_continue: bool,
 }
 
 impl Default for DriverOptions {
     fn default() -> Self {
-        DriverOptions::new(
-            "output",
-            "benchmarks",
-            DriverWriteMode::default(),
-            false,
-        )
+        DriverOptions::new("output", DriverWriteMode::default(), false)
     }
 }
 
 impl DriverOptions {
     pub(crate) fn new(
         output_dir_name: &str,
-        benchmarks_dir_name: &str,
         write_mode: DriverWriteMode,
         on_error_continue: bool,
     ) -> Self {
         let output_dir = PathBuf::from(output_dir_name);
-        let benchmarks_dir = output_dir.join(benchmarks_dir_name);
         DriverOptions {
             output_dir,
-            benchmarks_dir,
             write_mode,
             on_error_continue,
         }
@@ -59,9 +50,6 @@ impl DriverOptions {
 impl DriverOptions {
     pub fn output_dir(&self) -> &Path {
         &self.output_dir.as_path()
-    }
-    pub fn benchmarks_dir(&self) -> &Path {
-        &self.benchmarks_dir.as_path()
     }
     pub fn write_mode(&self) -> &DriverWriteMode {
         &self.write_mode

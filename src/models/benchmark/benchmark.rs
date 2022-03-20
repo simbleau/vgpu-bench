@@ -5,13 +5,16 @@ use std::thread;
 use std::time::{Duration, Instant};
 
 use crate::models::driver::DriverOptions;
-use crate::{util, BenchmarkOptions, Measurable, Measurement, Measurements};
+use crate::{
+    util, BenchmarkBundle, BenchmarkOptions, Measurable, Measurement,
+    Measurements, MonitorBundle,
+};
 
 use super::benchmark_metadata::BenchmarkMetadata;
 use crate::models::{BenchmarkFn, Monitor};
 use anyhow::{anyhow, Result};
 use crossbeam::thread::ScopedJoinHandle;
-use log::{debug, error, info, trace, warn};
+use log::{debug, error, trace, warn};
 
 pub struct Benchmark<T>
 where
@@ -56,11 +59,13 @@ where
         &self.metadata
     }
 
-    pub fn run(&mut self, options: &DriverOptions) -> Result<Measurements<T>> {
+    pub fn run(
+        &mut self,
+        options: &DriverOptions,
+    ) -> Result<BenchmarkBundle<T>> {
         // Collect info
         let bm_name = self.metadata().name().to_owned();
-        let bm_options =
-            BenchmarkOptions::new(options.benchmarks_dir(), &bm_name);
+        let bm_options = BenchmarkOptions::new(options.output_dir(), &bm_name);
         let num_mon = self.monitors.len();
 
         // Check conditions for run
@@ -78,16 +83,17 @@ where
         let complete = AtomicBool::new(false);
         let start_time = Instant::now();
 
-        let _mon_measurements =
+        // Collect monitor measurements
+        let monitor_measurement_map =
             HashMap::<String, Measurements<Measurement>>::new();
-        let _mon_measurements_mut = Arc::new(Mutex::new(_mon_measurements));
-        let scope_collection: Result<Measurements<T>, anyhow::Error> =
+        let mmm_arc = Arc::new(Mutex::new(monitor_measurement_map));
+        let scope: Result<Measurements<T>, anyhow::Error> =
             crossbeam::scope(|scope| {
                 for mon in self.monitors.iter_mut() {
                     scope.spawn(|_| {
                     let mon_name = mon.metadata().name.clone();
                     let freq_nanos = mon.metadata().frequency.as_duration().as_nanos();
-                    let mut mon_measurements = Measurements::new();
+                    let mut monitor_measurements = Measurements::new();
 
                     trace!("{mon_name}: waiting to poll");
                     barrier.wait();
@@ -124,22 +130,21 @@ where
                             match measurable {
                                 Ok(measurable) => {
                                     debug!("{mon_name}: polled in {elapsed:?}");
-                                    mon_measurements.push(measurable);
+                                    monitor_measurements.push(measurable);
                                 },
                                 Err(e) => error!("{mon_name}: failed to poll with error '{e}'")
                             }
                         }
                     }
 
-                    let mut histories = _mon_measurements_mut.lock().unwrap();
-                    histories.insert(mon_name, mon_measurements);
+                    let mut mmm_lock = mmm_arc.lock().unwrap();
+                    mmm_lock.insert(mon_name, monitor_measurements);
                 });
                 }
 
                 trace!("{bm_name}: waiting to execute");
                 barrier.wait();
                 trace!("{bm_name}: starting execution");
-                // TODO eliminate unwrap here
                 let func = self.func.take().expect("How was this taken?");
                 let measurements = func.run(&bm_options)?;
                 trace!("{bm_name}: completed execution");
@@ -150,33 +155,26 @@ where
             }).map_err(|thread_ex| {
             anyhow!("Unit thread exception: {thread_ex:?}")
         })?;
-        let measurements = scope_collection?;
+        let measurements = scope?;
+        let monitor_measurements = Arc::try_unwrap(mmm_arc)
+            .expect("No one should hold this arc!")
+            .into_inner()
+            .expect("No one should hold this mutex!");
+        let monitor_bundle = MonitorBundle {
+            monitor_measurements,
+        };
 
         // Lifecycle hook - 'on_stop'
         self.monitor_lifecycle_hook("on_stop", |mon| Ok(mon.on_stop()))?;
         trace!("{bm_name}: stopped all monitors");
 
-        // TODO write results
-        info!("Collected results");
+        // Package bundle
+        let bundle = BenchmarkBundle {
+            measurements,
+            monitor_bundle,
+        };
 
-        // Write monitor history
-        if num_mon > 0 {
-            trace!("{bm_name}: waiting to write monitor history");
-            for (mon_name, history) in
-                _mon_measurements_mut.lock().unwrap().iter()
-            {
-                let mut mon_file_path = bm_options.output_dir().join(mon_name);
-                mon_file_path.set_extension("csv");
-                history.write(&mon_file_path)?;
-                trace!(
-                    "{bm_name}: finished writing {mon_name} to {mon_file}",
-                    mon_file = mon_file_path.display()
-                );
-            }
-            trace!("{bm_name}: finished writing all monitor history");
-        }
-
-        Ok(measurements)
+        Ok(bundle)
     }
 
     fn monitor_lifecycle_hook<F, Any>(

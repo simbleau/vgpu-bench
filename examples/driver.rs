@@ -15,7 +15,7 @@ struct ExampleMeasurement {
 
 pub fn main() {
     let metadata = BenchmarkMetadata::new("My Benchmark");
-    let func = BenchmarkFn::new(|_| {
+    let func: BenchmarkFn<ExampleMeasurement> = BenchmarkFn::new(|_| {
         let mut measurements = Measurements::new();
         // Some real benchmarking would happen here
         for i in 0..10 {
@@ -31,12 +31,13 @@ pub fn main() {
 
     Driver::builder()
         .logger(TermLogger::new(
-            LevelFilter::Info,
+            LevelFilter::Trace,
             Config::default(),
             TerminalMode::Mixed,
             ColorChoice::Auto,
         ))
         .add(benchmark)
+        .on_error_contune(true)
         .build()
         .run()
         .unwrap();

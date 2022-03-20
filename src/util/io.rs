@@ -163,23 +163,6 @@ where
         })
 }
 
-pub fn write_csv<P>(
-    path: P,
-    rows: &Vec<Box<dyn erased_serde::Serialize>>,
-) -> Result<()>
-where
-    P: AsRef<Path>,
-{
-    let mut output_path = path.as_ref().to_owned();
-    output_path.set_extension("csv");
-    let mut writer = csv_writer(&output_path)?;
-    for row in rows {
-        writer.serialize(row)?;
-    }
-    writer.flush()?;
-    Ok(())
-}
-
 pub fn csv_writer_relative<P>(relative_path: P) -> Result<Writer<File>>
 where
     P: AsRef<Path>,
