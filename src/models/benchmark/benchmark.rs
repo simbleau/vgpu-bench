@@ -176,7 +176,6 @@ where
             trace!("{bm_name}: finished writing all monitor history");
         }
 
-        info!("{bm_name}: finished execution");
         Ok(measurements)
     }
 
