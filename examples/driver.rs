@@ -15,7 +15,7 @@ struct ExampleMeasurement {
 
 pub fn main() {
     let metadata = BenchmarkMetadata::new("My Benchmark");
-    let func = BenchmarkFn::from(|_| {
+    let func = BenchmarkFn::new(|_| {
         let mut measurements = Measurements::new();
         // Some real benchmarking would happen here
         for i in 0..10 {

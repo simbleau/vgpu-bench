@@ -5,15 +5,17 @@ pub struct BenchmarkFn<T: Measurable>(
     Box<dyn FnOnce(&BenchmarkOptions) -> Result<Measurements<T>>>,
 );
 
-impl<T, F: 'static> From<F> for BenchmarkFn<T>
+/* One day in the future when "existential type aliases" exist, we can do:
+impl<T, F> From<F> for BenchmarkFn<T>
 where
-    F: FnOnce(&BenchmarkOptions) -> Result<Measurements<T>>,
+    F: impl <for 'r> FnOnce(&'r BenchmarkOptions) -> Result<Measurements<T>> + 'static,
     T: Measurable,
 {
     fn from(func: F) -> BenchmarkFn<T> {
         BenchmarkFn(Box::new(func))
     }
 }
+*/
 
 impl<T> BenchmarkFn<T>
 where
@@ -23,7 +25,7 @@ where
         Ok(self.0(options)?)
     }
 
-    pub fn from<F>(func: F) -> Self
+    pub fn new<F>(func: F) -> Self
     where
         F: FnOnce(&BenchmarkOptions) -> Result<Measurements<T>> + 'static,
     {
