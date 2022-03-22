@@ -8,6 +8,7 @@ extern crate rendering_util;
 extern crate svg_generator;
 extern crate tessellation_util;
 
+pub use anyhow::Error;
 pub use anyhow::Result;
 
 pub mod macros;
