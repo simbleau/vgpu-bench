@@ -1,4 +1,3 @@
-use simplelog::SharedLogger;
 use std::path::Path;
 
 use crate::{Benchmark, Driver, DriverOptions, DriverWriteMode, Measurable};
@@ -9,7 +8,6 @@ where
     T: Measurable,
 {
     pub(crate) options: DriverOptions,
-    pub(crate) loggers: Vec<Box<dyn SharedLogger>>,
     pub(crate) benchmarks: Vec<Benchmark<T>>,
 }
 
@@ -20,7 +18,6 @@ where
     pub fn new() -> Self {
         Self {
             options: DriverOptions::default(),
-            loggers: Vec::new(),
             benchmarks: Vec::new(),
         }
     }
@@ -40,11 +37,6 @@ where
         self
     }
 
-    pub fn logger(mut self, logger: Box<dyn SharedLogger>) -> Self {
-        self.loggers.push(logger);
-        self
-    }
-
     pub fn add(mut self, benchmark: Benchmark<T>) -> Self {
         self.benchmarks.push(benchmark);
         self
@@ -53,7 +45,6 @@ where
     pub fn build(self) -> Driver<T> {
         Driver {
             options: self.options,
-            loggers: self.loggers,
             benchmarks: self.benchmarks,
         }
     }

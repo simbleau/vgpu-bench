@@ -12,6 +12,10 @@ struct ExampleMeasurement {
 }
 
 pub fn main() -> Result<()> {
+    // Init logging
+    vgpu_bench::util::logging::init_default();
+
+    // Run driver
     Driver::from(Benchmark::from(BenchmarkFn::new(|_| {
         let mut measurements = Measurements::new();
         // Some real benchmarking would happen here

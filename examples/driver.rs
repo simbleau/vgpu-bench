@@ -56,13 +56,14 @@ pub fn main() {
     let mut benchmark = Benchmark::new(metadata, func);
     benchmark.monitors_mut().push(Box::new(ExampleMonitor));
 
+    vgpu_bench::util::logging::init(vec![TermLogger::new(
+        LevelFilter::Trace,
+        Config::default(),
+        TerminalMode::Mixed,
+        ColorChoice::Auto,
+    )]);
+
     Driver::builder()
-        .logger(TermLogger::new(
-            LevelFilter::Trace,
-            Config::default(),
-            TerminalMode::Mixed,
-            ColorChoice::Auto,
-        ))
         .add(benchmark)
         .on_error_contune(true)
         .build()

@@ -6,10 +6,7 @@ use crate::{
     util, BenchmarkBundle, DriverBuilder, DriverBundle, DriverOptions,
     Measurable, Result,
 };
-use log::{error, info, trace, LevelFilter};
-use simplelog::{
-    ColorChoice, CombinedLogger, Config, SharedLogger, TermLogger, TerminalMode,
-};
+use log::{error, info, trace};
 
 // Driver fields
 pub struct Driver<T>
@@ -17,7 +14,6 @@ where
     T: Measurable,
 {
     pub(crate) options: DriverOptions,
-    pub(crate) loggers: Vec<Box<dyn SharedLogger>>,
     pub(crate) benchmarks: Vec<Benchmark<T>>,
 }
 
@@ -26,15 +22,7 @@ where
     T: Measurable,
 {
     fn from(benchmark: Benchmark<T>) -> Self {
-        Driver::builder()
-            .logger(TermLogger::new(
-                LevelFilter::Debug,
-                Config::default(),
-                TerminalMode::default(),
-                ColorChoice::Auto,
-            ))
-            .add(benchmark)
-            .build()
+        Driver::builder().add(benchmark).build()
     }
 }
 
@@ -74,14 +62,6 @@ where
     }
 
     pub fn extract(self) -> Result<DriverBundle<T>> {
-        // Initialize logger
-        match CombinedLogger::init(self.loggers) {
-            Err(_) => eprintln!(
-                "Logger failed to initialize... Was it already initialized by another driver?"
-            ),
-            Ok(_) => trace!("logging initialized"),
-        };
-
         // Create buffers
         let mut bundles: HashMap<String, BenchmarkBundle<T>> = HashMap::new();
 
