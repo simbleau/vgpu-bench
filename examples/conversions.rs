@@ -24,13 +24,13 @@ pub fn main() -> Result<()> {
     };
 
     // Convert closure into GPU-annotated `BenchmarkFn`
-    let benchmark_fn: BenchmarkFn<RenderTime> = func.into();
+    let benchmk_fn: BenchmarkFn<RenderTime> = func.into();
     // Create `Benchmark` from `BenchmarkFn`
-    let benchmark: Benchmark<RenderTime> = Benchmark::from(benchmark_fn)
-        .monitor(Box::new(CpuUtilizationMonitor {
+    let benchmark: Benchmark<RenderTime> =
+        Benchmark::from(benchmk_fn).monitor(CpuUtilizationMonitor {
             name: "CPU Utilization Monitor",
             frequency: MonitorFrequency::Hertz(1),
-        }));
+        });
     // Convert `Benchmark` into `Driver`
     let driver: Driver<RenderTime> = benchmark.into();
 

@@ -45,8 +45,11 @@ where
         }
     }
 
-    pub fn monitor(mut self, monitor: Box<dyn Monitor>) -> Self {
-        self.monitors.push(monitor);
+    pub fn monitor<M>(mut self, monitor: M) -> Self
+    where
+        M: Monitor + 'static,
+    {
+        self.monitors.push(Box::new(monitor));
         self
     }
 
