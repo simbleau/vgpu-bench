@@ -45,12 +45,9 @@ where
         }
     }
 
-    pub fn monitors(&self) -> &Vec<Box<dyn Monitor>> {
-        &self.monitors
-    }
-
-    pub fn monitors_mut(&mut self) -> &mut Vec<Box<dyn Monitor>> {
-        &mut self.monitors
+    pub fn monitor(mut self, monitor: Box<dyn Monitor>) -> Self {
+        self.monitors.push(monitor);
+        self
     }
 
     pub fn metadata(&self) -> &BenchmarkMetadata {

@@ -44,8 +44,8 @@ pub fn main() {
         // Benchmarking done!
         Ok(measurements)
     });
-    let mut benchmark = Benchmark::new(metadata, func);
-    benchmark.monitors_mut().push(Box::new(ExampleMonitor));
+    let benchmark =
+        Benchmark::new(metadata, func).monitor(Box::new(ExampleMonitor));
 
     vgpu_bench::util::logging::init(vec![TermLogger::new(
         LevelFilter::Trace,
