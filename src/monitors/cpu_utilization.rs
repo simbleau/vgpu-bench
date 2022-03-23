@@ -15,16 +15,19 @@ struct CpuMeasurement {
 }
 unsafe impl Send for CpuMeasurement {}
 unsafe impl Sync for CpuMeasurement {}
-pub struct CpuUtilizationMonitor {}
+pub struct CpuUtilizationMonitor {
+    pub name: &'static str,
+    pub frequency: MonitorFrequency,
+}
 unsafe impl Send for CpuUtilizationMonitor {}
 
 impl Monitor for CpuUtilizationMonitor {
     fn name(&self) -> &'static str {
-        "CPU Utilization"
+        self.name
     }
 
     fn frequency(&self) -> MonitorFrequency {
-        MonitorFrequency::Hertz(1)
+        self.frequency
     }
 
     fn poll(&self) -> Result<Measurement> {
