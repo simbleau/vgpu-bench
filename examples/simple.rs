@@ -12,7 +12,7 @@ pub fn main() -> Result<()> {
     vgpu_bench::util::logging::init_default();
 
     // Run driver
-    Driver::from(Benchmark::from(BenchmarkFn::new(|_| {
+    Driver::from(Benchmark::from(BenchmarkFn::new(|| {
         let mut measurements = Measurements::new();
         // Some real benchmarking would happen here
         for i in 0..10 {

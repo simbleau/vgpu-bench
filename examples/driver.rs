@@ -31,7 +31,7 @@ impl Monitor for ExampleMonitor {
 
 pub fn main() {
     let metadata = BenchmarkMetadata::new("My Benchmark");
-    let func: BenchmarkFn<ExampleMeasurement> = BenchmarkFn::new(|_| {
+    let func: BenchmarkFn<ExampleMeasurement> = BenchmarkFn::new(|| {
         let mut measurements = Measurements::new();
         // Some real benchmarking would happen here
         for i in 0..10 {

@@ -71,9 +71,7 @@ where
         for mut benchmark in self.benchmarks {
             let benchmark_name = benchmark.metadata().name();
             info!("{benchmark_name}: commencing");
-            nvtx::range_push(format!("benching {benchmark_name}").as_str());
             let benchmark_result = benchmark.run(&self.options);
-            nvtx::range_pop();
             match benchmark_result {
                 Ok(bundle) => {
                     info!("{benchmark_name}: completed");

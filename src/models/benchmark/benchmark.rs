@@ -8,9 +8,8 @@ use std::thread;
 use std::time::{Duration, Instant};
 
 use crate::models::{
-    BenchmarkBundle, BenchmarkFn, BenchmarkMetadata, BenchmarkOptions,
-    DriverOptions, Measurable, Measurement, Measurements, Monitor,
-    MonitorBundle,
+    BenchmarkBundle, BenchmarkFn, BenchmarkMetadata, DriverOptions, Measurable,
+    Measurement, Measurements, Monitor, MonitorBundle,
 };
 use crate::util;
 use crate::Result;
@@ -64,11 +63,11 @@ where
     ) -> Result<BenchmarkBundle<T>> {
         // Collect info
         let bm_name = self.metadata().name().to_owned();
-        let bm_options = BenchmarkOptions::new(options.output_dir(), &bm_name);
+        let bm_dir = options.output_dir().join(&bm_name);
         let num_mon = self.monitors.len();
 
         // Check conditions for run
-        util::io::create_data_landing(bm_options.output_dir())?;
+        util::io::create_data_landing(bm_dir)?;
 
         // Start run
         debug!("{bm_name}: augmented with {num_mon} monitors");
@@ -145,7 +144,7 @@ where
                 barrier.wait();
                 trace!("{bm_name}: starting execution");
                 let func = self.func.take().expect("How was this taken?");
-                let measurements = func.run(&bm_options)?;
+                let measurements = func.run(&bm_name)?;
                 trace!("{bm_name}: completed execution");
                 complete.store(true, Ordering::Release);
 
