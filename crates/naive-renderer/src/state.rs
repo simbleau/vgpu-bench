@@ -25,14 +25,14 @@ impl State {
         data: TessellationData,
     ) -> Self {
         // The instance is a handle to our GPU
-        // Backends::all() => Vulkan + Metal + DX12 + Browser WebGPU
-        let instance = wgpu::Instance::new(wgpu::Backends::all());
+        // Backends::PRIMARY => Vulkan + Metal + DX12 + Browser WebGPU
+        let instance = wgpu::Instance::new(wgpu::Backends::PRIMARY);
         // The surface is part of the window to draw on
         let surface = unsafe { instance.create_surface(window) };
         // The adapter is a handle to an actual graphics card
         let adapter = instance
             .request_adapter(&wgpu::RequestAdapterOptions {
-                power_preference: wgpu::PowerPreference::default(),
+                power_preference: wgpu::PowerPreference::HighPerformance,
                 compatible_surface: Some(&surface),
                 force_fallback_adapter: false,
             })
@@ -140,6 +140,22 @@ impl State {
         let view = frame
             .texture
             .create_view(&wgpu::TextureViewDescriptor::default());
+        let msaa_texture = self
+            .device
+            .create_texture(&wgpu::TextureDescriptor {
+                label: Some("Multisampled frame descriptor"),
+                size: wgpu::Extent3d {
+                    width: self.size.width,
+                    height: self.size.height,
+                    depth_or_array_layers: 1,
+                },
+                mip_level_count: 1,
+                sample_count: util::MSAA_SAMPLES,
+                dimension: wgpu::TextureDimension::D2,
+                format: self.config.format,
+                usage: wgpu::TextureUsages::RENDER_ATTACHMENT,
+            })
+            .create_view(&wgpu::TextureViewDescriptor::default());
         // Encoder sends commands to the GPU
         let mut encoder = self.device.create_command_encoder(
             &wgpu::CommandEncoderDescriptor {
@@ -163,7 +179,7 @@ impl State {
                 encoder.begin_render_pass(&wgpu::RenderPassDescriptor {
                     label: None,
                     color_attachments: &[wgpu::RenderPassColorAttachment {
-                        view: &view,
+                        view: &msaa_texture,
                         ops: wgpu::Operations {
                             load: wgpu::LoadOp::Clear(
                                 match self.scene.wireframe {
@@ -173,7 +189,7 @@ impl State {
                             ),
                             store: true,
                         },
-                        resolve_target: None,
+                        resolve_target: Some(&view),
                     }],
                     depth_stencil_attachment: None,
                 });

@@ -7,7 +7,8 @@ use tessellation_util::artifacts::TessellationData;
 use wgpu::{include_wgsl, util::DeviceExt, RenderPipeline};
 use winit::dpi::PhysicalSize;
 
-const WINDOW_SIZE: f32 = 800.0;
+pub const WINDOW_SIZE: f32 = 800.0;
+pub const MSAA_SAMPLES: u32 = 4;
 // These mush match the uniform buffer sizes in the vertex shader.
 pub fn get_globals(file_data: &SVGDocument) -> SceneGlobals {
     let opt = usvg::Options::default();
@@ -97,11 +98,16 @@ pub fn build_pipeline(
             front_face: wgpu::FrontFace::Ccw,
             strip_index_format: None,
             cull_mode: None,
-            clamp_depth: false,
+            unclipped_depth: false,
             conservative: false,
         },
         depth_stencil: None,
-        multisample: wgpu::MultisampleState::default(),
+        multisample: wgpu::MultisampleState {
+            count: MSAA_SAMPLES,
+            mask: !0,
+            alpha_to_coverage_enabled: false,
+        },
+        multiview: None,
     };
 
     device.create_render_pipeline(&render_pipeline_descriptor)
@@ -154,6 +160,7 @@ pub fn build_buffers(
         usage: wgpu::BufferUsages::UNIFORM | wgpu::BufferUsages::COPY_DST,
         mapped_at_creation: false,
     });
+
     let bind_group_layout =
         device.create_bind_group_layout(&wgpu::BindGroupLayoutDescriptor {
             label: Some("Bind group layout"),

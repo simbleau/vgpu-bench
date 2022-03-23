@@ -57,6 +57,7 @@ impl TriangleRenderer {
             winit::platform::unix::EventLoopExtUnix::new_any_thread();
         let window = WindowBuilder::new().build(&event_loop_thread)?;
         window.set_resizable(true);
+        window.set_title("Render-Kit");
         let state = pollster::block_on(State::new(&window, scene, data));
 
         self.window = Some(window);
