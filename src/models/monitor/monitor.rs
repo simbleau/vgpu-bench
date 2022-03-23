@@ -1,5 +1,4 @@
-use crate::Measurement;
-use crate::MonitorFrequency;
+use crate::models::{Measurement, MonitorFrequency};
 use crate::Result;
 
 pub trait Monitor: Send + Sync {

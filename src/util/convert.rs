@@ -1,6 +1,8 @@
-use crate::{Measurable, Result};
 use renderer::targets::{SVGDocument, SVGFile};
 use std::path::PathBuf;
+
+use crate::models::Measurable;
+use crate::Result;
 
 pub fn path_to_svg<P>(path: P) -> Result<SVGDocument>
 where

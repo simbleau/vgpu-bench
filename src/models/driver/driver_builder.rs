@@ -1,6 +1,8 @@
 use std::path::Path;
 
-use crate::{Benchmark, Driver, DriverOptions, DriverWriteMode, Measurable};
+use crate::models::{
+    Benchmark, Driver, DriverOptions, DriverWriteMode, Measurable,
+};
 
 // Driver builder
 pub struct DriverBuilder<T>

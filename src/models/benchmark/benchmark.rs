@@ -1,20 +1,19 @@
+use anyhow::anyhow;
+use crossbeam::thread::ScopedJoinHandle;
+use log::{debug, error, trace, warn};
 use std::collections::HashMap;
 use std::sync::atomic::{AtomicBool, Ordering};
 use std::sync::{Arc, Barrier, Mutex};
 use std::thread;
 use std::time::{Duration, Instant};
 
-use crate::models::driver::DriverOptions;
-use crate::{
-    util, BenchmarkBundle, BenchmarkOptions, Measurable, Measurement,
-    Measurements, MonitorBundle,
+use crate::models::{
+    BenchmarkBundle, BenchmarkFn, BenchmarkMetadata, BenchmarkOptions,
+    DriverOptions, Measurable, Measurement, Measurements, Monitor,
+    MonitorBundle,
 };
-
-use super::benchmark_metadata::BenchmarkMetadata;
-use crate::models::{BenchmarkFn, Monitor};
-use anyhow::{anyhow, Result};
-use crossbeam::thread::ScopedJoinHandle;
-use log::{debug, error, trace, warn};
+use crate::util;
+use crate::Result;
 
 pub struct Benchmark<T>
 where

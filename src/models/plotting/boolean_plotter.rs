@@ -2,9 +2,8 @@ use log::debug;
 use pyo3::prelude::*;
 use pyo3::types::*;
 
-use crate::Measurable;
-use crate::Measurements;
-use crate::{Plotter, Result};
+use crate::models::{Measurable, Measurements, Plotter};
+use crate::Result;
 
 pub enum BooleanPlotType {
     Pie,
@@ -30,7 +29,7 @@ impl Plotter for BooleanPlotter {
 
         Ok(Python::with_gil(|py| -> PyResult<Py<PyAny>> {
             // Load util functions
-            let utils = crate::plot_utils(py)?;
+            let utils = crate::models::plot_utils(py)?;
 
             // Make dataframe
             let df_func: PyObject = utils.getattr("dataframe")?.into();

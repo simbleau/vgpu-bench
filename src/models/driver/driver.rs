@@ -1,12 +1,12 @@
+use log::{error, info, trace};
 use std::collections::HashMap;
 
-use crate::{
-    log_assert,
-    models::{driver::driver_options::DriverWriteMode, Benchmark},
-    util, BenchmarkBundle, DriverBuilder, DriverBundle, DriverOptions,
-    Measurable, Result,
+use crate::models::{
+    Benchmark, BenchmarkBundle, DriverBuilder, DriverBundle, DriverOptions,
+    DriverWriteMode, Measurable,
 };
-use log::{error, info, trace};
+use crate::Result;
+use crate::{log_assert, util};
 
 // Driver fields
 pub struct Driver<T>

@@ -6,8 +6,8 @@ use pyo3::prelude::*;
 use pyo3::types::PyString;
 
 use crate::log_assert;
+use crate::models::Measurable;
 use crate::util;
-use crate::Measurable;
 use crate::Result;
 
 #[derive(Debug)]

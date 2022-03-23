@@ -1,6 +1,7 @@
 use std::{collections::HashMap, path::Path};
 
-use crate::{Measurable, Measurement, Measurements, Result};
+use crate::models::{Measurable, Measurement, Measurements};
+use crate::Result;
 
 #[derive(Debug)]
 pub struct MonitorBundle {

@@ -1,7 +1,7 @@
 use serde::{Serialize, Serializer};
 use std::fmt;
 
-use crate::Measurable;
+use crate::models::Measurable;
 
 pub struct Measurement {
     measurable: Box<dyn erased_serde::Serialize>,

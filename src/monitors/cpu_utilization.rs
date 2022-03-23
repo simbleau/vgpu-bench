@@ -1,10 +1,9 @@
-use anyhow::Result;
 use serde::Serialize;
+use std::{thread, time::Duration};
 use systemstat::{Platform, System};
 
-use crate::models::{Monitor, MonitorFrequency};
-use crate::Measurement;
-use std::{thread, time::Duration};
+use crate::models::{Measurement, Monitor, MonitorFrequency};
+use crate::Result;
 
 #[derive(Serialize, Debug)]
 struct CpuMeasurement {

@@ -1,10 +1,9 @@
-use anyhow::Result;
 use serde::Serialize;
 use std::time::Instant;
 
-use crate::models::{Monitor, MonitorFrequency};
+use crate::models::{Measurement, Monitor, MonitorFrequency};
 use crate::monitors::MonitorError;
-use crate::Measurement;
+use crate::Result;
 
 #[derive(Serialize, Debug)]
 struct HeartbeatMeasurement {

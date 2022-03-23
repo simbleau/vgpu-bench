@@ -12,8 +12,13 @@ pub use anyhow::Error;
 pub use anyhow::Result;
 
 pub mod macros;
+pub mod models;
 pub mod monitors;
 pub mod util;
 
-mod models;
-pub use models::*;
+pub mod prelude {
+    pub use crate::macros::*;
+    pub use crate::models::*;
+    pub use anyhow::Error;
+    pub use anyhow::Result;
+}

@@ -1,5 +1,5 @@
-use crate::{BenchmarkOptions, Measurements};
-use crate::{Measurable, Result};
+use crate::models::{BenchmarkOptions, Measurable, Measurements};
+use crate::Result;
 
 pub struct BenchmarkFn<T: Measurable>(
     Box<dyn FnOnce(&BenchmarkOptions) -> Result<Measurements<T>>>,

@@ -1,7 +1,8 @@
 use pyo3::{prelude::*, types::PyTuple};
-
-use crate::{Measurable, Measurements, Result};
 use std::path::Path;
+
+use crate::models::{Measurable, Measurements};
+use crate::Result;
 
 pub trait Plotter {
     fn plot<T>(&self, data: &Measurements<T>) -> Result<PyObject>
@@ -18,7 +19,7 @@ pub trait Plotter {
 
         Python::with_gil(|py| -> PyResult<Py<PyAny>> {
             // Load util functions
-            let utils = crate::plot_utils(py)?;
+            let utils = crate::models::plot_utils(py)?;
 
             // Save
             let save_func: PyObject = utils.getattr("save")?.into();
@@ -38,7 +39,7 @@ pub trait Plotter {
 
         Python::with_gil(|py| -> PyResult<Py<PyAny>> {
             // Load util functions
-            let utils = crate::plot_utils(py)?;
+            let utils = crate::models::plot_utils(py)?;
 
             // Show
             let show_func: PyObject = utils.getattr("show")?.into();
