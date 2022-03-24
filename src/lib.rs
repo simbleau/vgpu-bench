@@ -3,7 +3,7 @@
 #![feature(div_duration)]
 #![feature(duration_consts_float)]
 
-extern crate nvtx;
+pub extern crate nvtx;
 extern crate rendering_util;
 extern crate svg_generator;
 extern crate tessellation_util;
@@ -17,6 +17,7 @@ pub mod monitors;
 pub mod util;
 
 pub mod prelude {
+    pub extern crate nvtx;
     pub use crate::macros::*;
     pub use crate::models::*;
     pub use anyhow::Error;
