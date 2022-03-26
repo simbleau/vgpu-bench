@@ -1,3 +1,4 @@
+import os
 import pandas as pd
 import numpy as np
 import matplotlib.pyplot as plt
@@ -5,9 +6,11 @@ import io
 import csv
 
 
-def save(plot, path):
-    print("Saving plot")
-    # Todo
+def save(path, name, type):
+    if not os.path.exists(path):
+        os.makedirs(path)
+    plt.savefig(
+        f"{path}/{name}.{type}", dpi=500)
     pass
 
 

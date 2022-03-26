@@ -11,7 +11,6 @@ use crate::models::{
     BenchmarkBundle, BenchmarkFn, BenchmarkMetadata, DriverOptions, Measurable,
     Measurement, Measurements, Monitor, MonitorBundle,
 };
-use crate::util;
 use crate::Result;
 
 pub struct Benchmark<T>
@@ -59,15 +58,11 @@ where
 
     pub fn run(
         &mut self,
-        options: &DriverOptions,
+        _options: &DriverOptions,
     ) -> Result<BenchmarkBundle<T>> {
         // Collect info
         let bm_name = self.metadata().name().to_owned();
-        let bm_dir = options.output_dir().join(&bm_name);
         let num_mon = self.monitors.len();
-
-        // Check conditions for run
-        util::io::create_data_landing(bm_dir)?;
 
         // Start run
         debug!("{bm_name}: augmented with {num_mon} monitors");

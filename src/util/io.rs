@@ -181,7 +181,7 @@ where
     P: AsRef<Path>,
 {
     let output_file = create_or_append(path)?;
-    let mut write_header = true;
+    let mut write_header = false;
     if output_file.metadata().unwrap().len() > 0 {
         write_header = false;
     }

@@ -23,10 +23,12 @@ def plot(df, x_col, y_col, title, x_label, y_label, plot_by=None, show_stats=Fal
     if df.empty:
         return fig
 
+    df[y_col] = df[y_col].apply(util.ns_to_ms)
+
     # Get plot classifications
     if plot_by is not None:
         plot_items = df[plot_by].unique()
-        for plot_item in plot_items:
+        for plot_item in sorted(plot_items):
             rows = df.loc[df[plot_by] == plot_item]
             x_values = rows[x_col].unique()
             xy_values = []
@@ -36,7 +38,7 @@ def plot(df, x_col, y_col, title, x_label, y_label, plot_by=None, show_stats=Fal
                 y_value = round(np.mean(y_rows[y_col]), decimals)
                 xy_values.append(y_value)
                 # Plot frame times
-            print(f"plot item: {plot_item}\nx: {x_values}\ny: {xy_values}")
+            print(f"plot item: {plot_item}")#\nx: {x_values}\ny: {xy_values}")
             p_ax.plot(x_values, xy_values, label=plot_item,
                       linewidth=3)
     else:
@@ -49,7 +51,6 @@ def plot(df, x_col, y_col, title, x_label, y_label, plot_by=None, show_stats=Fal
             y_value = round(np.mean(y_rows[y_col]), decimals)
             xy_values.append(y_value)
             # Plot frame times
-        print(f"x: {x_values}\ny: {xy_values}")
         p_ax.plot(x_values, xy_values,
                   linewidth=3)
 
@@ -83,12 +84,17 @@ def plot(df, x_col, y_col, title, x_label, y_label, plot_by=None, show_stats=Fal
 
 
 if __name__ == "__main__":
-    columns = ["asset", "time", "amplitude"]
-    rows = "1, 10, 3\n1, 11, 5\n1, 11, 4\n2, 10, 3\n2, 10, 5\n2, 9, 4\n2, 9, 4.5\n1,7,4"
-df = util.dataframe(columns, rows, sort=True, by=columns[1], ascending=True)
-print(df)
-show_stats = True
-show_stats_table = False
-plot = plot(df, columns[1], columns[2], "Time vs. Amplitude",
-            "Time (ms)", "Amplitude (nm)", plot_by=None, show_stats=show_stats, show_stats_table=show_stats_table)
-util.show(plot)
+    columns = ["filename", "frame", "frametime_ns"]
+    txt_file = open("/home/simbleau/git/vgpu-bench/output/measurements.csv", "r")
+    rows = txt_file.read()
+    txt_file.close()
+
+    df = util.dataframe(columns, rows, sort=True, by=columns[1], ascending=True)
+    print(df)
+    show_stats = True
+    show_stats_table = False
+    plot = plot(df, columns[1], columns[2], "Rendering Frame-times by SVG",
+                "Frame", "Time (ms)", plot_by=columns[0], show_stats=True, show_stats_table=True)
+    #plt.autoscale(enable=True, axis='both', tight=True)
+    util.save("/home/simbleau/git/vgpu-bench/output", "plot", "png")
+    #util.show(plot)

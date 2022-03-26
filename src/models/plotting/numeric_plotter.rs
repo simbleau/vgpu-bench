@@ -37,7 +37,8 @@ impl Plotter for NumericPlotter {
 
             // Make dataframe
             let df_func: PyObject = utils.getattr("dataframe")?.into();
-            let py_data_columns = PyList::new(py, &["value"]);
+            let py_data_columns =
+                PyList::new(py, &["filename", "frame", "time_ns"]);
             let py_data = data.to_pystring(py);
             let py_kwargs = vec![
                 ("columns", py_data_columns.into_py(py)),
@@ -56,8 +57,27 @@ impl Plotter for NumericPlotter {
             // Plot
             let plotter = PyModule::from_code(py, script, "", "")?;
             let plot_func: PyObject = plotter.getattr("plot")?.into();
-            let plot: PyObject = plot_func
-                .call1(py, (df, &self.title, &self.x_label, &self.y_label))?;
+
+            let x_col = String::from("filename");
+            let y_col = String::from("frametime_ns");
+            let py_kwargs = vec![
+                ("plot_by", "".into_py(py)),
+                ("show_stats", true.into_py(py)),
+                ("show_stats_table", true.into_py(py)),
+            ]
+            .into_py_dict(py);
+            let plot: PyObject = plot_func.call(
+                py,
+                (
+                    df,
+                    &x_col,
+                    &y_col,
+                    &self.title,
+                    &self.x_label,
+                    &self.y_label,
+                ),
+                Some(py_kwargs),
+            )?;
 
             Ok(plot)
         })?)

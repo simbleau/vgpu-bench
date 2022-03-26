@@ -16,14 +16,13 @@ exclude = [
     "tools/",
 ]
 
+[[bin]]
+name = "plotting_pathfinder"
+path = "src/bin/plotting_pathfinder.rs"
 
 [lib]
 name = "vgpu_bench"
 path = "src/lib.rs"
-
-[[bin]]
-name = "nvidia_monitor"
-path = "src/bin/monitors/nvidia_monitor.rs"
 
 [workspace]
 members = [
@@ -50,7 +49,7 @@ crossbeam = "0.8"
 systemstat = "0.1.10"
 clap = "3.0.14"
 lyon = { version ="0.17.5", features = ["extra"] }
-usvg = "0.21.0"
+usvg = "0.22.0"
 walkdir = "2"
 csv = "1.1"
 log = "0.4"
@@ -60,6 +59,9 @@ erased-serde = "0.3"
 chrono = "0.4.19"
 anyhow = "1.0.45"
 thiserror = "1.0.30"
-
+resvg = "0.22.0"
+tiny-skia = "0.6.1"
 [dev-dependencies]
 rand = "0.8.4"
+resvg = "0.22.0"
+tiny-skia = "0.6.1"
