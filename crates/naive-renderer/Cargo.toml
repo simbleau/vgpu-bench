@@ -20,6 +20,7 @@ path = "src/main.rs"
 svg-gen = { package = "svg-generator", path = "../svg-generator" }
 tessellation-util = { package = "tessellation-util", path = "../tessellation-util" }
 renderer = { package = "renderer", path = "../renderer" }
+nvtx = {  version = "0.11", package = "nvtx-rs" }
 
 clap = "2.33.3"
 lyon = {version ="0.17.5", features = ["extra"]}

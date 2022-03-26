@@ -79,6 +79,9 @@ impl TriangleRenderer {
     }
 
     pub fn run(&mut self) -> Result<()> {
+        let mut t1 = Instant::now();
+        let mut still_weird = true;
+        nvtx::range_push("Strange Behavior");
         if let (Some(state), Some(window), Some(event_loop)) = (
             self.state.as_mut(),
             self.window.as_mut(),
@@ -86,7 +89,12 @@ impl TriangleRenderer {
         ) {
             event_loop.run_return(move |event, _, control_flow| match event {
                 Event::RedrawRequested(_) => match state.render() {
-                    Ok(_) => {}
+                    Ok(_) => {
+                        let dur = Instant::now().duration_since(t1);
+                        if dur.as_millis() < 50 && still_weird {
+                            nvtx::range_pop();
+                        }
+                    }
                     Err(wgpu::SurfaceError::Lost) => state.resize(state.size),
                     Err(wgpu::SurfaceError::OutOfMemory) => {
                         *control_flow = ControlFlow::Exit
