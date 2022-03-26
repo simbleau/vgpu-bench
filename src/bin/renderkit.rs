@@ -3,7 +3,6 @@ use log::info;
 use naive_renderer::NaiveRenderer;
 use naive_renderer::TriangleRenderer;
 use renderer::targets::{SVGDocument, SVGFile};
-use renderer::Renderer;
 use std::path::PathBuf;
 use tessellation_util::backends::LyonTessellator;
 use vgpu_bench::macros::measurement;
@@ -45,7 +44,7 @@ pub fn main() -> Result<()> {
             info!("Starting renderer...");
             let prev_level = log::max_level();
             log::set_max_level(log::LevelFilter::Off);
-            nvtx::range_push("Renderer Open");
+            nvtx::range_push("Renderering");
             r.run().unwrap();
             nvtx::range_pop();
             log::set_max_level(prev_level);
