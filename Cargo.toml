@@ -17,6 +17,14 @@ exclude = [
 ]
 
 [[bin]]
+name = "plotting_renderkit"
+path = "src/bin/plotting_renderkit.rs"
+
+[[bin]]
+name = "plotting_resvg"
+path = "src/bin/plotting_resvg.rs"
+
+[[bin]]
 name = "plotting_pathfinder"
 path = "src/bin/plotting_pathfinder.rs"
 

@@ -1,4 +1,5 @@
 rm -rf /home/simbleau/git/vgpu-bench/output*
+mkdir /home/simbleau/git/vgpu-bench/output_cache
 
 cd /home/simbleau/git/vgpu-bench
 cargo build --release
@@ -8,13 +9,13 @@ for filename in ./assets/svg/examples/*.svg; do
 	cat ./output/measurements.csv >> ./output/measurements_total.csv
 done
 mv -f ./output/measurements_total.csv ./output/measurements.csv
-python3 src/models/plotting/py/numeric_line.py
-mv output output_pathfinder
+python3 src/models/plotting/py/numeric_line.py "Pathfinder"
+mv output output_cache/pathfinder
 
-cargo run --release --example plotting_naive
-python3 src/models/plotting/py/numeric_line.py
-mv output output_naive
+./target/release/plotting_renderkit
+python3 src/models/plotting/py/numeric_line.py "Render-Kit"
+mv output output_cache/renderkit
 
-cargo run --release --example plotting_resvg
-python3 src/models/plotting/py/numeric_line.py
-mv output output_resvg
+./target/release/plotting_resvg
+python3 src/models/plotting/py/numeric_line.py "Resvg"
+mv output output_cache/resvg

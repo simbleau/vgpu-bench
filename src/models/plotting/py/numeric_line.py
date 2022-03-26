@@ -1,7 +1,9 @@
+import sys
 import util
 import matplotlib.pyplot as plt
 import numpy as np
 
+title_arg = sys.argv[1]
 
 def plot(df, x_col, y_col, title, x_label, y_label, plot_by=None, show_stats=False, show_stats_table=False):
 
@@ -15,10 +17,8 @@ def plot(df, x_col, y_col, title, x_label, y_label, plot_by=None, show_stats=Fal
         fig, p_ax = plt.subplots()
     fig.suptitle(title, fontweight="bold")
 
-    p_ax.axis('equal')
     p_ax.set_xlabel(x_label)
     p_ax.set_ylabel(y_label)
-    plt.tight_layout()
 
     if df.empty:
         return fig
@@ -41,6 +41,11 @@ def plot(df, x_col, y_col, title, x_label, y_label, plot_by=None, show_stats=Fal
             print(f"plot item: {plot_item}")#\nx: {x_values}\ny: {xy_values}")
             p_ax.plot(x_values, xy_values, label=plot_item,
                       linewidth=3)
+            x1,x2,y1,y2 = plt.axis()
+            if np.amin(xy_values) < y1:
+                p_ax.axis((x1,x2,np.amin(xy_values),y2))
+            if np.amax(xy_values) > y2:
+                p_ax.axis((x1,x2,y1,np.amax(xy_values)))
     else:
         rows = df
         x_values = rows[x_col].unique()
@@ -79,6 +84,7 @@ def plot(df, x_col, y_col, title, x_label, y_label, plot_by=None, show_stats=Fal
             loc='center',
         )
 
+    p_ax.margins(.05, .05, tight=True)
     p_ax.legend(loc='best')
     return fig
 
@@ -93,8 +99,9 @@ if __name__ == "__main__":
     print(df)
     show_stats = True
     show_stats_table = False
-    plot = plot(df, columns[1], columns[2], "Rendering Frame-times by SVG",
-                "Frame", "Time (ms)", plot_by=columns[0], show_stats=True, show_stats_table=True)
+    plot = plot(df, columns[1], columns[2], f"{title_arg} Frametime, by SVG",
+                "Frame", "Time (ms)", plot_by=columns[0], show_stats=False, show_stats_table=False)
+    plt.grid(True, axis='y')
     #plt.autoscale(enable=True, axis='both', tight=True)
-    util.save("/home/simbleau/git/vgpu-bench/output", "plot", "png")
+    util.save("/home/simbleau/git/vgpu-bench/output", "plot", "svg")
     #util.show(plot)
