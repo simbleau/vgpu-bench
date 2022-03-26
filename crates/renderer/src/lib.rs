@@ -8,7 +8,6 @@ mod error;
 pub use error::{ExternalRendererError, RendererError, Result};
 
 pub mod artifacts;
-pub mod ffi;
 pub mod targets;
 
 mod renderer;
