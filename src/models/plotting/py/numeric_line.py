@@ -100,7 +100,7 @@ if __name__ == "__main__":
     show_stats = True
     show_stats_table = False
     plot = plot(df, columns[1], columns[2], f"{title_arg} Frametime, by SVG",
-                "Frame", "Time (ms)", plot_by=columns[0], show_stats=False, show_stats_table=False)
+                "Frame", "Time (ms)", plot_by=None, show_stats=True, show_stats_table=True)
     plt.grid(True, axis='y')
     #plt.autoscale(enable=True, axis='both', tight=True)
     util.save("/home/simbleau/git/vgpu-bench/output", "plot", "svg")

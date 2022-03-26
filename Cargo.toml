@@ -17,6 +17,10 @@ exclude = [
 ]
 
 [[bin]]
+name = "renderkit"
+path = "src/bin/renderkit.rs"
+
+[[bin]]
 name = "plotting_renderkit"
 path = "src/bin/plotting_renderkit.rs"
 
