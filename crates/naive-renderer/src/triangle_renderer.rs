@@ -93,6 +93,7 @@ impl TriangleRenderer {
                         let dur = Instant::now().duration_since(t1);
                         if dur.as_millis() < 50 && still_weird {
                             nvtx::range_pop();
+                            still_weird = false;
                         }
                     }
                     Err(wgpu::SurfaceError::Lost) => state.resize(state.size),
