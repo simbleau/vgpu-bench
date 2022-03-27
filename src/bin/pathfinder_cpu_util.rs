@@ -67,7 +67,7 @@ pub fn main() -> Result<()> {
                 let mut renderer = Box::new(PathfinderImpl::new(file));
                 renderer.init().unwrap();
                 renderer.stage(&d).unwrap();
-                renderer.render(20).unwrap();
+                renderer.render(10000).unwrap();
                 drop(renderer);
                 log::set_max_level(prev_level);
             }
