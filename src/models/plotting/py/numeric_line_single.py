@@ -4,6 +4,7 @@ import matplotlib.pyplot as plt
 import numpy as np
 
 title_arg = sys.argv[1]
+file_arg = sys.argv[2]
 
 def plot(df, x_col, y_col, title, x_label, y_label, plot_by=None, show_stats=False, show_stats_table=False):
 
@@ -97,10 +98,10 @@ if __name__ == "__main__":
 
     df = util.dataframe(columns, rows, sort=True, by=columns[1], ascending=True)
     print(df)
-    show_stats = False
-    show_stats_table = False
-    plot = plot(df, columns[1], columns[2], f"{title_arg} Frametime, by SVG",
-                "Frame", "Time (ms)", plot_by=columns[0], show_stats=show_stats, show_stats_table=show_stats_table)
+    show_stats = True
+    show_stats_table = True
+    plot = plot(df, columns[1], columns[2], f"{title_arg} Frametimes, {file_arg}",
+                "Frame", "Time (ms)", plot_by=None, show_stats=show_stats, show_stats_table=show_stats_table)
     plt.grid(True, axis='y')
     #plt.autoscale(enable=True, axis='both', tight=True)
     util.save("/home/simbleau/git/vgpu-bench/output", "plot", "svg")
