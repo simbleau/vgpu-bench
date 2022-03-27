@@ -101,7 +101,6 @@ pub fn main() -> Result<()> {
     let bm_fn = move |_files| {
         let files: Vec<PathBuf> = _files;
         println!("{files:?}");
-        let mut measurements: Measurements<RenderTime> = Measurements::new();
         // Benchmarking
         for file in files.iter() {
             let f = SVGFile::from(file);
@@ -112,7 +111,7 @@ pub fn main() -> Result<()> {
                 let mut renderer = Box::new(Resvg::new());
                 renderer.init().unwrap();
                 renderer.stage(&d).unwrap();
-                let results = renderer.render(500).unwrap().frame_times.clone();
+                renderer.render(500).unwrap();
                 drop(renderer);
                 log::set_max_level(prev_level);
             }

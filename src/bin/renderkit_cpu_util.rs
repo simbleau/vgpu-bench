@@ -23,7 +23,6 @@ pub fn main() -> Result<()> {
     let bm_fn = move |_files| {
         let files: Vec<PathBuf> = _files;
         println!("{files:?}");
-        let mut measurements: Measurements<RenderTime> = Measurements::new();
         // Benchmarking
         for file in files.iter() {
             info!("Loading file...");
