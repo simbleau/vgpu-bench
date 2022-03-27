@@ -25,12 +25,24 @@ name = "plotting_renderkit"
 path = "src/bin/plotting_renderkit.rs"
 
 [[bin]]
+name = "plotting_renderkit_cpu_util"
+path = "src/bin/plotting_renderkit_cpu_util.rs"
+
+[[bin]]
+name = "plotting_resvg"
+path = "src/bin/plotting_resvg.rs"
+
+[[bin]]
 name = "plotting_resvg"
 path = "src/bin/plotting_resvg.rs"
 
 [[bin]]
 name = "plotting_pathfinder"
 path = "src/bin/plotting_pathfinder.rs"
+
+[[bin]]
+name = "plotting_pathfinder_cpu_util"
+path = "src/bin/plotting_pathfinder_cpu_util.rs"
 
 [lib]
 name = "vgpu_bench"
