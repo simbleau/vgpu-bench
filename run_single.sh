@@ -15,5 +15,5 @@ python3 src/models/plotting/py/numeric_line_single.py "Render-Kit" "$2"
 mv output output_cache/renderkit
 
 ./target/release/plotting_resvg
-python3 src/models/plotting/py/numeric_line.py "Resvg" "$2"
+python3 src/models/plotting/py/numeric_line_single.py "Resvg" "$2"
 mv output output_cache/resvg
