@@ -36,6 +36,10 @@ path = "src/bin/renderkit_cpu_util.rs"
 name = "plotting_resvg"
 path = "src/bin/plotting_resvg.rs"
 
+[[bin]]
+name = "resvg_cpu_util"
+path = "src/bin/resvg_cpu_util.rs"
+
 
 ## PATHFINDER
 
