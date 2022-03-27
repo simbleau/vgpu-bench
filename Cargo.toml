@@ -16,6 +16,8 @@ exclude = [
     "tools/",
 ]
 
+## RENDERKIT
+
 [[bin]]
 name = "renderkit"
 path = "src/bin/renderkit.rs"
@@ -28,13 +30,14 @@ path = "src/bin/plotting_renderkit.rs"
 name = "plotting_renderkit_cpu_util"
 path = "src/bin/plotting_renderkit_cpu_util.rs"
 
-[[bin]]
-name = "plotting_resvg"
-path = "src/bin/plotting_resvg.rs"
+## RESVG
 
 [[bin]]
 name = "plotting_resvg"
 path = "src/bin/plotting_resvg.rs"
+
+
+## PATHFINDER
 
 [[bin]]
 name = "plotting_pathfinder"
