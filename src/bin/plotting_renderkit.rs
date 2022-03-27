@@ -25,7 +25,7 @@ pub fn main() -> Result<()> {
         for file in files.iter() {
             let f = SVGFile::from(file);
             let d = SVGDocument::try_from(f).unwrap();
-            for _ in 0..10 {
+            for _ in 0..1 {
                 let prev_level = log::max_level();
                 log::set_max_level(log::LevelFilter::Off);
                 let mut renderer = Box::new(NaiveRenderer::new());
