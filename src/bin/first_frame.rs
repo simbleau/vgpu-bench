@@ -130,7 +130,7 @@ pub fn main() -> Result<()> {
     // Init logging
     vgpu_bench::util::logging::init_default();
 
-    let bm_fn = move |_renderer, _file| {
+    let bm_fn = move |_name, _renderer, _file| {
         let file: PathBuf = _file;
         let mut renderer: Box<dyn Renderer> = _renderer;
         println!("{file:?}");
@@ -164,20 +164,19 @@ pub fn main() -> Result<()> {
 
     let args: Vec<_> = env::args().collect();
     let file = PathBuf::from(args[1].to_owned());
-    let renderers: Vec<Box<dyn Renderer>> = vec![
-        Box::new(Resvg::new()),
-        Box::new(PathfinderImpl::new(file.clone())),
-        Box::new(NaiveRenderer::new()),
+    let renderers: Vec<(&'static str, Box<dyn Renderer>)> = vec![
+        ("Resvg", Box::new(Resvg::new())),
+        ("Pathfinder", Box::new(PathfinderImpl::new(file.clone()))),
+        ("Render-Kit", Box::new(NaiveRenderer::new())),
     ];
 
-    let mut driver_builder = Driver::builder();
-    for r in renderers {
+    for (r_name, r) in renderers {
         let f_copy = file.clone();
-        let bm_fn = BenchmarkFn::new(move || bm_fn(r, f_copy));
-        let bm_ = Benchmark::from(bm_fn);
-        driver_builder = driver_builder.add(bm_);
+        let bm_fn = BenchmarkFn::new(move || bm_fn(r_name, r, f_copy));
+        let mut bm_ = Benchmark::from(bm_fn);
+        let bundle1 = bm_.run(&DriverOptions::default()).unwrap();
+        bundle1.write(format!("output/{r_name}")).unwrap();
     }
-    driver_builder.build().run().unwrap();
 
     Ok(())
 }
