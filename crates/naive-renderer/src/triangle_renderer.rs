@@ -92,8 +92,9 @@ impl TriangleRenderer {
                     Ok(_) => {
                         let now = Instant::now();
                         let dur = now.duration_since(t1);
+                        println!("{:?}", dur);
                         t1 = now;
-                        if dur.as_millis() < 50 && still_weird {
+                        if dur.as_millis() < 2000 && still_weird {
                             nvtx::range_pop();
                             still_weird = false;
                         }

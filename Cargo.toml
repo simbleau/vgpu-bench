@@ -44,8 +44,8 @@ name = "plotting_pathfinder"
 path = "src/bin/plotting_pathfinder.rs"
 
 [[bin]]
-name = "plotting_pathfinder_cpu_util"
-path = "src/bin/plotting_pathfinder_cpu_util.rs"
+name = "pathfinder_cpu_util"
+path = "src/bin/pathfinder_cpu_util.rs"
 
 [lib]
 name = "vgpu_bench"

@@ -111,7 +111,7 @@ pub fn main() -> Result<()> {
                 let mut renderer = Box::new(Resvg::new());
                 renderer.init().unwrap();
                 renderer.stage(&d).unwrap();
-                renderer.render(500).unwrap();
+                renderer.render(20).unwrap();
                 drop(renderer);
                 log::set_max_level(prev_level);
             }
