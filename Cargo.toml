@@ -16,6 +16,12 @@ exclude = [
     "tools/",
 ]
 
+## FIRST FRAME
+
+[[bin]]
+name = "first_frame"
+path = "src/bin/first_frame.rs"
+
 ## RENDERKIT
 
 [[bin]]
@@ -50,6 +56,8 @@ path = "src/bin/plotting_pathfinder.rs"
 [[bin]]
 name = "pathfinder_cpu_util"
 path = "src/bin/pathfinder_cpu_util.rs"
+
+## LIB
 
 [lib]
 name = "vgpu_bench"
