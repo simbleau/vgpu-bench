@@ -28,7 +28,7 @@ path = "src/bin/plotting_renderkit.rs"
 
 [[bin]]
 name = "plotting_renderkit_cpu_util"
-path = "src/bin/plotting_renderkit_cpu_util.rs"
+path = "src/bin/renderkit_cpu_util.rs"
 
 ## RESVG
 
