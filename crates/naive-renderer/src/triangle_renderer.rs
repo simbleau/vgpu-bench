@@ -54,7 +54,7 @@ impl TriangleRenderer {
         data: TessellationData,
     ) -> Result<()> {
         let event_loop_thread: EventLoop<()> =
-            winit::platform::windows::EventLoopExtWindows::new_any_thread();
+            winit::platform::unix::EventLoopExtUnix::new_any_thread();
         let window = WindowBuilder::new().build(&event_loop_thread)?;
         window.set_resizable(true);
         window.set_title("Render-Kit");
@@ -90,7 +90,9 @@ impl TriangleRenderer {
             event_loop.run_return(move |event, _, control_flow| match event {
                 Event::RedrawRequested(_) => match state.render() {
                     Ok(_) => {
-                        let dur = Instant::now().duration_since(t1);
+                        let now = Instant::now();
+                        let dur = now.duration_since(t1);
+                        t1 = now;
                         if dur.as_millis() < 50 && still_weird {
                             nvtx::range_pop();
                             still_weird = false;
