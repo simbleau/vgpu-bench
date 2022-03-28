@@ -51,14 +51,6 @@ impl Renderer for Resvg {
         self.rtree = Some(
             usvg::Tree::from_data(&self.svg_data, &self.opt.to_ref()).unwrap(),
         );
-        self.pixmap_size = Some(
-            self.rtree
-                .as_ref()
-                .unwrap()
-                .svg_node()
-                .size
-                .to_screen_size(),
-        );
 
         Ok(())
     }
@@ -67,10 +59,7 @@ impl Renderer for Resvg {
         &mut self,
         frames: usize,
     ) -> renderer::Result<renderer::artifacts::RenderTimeResult> {
-        let pixmap_size = self.pixmap_size.unwrap();
-        let mut pixmap =
-            tiny_skia::Pixmap::new(pixmap_size.width(), pixmap_size.height())
-                .unwrap();
+        let mut pixmap = tiny_skia::Pixmap::new(800, 800).unwrap();
 
         let mut frame_times: Vec<Duration> = Vec::new();
         for _ in 0..frames {
