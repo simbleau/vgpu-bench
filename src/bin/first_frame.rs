@@ -5,6 +5,7 @@ use renderer::artifacts::RenderTimeResult;
 use renderer::targets::{SVGDocument, SVGFile};
 use renderer::Renderer;
 use std::env;
+use std::ops::Add;
 use std::path::PathBuf;
 use std::time::{Duration, Instant};
 use usvg::ScreenSize;
@@ -142,7 +143,9 @@ pub fn main() -> Result<()> {
         let prev_level = log::max_level();
         log::set_max_level(log::LevelFilter::Off);
         renderer.init().unwrap();
+        let start = Instant::now();
         renderer.stage(&d).unwrap();
+        let dur = Instant::now().duration_since(start);
         let results = renderer.render(1).unwrap().frame_times.clone();
         drop(renderer);
         log::set_max_level(prev_level);
@@ -155,7 +158,7 @@ pub fn main() -> Result<()> {
                     .to_str()
                     .unwrap()
                     .to_string(),
-                time_ns: results.get(frame).unwrap().as_nanos(),
+                time_ns: (results.get(frame).unwrap().add(dur)).as_nanos(),
             })
         }
 
