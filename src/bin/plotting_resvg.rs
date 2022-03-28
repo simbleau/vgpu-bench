@@ -3,6 +3,7 @@ use naive_renderer::NaiveRenderer;
 use renderer::artifacts::RenderTimeResult;
 use renderer::targets::{SVGDocument, SVGFile};
 use renderer::Renderer;
+use std::env;
 use std::path::PathBuf;
 use std::time::{Duration, Instant};
 use usvg::ScreenSize;
@@ -131,11 +132,15 @@ pub fn main() -> Result<()> {
         Ok(measurements)
     };
 
-    let files = vgpu_bench::util::io::get_files_with_extension(
-        "assets/svg/examples",
-        false,
-        "svg",
-    );
+    let args: Vec<_> = env::args().collect();
+    let files = match args.get(0) {
+        Some(arg1) => vec![PathBuf::from(arg1)],
+        None => vgpu_bench::util::io::get_files_with_extension(
+            "assets/svg/examples",
+            false,
+            "svg",
+        ),
+    };
     let bm_fn = BenchmarkFn::new(move || bm_fn(files));
     let mut bm_ = Benchmark::from(bm_fn);
     let bundle1 = bm_.run(&DriverOptions::default()).unwrap();
