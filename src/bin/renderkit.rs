@@ -3,6 +3,7 @@ use log::info;
 use naive_renderer::NaiveRenderer;
 use naive_renderer::TriangleRenderer;
 use renderer::targets::{SVGDocument, SVGFile};
+use std::env;
 use std::path::PathBuf;
 use tessellation_util::backends::LyonTessellator;
 use vgpu_bench::macros::measurement;
@@ -54,7 +55,8 @@ pub fn main() -> Result<()> {
         Ok(measurements)
     };
 
-    let files = vec![PathBuf::from("assets/svg/examples/København_512.svg")];
+    let args: Vec<_> = env::args().collect();
+    let files = vec![PathBuf::from(args.get(1).unwrap())];
     let bm_fn = BenchmarkFn::new(move || bm_fn(files));
     let mut bm_ = Benchmark::new(BenchmarkMetadata::new("Renderkit"), bm_fn);
     bm_.run(&DriverOptions::default()).unwrap();

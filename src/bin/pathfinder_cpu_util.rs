@@ -78,8 +78,7 @@ pub fn main() -> Result<()> {
     };
 
     let args: Vec<_> = env::args().collect();
-    let file = PathBuf::from(args[1].to_owned());
-    let files = vec![file];
+    let files = vec![PathBuf::from(args.get(1).unwrap())];
     let bm_fn = BenchmarkFn::new(move || bm_fn(files));
     let mut bm_ = Benchmark::from(bm_fn).monitor(CpuUtilizationMonitor {
         name: "cpu_util",

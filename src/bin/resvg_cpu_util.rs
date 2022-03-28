@@ -3,6 +3,7 @@ use naive_renderer::NaiveRenderer;
 use renderer::artifacts::RenderTimeResult;
 use renderer::targets::{SVGDocument, SVGFile};
 use renderer::Renderer;
+use std::env;
 use std::path::PathBuf;
 use std::time::{Duration, Instant};
 use usvg::ScreenSize;
@@ -50,6 +51,14 @@ impl Renderer for Resvg {
         self.svg_data = data;
         self.rtree = Some(
             usvg::Tree::from_data(&self.svg_data, &self.opt.to_ref()).unwrap(),
+        );
+        self.pixmap_size = Some(
+            self.rtree
+                .as_ref()
+                .unwrap()
+                .svg_node()
+                .size
+                .to_screen_size(),
         );
 
         Ok(())
@@ -106,7 +115,8 @@ pub fn main() -> Result<()> {
         Ok(Measurements::<RenderTime>::new())
     };
 
-    let files = vec![PathBuf::from("assets/svg/examples/København_512.svg")];
+    let args: Vec<_> = env::args().collect();
+    let files = vec![PathBuf::from(args.get(1).unwrap())];
     let bm_fn = BenchmarkFn::new(move || bm_fn(files));
     let mut bm_ = Benchmark::from(bm_fn).monitor(CpuUtilizationMonitor {
         name: "cpu_util",

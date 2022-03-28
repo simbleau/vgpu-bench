@@ -5,7 +5,6 @@ use renderer::artifacts::RenderTimeResult;
 use renderer::targets::{SVGDocument, SVGFile};
 use renderer::Renderer;
 use std::env;
-use std::ops::Index;
 use std::path::PathBuf;
 use vgpu_bench::macros::measurement;
 use vgpu_bench::prelude::*;
@@ -90,7 +89,7 @@ pub fn main() -> Result<()> {
     };
 
     let args: Vec<_> = env::args().collect();
-    let files = match args.get(0) {
+    let files = match args.get(1) {
         Some(arg1) => vec![PathBuf::from(arg1)],
         None => vgpu_bench::util::io::get_files_with_extension(
             "assets/svg/examples",

@@ -166,15 +166,18 @@ pub fn main() -> Result<()> {
     };
 
     let args: Vec<_> = env::args().collect();
-    let file = PathBuf::from(args[1].to_owned());
+    let files = vec![PathBuf::from(args.get(1).unwrap())];
     let renderers: Vec<(&'static str, Box<dyn Renderer>)> = vec![
         ("Resvg", Box::new(Resvg::new())),
-        ("Pathfinder", Box::new(PathfinderImpl::new(file.clone()))),
+        (
+            "Pathfinder",
+            Box::new(PathfinderImpl::new(files[0].clone())),
+        ),
         ("Render-Kit", Box::new(NaiveRenderer::new())),
     ];
 
     for (r_name, r) in renderers {
-        let f_copy = file.clone();
+        let f_copy = files[0].clone();
         let bm_fn = BenchmarkFn::new(move || bm_fn(r_name, r, f_copy));
         let mut bm_ = Benchmark::from(bm_fn);
         let bundle1 = bm_.run(&DriverOptions::default()).unwrap();

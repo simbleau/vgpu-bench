@@ -67,10 +67,7 @@ impl Renderer for Resvg {
         &mut self,
         frames: usize,
     ) -> renderer::Result<renderer::artifacts::RenderTimeResult> {
-        let pixmap_size = self.pixmap_size.unwrap();
-        let mut pixmap =
-            tiny_skia::Pixmap::new(pixmap_size.width(), pixmap_size.height())
-                .unwrap();
+        let mut pixmap = tiny_skia::Pixmap::new(800, 800).unwrap();
 
         let mut frame_times: Vec<Duration> = Vec::new();
         for _ in 0..frames {
@@ -133,7 +130,7 @@ pub fn main() -> Result<()> {
     };
 
     let args: Vec<_> = env::args().collect();
-    let files = match args.get(0) {
+    let files = match args.get(1) {
         Some(arg1) => vec![PathBuf::from(arg1)],
         None => vgpu_bench::util::io::get_files_with_extension(
             "assets/svg/examples",
