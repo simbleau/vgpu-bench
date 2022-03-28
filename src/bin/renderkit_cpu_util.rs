@@ -56,7 +56,6 @@ pub fn main() -> Result<()> {
     };
 
     let files = vec![PathBuf::from("assets/svg/examples/København_512.svg")];
-    let files = vec![PathBuf::from("C:\\Users\\sterc\\OneDrive\\Desktop\\Spencer_thesis\\vgpu-bench\\assets\\svg\\complex\\Kobenhavn_512.svg")];
     let bm_fn = BenchmarkFn::new(move || bm_fn(files));
     let mut bm_ = Benchmark::new(BenchmarkMetadata::new("Renderkit"), bm_fn)
         .monitor(CpuUtilizationMonitor {
