@@ -14,9 +14,8 @@ use vgpu_bench::prelude::*;
 
 #[measurement]
 struct FirstFrameTime {
-    renderer: String,
     filename: String,
-    time_ns: u128,
+    time: String,
 }
 struct Resvg {
     opt: usvg::Options,
@@ -150,14 +149,14 @@ pub fn main() -> Result<()> {
 
         for frame in 0..results.len() {
             measurements.push(FirstFrameTime {
-                renderer: _name.to_string(),
                 filename: file
                     .file_name()
                     .unwrap()
                     .to_str()
                     .unwrap()
                     .to_string(),
-                time_ns: (results.get(frame).unwrap().add(dur)).as_nanos(),
+                time: format!("{:?}", (results.get(frame).unwrap().add(dur)))
+                    .to_string(),
             })
         }
 
