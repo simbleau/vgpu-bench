@@ -14,6 +14,7 @@ use vgpu_bench::prelude::*;
 
 #[measurement]
 struct FirstFrameTime {
+    renderer: String,
     filename: String,
     time_ns: u128,
 }
@@ -67,10 +68,7 @@ impl Renderer for Resvg {
         &mut self,
         frames: usize,
     ) -> renderer::Result<renderer::artifacts::RenderTimeResult> {
-        let pixmap_size = self.pixmap_size.unwrap();
-        let mut pixmap =
-            tiny_skia::Pixmap::new(pixmap_size.width(), pixmap_size.height())
-                .unwrap();
+        let mut pixmap = tiny_skia::Pixmap::new(800, 800).unwrap();
 
         let mut frame_times: Vec<Duration> = Vec::new();
         for _ in 0..frames {
@@ -131,7 +129,7 @@ pub fn main() -> Result<()> {
     // Init logging
     vgpu_bench::util::logging::init_default();
 
-    let bm_fn = move |_name, _renderer, _file| {
+    let bm_fn = move |_name: &str, _renderer, _file| {
         let file: PathBuf = _file;
         let mut renderer: Box<dyn Renderer> = _renderer;
         println!("{file:?}");
@@ -152,6 +150,7 @@ pub fn main() -> Result<()> {
 
         for frame in 0..results.len() {
             measurements.push(FirstFrameTime {
+                renderer: _name.to_string(),
                 filename: file
                     .file_name()
                     .unwrap()
