@@ -1,5 +1,5 @@
 mod lyon_tessellator;
-use crate::artifacts::{TessellationData, TessellationProfile};
+use crate::artifacts::{PathProfile, TessellationData, TessellationProfile};
 pub use lyon_tessellator::LyonTessellator;
 use renderer::targets::SVGDocument;
 
@@ -9,6 +9,9 @@ pub trait Tessellator {
     fn get_tessellation_profile(
         &self,
     ) -> Result<TessellationProfile, Box<dyn std::error::Error + Send + Sync>>;
+    fn get_tessellation_path_profile(
+        &self,
+    ) -> Result<PathProfile, Box<dyn std::error::Error + Send + Sync>>;
     fn get_tessellation_data(
         &self,
     ) -> Result<TessellationData, Box<dyn std::error::Error + Send + Sync>>;

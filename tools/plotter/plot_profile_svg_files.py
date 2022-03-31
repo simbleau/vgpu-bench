@@ -14,7 +14,7 @@ if len(sys.argv) != 4:
 INPUT_CSV = sys.argv[1]
 OUTPUT_DIR = sys.argv[2]
 OUTPUT_NAME = sys.argv[3]
-OUTPUT_TYPE = "png"
+OUTPUT_TYPE = "svg"
 
 # Get Data
 data = pd.read_csv(INPUT_CSV)

@@ -1,4 +1,4 @@
-use crate::artifacts::{TessellationData, TessellationProfile};
+use crate::artifacts::{PathProfile, TessellationData, TessellationProfile};
 use crate::backends::Tessellator;
 use lyon::lyon_tessellation::{
     BuffersBuilder, FillVertexConstructor, StrokeVertexConstructor,
@@ -15,7 +15,7 @@ use renderer::artifacts::types::{
 use renderer::targets::SVGDocument;
 use std::error::Error;
 use std::f64::NAN;
-use usvg::{NodeExt, Tree, ViewBox};
+use usvg::{Node, NodeExt, NodeKind, Tree, ViewBox};
 
 const TOLERANCE: f32 = 0.1;
 
@@ -40,6 +40,26 @@ impl LyonTessellator {
     pub fn new() -> LyonTessellator {
         Self { state: None }
     }
+
+    pub fn recurse_children(parent: &Node) -> u32 {
+        let mut count = 0;
+        for n in parent.children() {
+            count += LyonTessellator::count_children(&n);
+        }
+        count
+    }
+
+    pub fn count_children(node: &Node) -> u32 {
+        let mut count = 0;
+        match *node.borrow() {
+            NodeKind::Path(ref p) => {
+                count += p.data.len() as u32;
+            }
+            _ => {}
+        }
+        count += LyonTessellator::recurse_children(node);
+        count
+    }
 }
 
 impl Tessellator for LyonTessellator {
@@ -56,6 +76,18 @@ impl Tessellator for LyonTessellator {
 
         let state = LyonState { rtree, view_box };
         self.state = Some(state);
+    }
+
+    fn get_tessellation_path_profile(
+        &self,
+    ) -> Result<
+        crate::artifacts::PathProfile,
+        Box<dyn std::error::Error + Send + Sync>,
+    > {
+        let rtree = &self.state.as_ref().unwrap().rtree;
+        let root = rtree.root();
+        let count = LyonTessellator::recurse_children(&root);
+        Ok(PathProfile { paths: count })
     }
 
     fn get_tessellation_profile(

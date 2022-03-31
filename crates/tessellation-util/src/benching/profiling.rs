@@ -6,7 +6,7 @@ use renderer::targets::{SVGDocument, SVGFile};
 use std::path::PathBuf;
 use svg_gen::Primitive;
 
-use super::output::SVGPrimitiveProfile;
+use super::output::{SVGFilePathProfile, SVGPrimitiveProfile};
 
 pub fn get_file_profile<P: Into<PathBuf>>(
     backend: &mut dyn Tessellator,
@@ -25,6 +25,23 @@ pub fn get_file_profile<P: Into<PathBuf>>(
         vertices: profile.vertices,
         indices: profile.indices,
         triangles: profile.triangles,
+    })
+}
+
+pub fn get_file_path_profile<P: Into<PathBuf>>(
+    backend: &mut dyn Tessellator,
+    file_path: P,
+) -> Result<SVGFilePathProfile> {
+    let path: PathBuf = file_path.into();
+    let svg_file = SVGFile::from(&path);
+    let svg_doc = SVGDocument::from(svg_file);
+
+    backend.init(&svg_doc);
+    let profile = backend.get_tessellation_path_profile()?;
+
+    Ok(SVGFilePathProfile {
+        filename: path.display().to_string(),
+        paths: profile.paths,
     })
 }
 

@@ -8,24 +8,24 @@ use log::{debug, info, trace, warn};
 use std::path::PathBuf;
 use svg_generator::Primitive;
 use tessellation_util::{
-    backends::Tessellator, benching::output::SVGPrimitiveProfile,
+    backends::Tessellator, benching::output::SVGTessellationTime,
 };
 
 #[derive(Debug, BenchmarkData)]
-pub struct ProfileSVGPrimitives {
+pub struct TimeSVGFileTessellation {
     backends: Vec<Box<dyn Tessellator>>,
-    primitives: Vec<Primitive>,
-    primitive_counts: Vec<u32>,
+    assets: Vec<PathBuf>,
+    trials: u32,
     csv_output: Option<&'static str>,
     plot_output: Option<&'static str>,
 }
 
-impl ProfileSVGPrimitives {
+impl TimeSVGFileTessellation {
     pub fn new() -> Self {
-        ProfileSVGPrimitives {
+        TimeSVGFileTessellation {
             backends: Vec::new(),
-            primitives: Vec::new(),
-            primitive_counts: Vec::new(),
+            assets: Vec::new(),
+            trials: 0,
             csv_output: None,
             plot_output: None,
         }
@@ -36,29 +36,26 @@ impl ProfileSVGPrimitives {
         self
     }
 
-    pub fn primitive(mut self, primitive: Primitive) -> Self {
-        self.primitives.push(primitive);
-        self
-    }
-
-    pub fn primitives<I>(mut self, primitives: I) -> Self
+    pub fn asset<P>(mut self, path: P) -> Self
     where
-        I: IntoIterator<Item = Primitive>,
+        P: Into<PathBuf>,
     {
-        self.primitives.extend(primitives);
+        self.assets.push(path.into());
         self
     }
 
-    pub fn primitive_count(mut self, primitive_count: u32) -> Self {
-        self.primitive_counts.push(primitive_count);
-        self
-    }
-
-    pub fn primitives_counts<I>(mut self, primitive_counts: I) -> Self
+    pub fn assets<I>(mut self, assets: I) -> Self
     where
-        I: IntoIterator<Item = u32>,
+        I: IntoIterator,
+        I::Item: Into<PathBuf>,
     {
-        self.primitive_counts.extend(primitive_counts);
+        self.assets
+            .extend(assets.into_iter().map(|path| path.into()));
+        self
+    }
+
+    pub fn trials(mut self, trials: u32) -> Self {
+        self.trials = trials;
         self
     }
 
@@ -73,7 +70,7 @@ impl ProfileSVGPrimitives {
     }
 }
 
-impl BenchmarkBuilder for ProfileSVGPrimitives {
+impl BenchmarkBuilder for TimeSVGFileTessellation {
     fn build(self: Box<Self>) -> Result<BenchmarkFn> {
         // Input check
         if let Some(path) = self.csv_output {
@@ -96,29 +93,25 @@ impl BenchmarkBuilder for ProfileSVGPrimitives {
                 "you cannot save a plot without an output path set"
             )
         }
-        log_assert!(self.primitives.len() > 0, "no primitive were provided");
-        log_assert!(
-            self.primitive_counts.len() > 0,
-            "no primitive counts were provided"
-        );
+        log_assert!(self.assets.len() > 0, "no assets were provided");
+        log_assert!(self.trials > 0, "trials must be greater than 0");
         log_assert!(self.backends.len() > 0, "no backends were provided");
 
         // Write benchmark
         BenchmarkFn::from(move |options| {
-            trace!("commencing SVG primitive profiling");
+            trace!("commencing SVG file tessellation timing");
             debug!("options: {:?}", self);
 
             // Collect results
-            let mut results: Vec<SVGPrimitiveProfile> = Vec::new();
+            let mut results: Vec<SVGTessellationTime> = Vec::new();
             for mut backend in self.backends {
-                let backend: &mut dyn Tessellator = backend.as_mut();
-                for primitive_count in &self.primitive_counts {
-                    for primitive in &self.primitives {
-                        let result =
-                    tessellation_util::benching::profiling::get_primitive_profile(backend,
-                        *primitive, *primitive_count)?;
-                        results.push(result);
-                    }
+                let backend: &mut dyn Tessellator = backend.as_mut(); // Coerce & shadow
+                for file_path in &assets {
+                    results.push(
+                        tessellation_util::benching::tessellating::time_svg_file(
+                            backend, file_path,
+                        )?,
+                    );
                 }
             }
 
@@ -142,7 +135,7 @@ impl BenchmarkBuilder for ProfileSVGPrimitives {
                 let _proc_output = util::call_program(
                     "python3",
                     [
-                        "tools/plotter/plot_path_profile_svg_primitives.py",
+                        "tools/plotter/plot_tessellation_time_svg_files.py",
                         csv_path.to_str().unwrap(),
                         options.benchmark_dir().to_str().unwrap(),
                         plot_output,
@@ -154,7 +147,7 @@ impl BenchmarkBuilder for ProfileSVGPrimitives {
                 );
             }
 
-            trace!("completed SVG primitive profiling");
+            trace!("completed SVG file tessellation timing");
             Ok(())
         })
     }

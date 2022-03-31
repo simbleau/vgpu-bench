@@ -10,6 +10,12 @@ pub struct SVGFileProfile {
 }
 
 #[derive(Debug, Serialize)]
+pub struct SVGFilePathProfile {
+    pub filename: String,
+    pub paths: u32,
+}
+
+#[derive(Debug, Serialize)]
 pub struct SVGPrimitiveProfile {
     pub tessellator: String,
     pub primitive: String,

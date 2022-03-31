@@ -22,12 +22,25 @@ name = "vgpu_bench"
 path = "src/lib.rs"
 
 [[bin]]
-name = "tessellation_driver"
-path = "src/bin/drivers/tessellation.rs"
+name = "path_profile_driver"
+path = "src/bin/drivers/path_profile.rs"
 
 [[bin]]
-name = "stress_test"
-path = "src/bin/drivers/stress_memory_test.rs"
+name = "tessellation_profile_driver"
+path = "src/bin/drivers/tessellation_profile.rs"
+
+
+[[bin]]
+name = "prim_tess_timing_reg"
+path = "src/bin/drivers/prim_timing_reg.rs"
+
+[[bin]]
+name = "prim_tess_timing"
+path = "src/bin/drivers/prim_timing.rs"
+
+[[bin]]
+name = "file_tess_timing"
+path = "src/bin/drivers/file_timing.rs"
 
 [[bin]]
 name = "naive_rendering_driver"

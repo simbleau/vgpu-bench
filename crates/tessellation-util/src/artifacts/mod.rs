@@ -10,6 +10,11 @@ pub struct TessellationProfile {
 }
 
 #[derive(Debug)]
+pub struct PathProfile {
+    pub paths: u32,
+}
+
+#[derive(Debug)]
 pub struct TessellationData {
     pub vertices: Vec<GpuVertex>,
     pub indices: Vec<u32>,

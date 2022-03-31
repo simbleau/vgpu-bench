@@ -3,14 +3,14 @@ use log::LevelFilter;
 use simplelog::{ColorChoice, Config, TermLogger, TerminalMode, WriteLogger};
 use std::path::Path;
 use vgpu_bench::{
-    benchmarks::tessellation::ProfileSVGFiles,
+    benchmarks::tessellation::PathProfileSVGFiles,
     driver::Driver,
     util::{self, create_or_append},
 };
 
 pub fn main() {
     // Get arguments
-    let matches = App::new("Tessellation Memory Test Benchmark Driver")
+    let matches = App::new("Tessellation Benchmark Driver")
         .version("1.0")
         .author("Spencer C. Imbleau <spencer@imbleau.com>")
         .arg(
@@ -56,8 +56,9 @@ pub fn main() {
             create_or_append(output_dir.join("trace.log")).unwrap(),
         ))
         .add(
-            ProfileSVGFiles::new()
-                .to_csv("stress_profiles")
+            PathProfileSVGFiles::new()
+                .to_csv("file_path_profiles")
+                .to_plot("file_path_profiles")
                 .backend(tessellation_util::backends::default())
                 .assets(util::get_files(input_dir, false)),
         )

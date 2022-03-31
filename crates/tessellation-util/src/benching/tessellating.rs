@@ -69,7 +69,7 @@ pub fn time_primitive(
     let svg = SVGDocument::from(svg_src);
 
     let mut results: Vec<PrimitiveTessellationTime> = Vec::new();
-    for _ in 0..trials {
+    for trial in 0..trials {
         // Time initialization
         let t1 = Instant::now();
         backend.init(&svg);
@@ -90,6 +90,14 @@ pub fn time_primitive(
             tess_time: dur2.as_nanos(),
         };
         results.push(result);
+
+        println!(
+            "{},{}: {}/{} complete",
+            primitive.name(),
+            primitive_count,
+            trial,
+            trials
+        )
     }
     Ok(results)
 }

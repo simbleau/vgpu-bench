@@ -11,14 +11,14 @@ if len(sys.argv) != 4:
 INPUT_CSV = sys.argv[1]
 OUTPUT_DIR = sys.argv[2]
 OUTPUT_NAME = sys.argv[3]
-OUTPUT_TYPE = "png"
+OUTPUT_TYPE = "svg"
 
 # Get data
 data = pd.read_csv(INPUT_CSV)
 # Add total time column
 data["total_time"] = data["init_time"] + data["tess_time"]
 # Sort by total time
-data = data.sort_values(by=["total_time"], ascending=False)
+data = data.sort_values(by=["amount"], ascending=True)
 # Filter rows
 primitives = data['primitive'].unique()
 
@@ -48,7 +48,7 @@ for primitive in primitives:
         tess_time_mean = amt_rows["tess_time"].mean()
         tess_time_std = amt_rows["tess_time"].std()
         # Append chart data
-        chart_labels.append(amount)
+        chart_labels.append(str(amount))
         chart_init_means.append(helper_methods.ns_to_ms(init_time_mean))
         chart_init_stds.append(helper_methods.ns_to_ms(init_time_std))
         chart_tess_means.append(helper_methods.ns_to_ms(tess_time_mean))
@@ -56,12 +56,13 @@ for primitive in primitives:
 
     # Plot data
     import numpy as np
-    bar1 = ax.bar(chart_labels, chart_init_means, width=25, yerr=chart_init_stds,
+    bar1 = ax.bar(chart_labels, chart_init_means,  yerr=chart_init_stds,
                   alpha=0.5, ecolor='black', capsize=3, label='Initialization')
-    bar2 = ax.bar(chart_labels, chart_tess_means, width=25, yerr=chart_tess_stds,
+    print(chart_tess_stds)
+    bar2 = ax.bar(chart_labels, chart_tess_means, yerr=chart_tess_stds,
                   alpha=0.5, ecolor='black', capsize=3, label='Tessellation', bottom=chart_init_means)
-    ax.bar_label(bar1, fmt='%0.0f', label_type='center')
-    ax.bar_label(bar2, fmt='%0.0f', label_type='center')
+    ax.bar_label(bar1, fmt='%.1f', label_type='center')
+    ax.bar_label(bar2, fmt='%.1f', label_type='center')
 
     # Dress plot
     plt.xticks(chart_labels, rotation='vertical')
