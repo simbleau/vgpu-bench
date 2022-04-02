@@ -53,8 +53,7 @@ impl TriangleRenderer {
         scene: SceneGlobals,
         data: TessellationData,
     ) -> Result<()> {
-        let event_loop_thread: EventLoop<()> =
-            winit::platform::unix::EventLoopExtUnix::new_any_thread();
+        let event_loop_thread = TriangleRenderer::get_event_loop();
         let window = WindowBuilder::new().build(&event_loop_thread)?;
         window.set_resizable(true);
         window.set_title("Render-Kit");
@@ -65,6 +64,16 @@ impl TriangleRenderer {
         self.state = Some(state);
 
         Ok(())
+    }
+
+    #[cfg(target_os = "windows")]
+    fn get_event_loop() -> EventLoop<()> {
+        winit::platform::windows::EventLoopExtWindows::new_any_thread()
+    }
+
+    #[cfg(target_os = "unix")]
+    fn get_event_loop() -> EventLoop<()> {
+        winit::platform::unix::EventLoopExtUnix::new_any_thread()
     }
 
     pub fn toggle_wireframe(&mut self) -> Result<()> {
