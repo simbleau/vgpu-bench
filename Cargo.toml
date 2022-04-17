@@ -55,7 +55,7 @@ walkdir = "2"
 csv = "1.1"
 log = "0.4"
 simplelog = { version = "0.11.2" }
-serde = "1.0.130"
+serde = "1.0.136"
 erased-serde = "0.3"
 chrono = "0.4.19"
 anyhow = "1.0.56"

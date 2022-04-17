@@ -21,7 +21,7 @@ tessellation_util = { package = "tessellation-util", path = "../tessellation-uti
 clap = "2.33.3"
 lyon = {version ="0.17.10", features = ["extra"]}
 usvg = "0.19.0"
-serde = { version = "1.0.130", features = ["derive"] }
+serde = { version = "1.0.136", features = ["derive"] }
 erased-serde = "0.3"
 walkdir = "2"
 csv = "1.1"
