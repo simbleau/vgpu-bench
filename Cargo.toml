@@ -58,7 +58,7 @@ simplelog = { version = "0.11.2" }
 serde = "1.0.130"
 erased-serde = "0.3"
 chrono = "0.4.19"
-anyhow = "1.0.45"
+anyhow = "1.0.56"
 thiserror = "1.0.30"
 
 [dev-dependencies]
