@@ -49,7 +49,7 @@ pyo3 = { version = "0.15.1", features = ["auto-initialize"]}
 crossbeam = "0.8"
 systemstat = "0.1.10"
 clap = "3.0.14"
-lyon = { version ="0.17.5", features = ["extra"] }
+lyon = { version ="0.17.10", features = ["extra"] }
 usvg = "0.21.0"
 walkdir = "2"
 csv = "1.1"
