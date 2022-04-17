@@ -17,7 +17,7 @@ svg-gen = { package = "svg-generator", path = "../svg-generator" }
 renderer = { package = "renderer", path = "../renderer" }
 
 clap = "2.33.3"
-lyon = {version ="0.17.5", features = ["extra"]}
+lyon = {version ="0.17.10", features = ["extra"]}
 usvg = "0.19.0"
 serde = { version = "1.0.130", features = ["derive"] }
 csv = "1.1"
