@@ -23,7 +23,7 @@ name = "svg-generator"
 path = "src/bin.rs"
 
 [dependencies]
-clap = "2.33.3"
+clap = "2.34.0"
 xmlwriter = "0.1.0"
 dynfmt = {version = "0.1.5", features = ["curly"]}
 

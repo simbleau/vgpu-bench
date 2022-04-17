@@ -18,7 +18,7 @@ renderer = { package = "renderer", path = "../renderer" }
 svg-generator = { package = "svg-generator", path = "../svg-generator" }
 tessellation_util = { package = "tessellation-util", path = "../tessellation-util" }
 
-clap = "2.33.3"
+clap = "2.34.0"
 lyon = {version ="0.17.10", features = ["extra"]}
 usvg = "0.22.0"
 serde = { version = "1.0.136", features = ["derive"] }
