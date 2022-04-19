@@ -2,26 +2,21 @@ use renderer::RendererError::RustLibraryError;
 use renderer::{
     artifacts::RenderTimeResult, targets::SVGDocument, Renderer, Result,
 };
-use tessellation_util::backends::{LyonTessellator, Tessellator};
-
-use crate::TriangleRenderer;
+use svg_tessellation_renderer::TriangleRenderer;
 
 // Wrapper
-pub struct NaiveRenderer {
+pub struct Renderer1 {
     renderer: TriangleRenderer,
-    backend: Box<dyn Tessellator>,
 }
 
-impl NaiveRenderer {
+impl Renderer1 {
     pub fn new() -> Self {
         let renderer = TriangleRenderer::new();
-        let backend = Box::new(LyonTessellator::new());
-
-        NaiveRenderer { renderer, backend }
+        Renderer1 { renderer }
     }
 }
 
-impl Renderer for NaiveRenderer {
+impl Renderer for Renderer1 {
     fn init(&mut self) -> Result<()> {
         Ok(()) // Renderer has no initialization
     }
@@ -29,7 +24,7 @@ impl Renderer for NaiveRenderer {
     fn stage(&mut self, svg: &SVGDocument) -> Result<()> {
         Ok(self
             .renderer
-            .init_with_svg(self.backend.as_mut(), svg)
+            .init_with_svg(svg.content())
             .map_err(|err| RustLibraryError(Box::new(err)))?)
     }
 
@@ -37,6 +32,7 @@ impl Renderer for NaiveRenderer {
         Ok(self
             .renderer
             .time(frames)
+            .map(|frame_times| RenderTimeResult { frame_times })
             .map_err(|err| RustLibraryError(Box::new(err)))?)
     }
 }

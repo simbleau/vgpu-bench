@@ -13,12 +13,11 @@ name = "rendering_util"
 path = "src/lib.rs"
 
 [dependencies]
-naive-renderer = { package = "naive-renderer", path = "../naive-renderer" }
+svg-tessellation-renderer = { git="https://github.com/kurbos/svg-tessellation-renderer" }
+svg-generator = { git="https://github.com/kurbos/svg-generator" }
 renderer = { package = "renderer", path = "../renderer" }
-svg-generator = { package = "svg-generator", path = "../svg-generator" }
-tessellation_util = { package = "tessellation-util", path = "../tessellation-util" }
 
-clap = "2.34.0"
+clap = "3.1.9"
 lyon = {version ="0.17.10", features = ["extra"]}
 usvg = "0.22.0"
 serde = { version = "1.0.136", features = ["derive"] }

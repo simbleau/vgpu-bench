@@ -7,8 +7,11 @@ pub use benchmark::*;
 mod monitor;
 pub use monitor::*;
 
-mod plotting;
-pub use plotting::*;
+mod plotter;
+pub use plotter::*;
+
+mod writer;
+pub use writer::*;
 
 mod data;
 pub use data::*;

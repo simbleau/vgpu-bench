@@ -13,10 +13,9 @@ name = "tessellation_util"
 path = "src/lib.rs"
 
 [dependencies]
-svg-gen = { package = "svg-generator", path = "../svg-generator" }
+svg-generator = { git="https://github.com/kurbos/svg-generator" }
 renderer = { package = "renderer", path = "../renderer" }
 
-clap = "2.34.0"
 lyon = {version ="0.17.10", features = ["extra"]}
 usvg = "0.22.0"
 serde = { version = "1.0.136", features = ["derive"] }

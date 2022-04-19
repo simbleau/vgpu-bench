@@ -7,7 +7,7 @@ use crate::backends::Tessellator;
 use renderer::targets::{SVGDocument, SVGFile};
 use std::path::PathBuf;
 use std::time::Instant;
-use svg_gen::Primitive;
+use svg_generator::Primitive;
 
 pub fn time_svg_file<P: Into<PathBuf>>(
     backend: Box<dyn Tessellator>,
@@ -65,7 +65,7 @@ pub fn time_primitive(
     primitive_count: u32,
     trials: u32,
 ) -> Result<Vec<PrimitiveTessellationTime>> {
-    let svg_src = svg_gen::generate_svg(primitive, primitive_count, true);
+    let svg_src = svg_generator::generate_svg(primitive, primitive_count, true);
     let svg = SVGDocument::from(svg_src);
 
     let mut results: Vec<PrimitiveTessellationTime> = Vec::new();

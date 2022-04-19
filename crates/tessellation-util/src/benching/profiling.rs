@@ -4,7 +4,7 @@ use crate::{
 };
 use renderer::targets::{SVGDocument, SVGFile};
 use std::path::PathBuf;
-use svg_gen::Primitive;
+use svg_generator::Primitive;
 
 use super::output::SVGPrimitiveProfile;
 
@@ -33,7 +33,7 @@ pub fn get_primitive_profile(
     primitive: Primitive,
     primitive_count: u32,
 ) -> Result<SVGPrimitiveProfile> {
-    let svg_src = svg_gen::generate_svg(primitive, primitive_count, true);
+    let svg_src = svg_generator::generate_svg(primitive, primitive_count, true);
     let svg = SVGDocument::from(svg_src);
 
     backend.init(&svg);

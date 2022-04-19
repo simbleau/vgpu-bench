@@ -2,8 +2,6 @@ use std::path::Path;
 
 use log::trace;
 use log::warn;
-use pyo3::prelude::*;
-use pyo3::types::PyString;
 
 use crate::log_assert;
 use crate::models::Measurable;
@@ -68,19 +66,5 @@ where
             writer.flush()?;
         }
         Ok(())
-    }
-}
-
-impl<T> Measurements<T>
-where
-    T: Measurable,
-{
-    pub fn to_pystring<'py>(&self, py: Python<'py>) -> &'py PyString {
-        let mut wtr = util::io::csv_string_writer();
-        for item in &self.measurables {
-            wtr.serialize(item).unwrap();
-        }
-        let data = String::from_utf8(wtr.into_inner().unwrap()).unwrap();
-        PyString::new(py, &data)
     }
 }

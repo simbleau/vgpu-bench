@@ -21,18 +21,12 @@ exclude = [
 name = "vgpu_bench"
 path = "src/lib.rs"
 
-[[bin]]
-name = "nvidia_monitor"
-path = "src/bin/monitors/nvidia_monitor.rs"
-
 [workspace]
 members = [
     "crates/proc-macro-measurable",
     "crates/renderer",
-    "crates/svg-generator",
     "crates/tessellation-util",
     "crates/rendering-util",
-    "crates/naive-renderer",
 ]
 
 [dependencies]
@@ -40,12 +34,10 @@ proc_macro_measurable = { package = "proc-macro-measurable", path = "crates/proc
 renderer = { package = "renderer", path = "crates/renderer" }
 tessellation-util = { package = "tessellation-util", path = "crates/tessellation-util" }
 rendering-util = { package = "rendering-util", path = "crates/rendering-util" }
-naive-renderer = { package = "naive-renderer", path = "crates/naive-renderer" }
-svg-generator = { package = "svg-generator", path = "crates/svg-generator" }
-pathfinder_vgpu_glue = { git="https://github.com/simbleau/pathfinder.git" }
+svg-tessellation-renderer = { git="https://github.com/kurbos/svg-tessellation-renderer" }
+svg-generator = { git="https://github.com/kurbos/svg-generator" }
 
 nvtx = {  version = "0.11", package = "nvtx-rs" }
-pyo3 = { version = "0.15.1", features = ["auto-initialize"]}
 crossbeam = "0.8"
 systemstat = "0.1.10"
 clap = "3.0.14"
@@ -60,6 +52,7 @@ erased-serde = "0.3"
 chrono = "0.4.19"
 anyhow = "1.0.56"
 thiserror = "1.0.30"
+plotters = "0.3.1"
 
 [dev-dependencies]
 rand = "0.8.5"
