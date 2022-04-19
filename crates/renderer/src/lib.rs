@@ -1,6 +1,7 @@
 #![feature(vec_into_raw_parts)]
 #![feature(c_size_t)]
 #![feature(fn_traits)]
+#![feature(core_ffi_c)]
 
 extern crate libloading;
 

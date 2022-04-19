@@ -9,12 +9,12 @@ use libloading::{Library, Symbol};
 use std::path::PathBuf;
 use std::time::Duration;
 
-type Init = fn() -> ::std::os::raw::c_int;
-type Stage = fn(input: *const ::std::os::raw::c_char) -> ::std::os::raw::c_int;
+type Init = fn() -> std::ffi::c_int;
+type Stage = fn(input: *const std::ffi::c_char) -> std::ffi::c_int;
 type Render = fn(
-    frame_times: *mut ::std::os::raw::c_ulonglong,
-    frames: ::std::os::raw::c_size_t,
-) -> ::std::os::raw::c_int;
+    frame_times: *mut std::ffi::c_ulonglong,
+    frames: std::ffi::c_size_t,
+) -> std::ffi::c_int;
 
 pub struct ExternalRenderer {
     library: Library,
