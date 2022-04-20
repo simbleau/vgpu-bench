@@ -15,5 +15,5 @@ path = "src/lib.rs"
 [dependencies]
 serde = { version = "1.0.136", features = ["derive"] }
 bytemuck = "1.9.1"
-libloading = "0.7.1"
+libloading = "0.7.3"
 thiserror = "1.0.30"
