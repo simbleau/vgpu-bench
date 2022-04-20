@@ -49,7 +49,6 @@ log = "0.4"
 simplelog = { version = "0.12.0" }
 serde = "1.0.136"
 erased-serde = "0.3"
-chrono = "0.4.19"
 anyhow = "1.0.56"
 thiserror = "1.0.30"
 plotters = "0.3.1"

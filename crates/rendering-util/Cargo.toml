@@ -14,15 +14,11 @@ path = "src/lib.rs"
 
 [dependencies]
 svg-tessellation-renderer = { git="https://github.com/kurbos/svg-tessellation-renderer" }
-svg-generator = { git="https://github.com/kurbos/svg-generator" }
 renderer = { package = "renderer", path = "../renderer" }
 
-clap = "3.1.10"
 lyon = {version ="0.17.10", features = ["extra"]}
 usvg = "0.22.0"
 serde = { version = "1.0.136", features = ["derive"] }
-erased-serde = "0.3"
-walkdir = "2"
 csv = "1.1"
 log = "0.4"
 bytemuck = "1.9.1"
