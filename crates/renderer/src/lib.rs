@@ -13,4 +13,4 @@ pub mod ffi;
 pub mod targets;
 
 mod renderer;
-pub use renderer::Renderer;
+pub use crate::renderer::Renderer;
