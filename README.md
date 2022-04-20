@@ -19,7 +19,7 @@ This project focuses on benchmarking hardware-accelerated renderering approaches
 ### *(Optional) GPU Metric Sampling*
 - **Graphics card**
   - NVIDIA Turing architecture or later
-- **NVIDIA graphics card with minimum driver version:**
+- **Minimum driver version:**
   - NVIDIA Turing architecture TU10x, TU11x - r440
   - NVIDIA Ampere architecture GA100 - r450
   - NVIDIA Ampere architecture GA100 MIG - r470 TRD1
