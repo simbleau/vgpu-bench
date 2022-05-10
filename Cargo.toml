@@ -40,7 +40,7 @@ svg-generator = { git="https://github.com/kurbos/svg-generator" }
 nvtx = {  version = "0.11", package = "nvtx-rs" }
 crossbeam = "0.8"
 systemstat = "0.1.10"
-clap = "3.1.12"
+clap = "3.1.18"
 lyon = { version ="0.17.10", features = ["extra"] }
 usvg = "0.22.0"
 walkdir = "2"
