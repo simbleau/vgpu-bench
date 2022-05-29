@@ -4,9 +4,6 @@
 #![feature(duration_consts_float)]
 
 pub extern crate nvtx;
-extern crate rendering_util;
-extern crate svg_generator;
-extern crate tessellation_util;
 
 pub use anyhow::Error;
 pub use anyhow::Result;

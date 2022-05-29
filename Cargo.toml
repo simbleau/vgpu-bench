@@ -24,18 +24,15 @@ path = "src/lib.rs"
 [workspace]
 members = [
     "crates/proc-macro-measurable",
-    "crates/renderer",
-    "crates/tessellation-util",
-    "crates/rendering-util",
 ]
 
 [dependencies]
 proc_macro_measurable = { package = "proc-macro-measurable", path = "crates/proc-macro-measurable" }
-renderer = { package = "renderer", path = "crates/renderer" }
-tessellation-util = { package = "tessellation-util", path = "crates/tessellation-util" }
-rendering-util = { package = "rendering-util", path = "crates/rendering-util" }
-svg-tessellation-renderer = { git="https://github.com/kurbos/svg-tessellation-renderer" }
-svg-generator = { git="https://github.com/kurbos/svg-generator" }
+# renderer = { package = "renderer", path = "crates/renderer" }
+# tessellation-util = { package = "tessellation-util", path = "crates/tessellation-util" }
+# rendering-util = { package = "rendering-util", path = "crates/rendering-util" }
+# svg-tessellation-renderer = { git="https://github.com/kurbos/svg-tessellation-renderer" }
+# svg-generator = { git="https://github.com/kurbos/svg-generator" }
 
 nvtx = {  version = "0.11", package = "nvtx-rs" }
 crossbeam = "0.8"
@@ -47,7 +44,7 @@ walkdir = "2"
 csv = "1.1"
 log = "0.4"
 simplelog = { version = "0.12.0" }
-serde = "1.0.137"
+serde = { version = "1.0.137", features = ["derive"] }
 erased-serde = "0.3"
 anyhow = "1.0.57"
 thiserror = "1.0.31"
