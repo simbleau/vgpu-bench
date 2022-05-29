@@ -14,5 +14,5 @@ name = "proc_macro_measurable"
 path = "src/lib.rs"
 
 [dependencies]
-syn = "1.0.92"
+syn = "1.0.95"
 quote = "1.0.18"
