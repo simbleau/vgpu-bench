@@ -22,4 +22,4 @@ serde = { version = "1.0.136", features = ["derive"] }
 csv = "1.1"
 log = "0.4"
 bytemuck = "1.9.1"
-thiserror = "1.0.30"
+thiserror = "1.0.31"
