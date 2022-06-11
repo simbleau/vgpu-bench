@@ -39,7 +39,7 @@ crossbeam = "0.8"
 systemstat = "0.1.11"
 clap = "3.1.18"
 lyon = { version ="0.17.10", features = ["extra"] }
-usvg = "0.22.0"
+usvg = "0.23.0"
 walkdir = "2"
 csv = "1.1"
 log = "0.4"
