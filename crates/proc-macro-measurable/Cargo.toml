@@ -15,4 +15,4 @@ path = "src/lib.rs"
 
 [dependencies]
 syn = "1.0.96"
-quote = "1.0.18"
+quote = "1.0.19"
