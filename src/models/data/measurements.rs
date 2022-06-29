@@ -8,6 +8,7 @@ use crate::models::Measurable;
 use crate::util;
 use crate::Result;
 
+/// Wrapper for Vector of Measurable types.
 #[derive(Debug)]
 pub struct Measurements<T>
 where
@@ -38,6 +39,9 @@ where
         self.measurables.clear()
     }
 
+    /// Writes a CSV containing the results of Measurements to @param path.
+    /// This function overrides the file generated if it already existed previously.
+    /// If Measurements is empty upon calling, nothing is written to the @param path. 
     pub fn write<P>(&self, path: P) -> Result<()>
     where
         P: AsRef<Path>,

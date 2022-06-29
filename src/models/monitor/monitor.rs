@@ -1,6 +1,7 @@
 use crate::models::{Measurement, MonitorFrequency};
 use crate::Result;
 
+// Alias for a Sync/Send compliant type
 pub trait Monitor: Send + Sync {
     fn name(&self) -> &'static str;
 

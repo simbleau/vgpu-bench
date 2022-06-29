@@ -3,6 +3,7 @@ use std::{collections::HashMap, path::Path};
 use crate::models::{Measurable, Measurement, Measurements};
 use crate::Result;
 
+/// HashMap of <String, Measurements> types
 #[derive(Debug)]
 pub struct MonitorBundle {
     pub monitor_measurements: HashMap<String, Measurements<Measurement>>,
@@ -24,6 +25,7 @@ impl MonitorBundle {
     }
 }
 
+/// Unifies Measurements and MonitorBundles for further processing.
 #[derive(Debug)]
 pub struct BenchmarkBundle<T>
 where
@@ -56,6 +58,7 @@ where
     }
 }
 
+/// HashMap of <String, BenchmarkBundle> types
 #[derive(Debug)]
 pub struct DriverBundle<T>
 where

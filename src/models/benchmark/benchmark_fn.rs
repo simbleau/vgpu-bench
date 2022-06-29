@@ -1,6 +1,7 @@
 use crate::models::{Measurable, Measurements};
 use crate::Result;
 
+/// Boxed dyn FnOnce type producing a Result<Measurable<T>>.
 pub struct BenchmarkFn<T: Measurable>(
     Box<dyn FnOnce() -> Result<Measurements<T>>>,
 );

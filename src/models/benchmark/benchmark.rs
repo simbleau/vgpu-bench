@@ -14,6 +14,7 @@ use crate::models::{
 use crate::util;
 use crate::Result;
 
+/// Benchmark
 pub struct Benchmark<T>
 where
     T: Measurable,
@@ -45,6 +46,7 @@ where
         }
     }
 
+    /// Add a static lifetime Monitor type to current Benchmarks.
     pub fn monitor<M>(mut self, monitor: M) -> Self
     where
         M: Monitor + 'static,
@@ -53,10 +55,14 @@ where
         self
     }
 
+    /// Read only reference for metadata of current Benchmark instance.
     pub fn metadata(&self) -> &BenchmarkMetadata {
         &self.metadata
     }
 
+    /// Multithreaded Arc Spinlock implementation for executing measurements of
+    /// Benchmark's FnOnce type alongside their assigned Monitors.
+    //  The results of the measurements are bundled up inside a Result<BenchmarkBundle<T>> upon completion.
     pub fn run(
         &mut self,
         options: &DriverOptions,
@@ -175,6 +181,8 @@ where
         Ok(bundle)
     }
 
+    /// Execute Multithreaded Blocking Monitor lifecycle hooks,
+    /// gather results and evaluate to a thread-safe Result<HashMap<String, Any>>.
     fn monitor_lifecycle_hook<F, Any>(
         &mut self,
         lifecycle_name: &'static str,

@@ -1,5 +1,6 @@
 use std::path::{Path, PathBuf};
 
+/// State-Machine Definitions for handling output buffer logic.
 #[derive(Debug, Clone, Copy)]
 pub enum DriverWriteMode {
     /// Panic if the output landing exists already, good for requiring
@@ -14,11 +15,14 @@ pub enum DriverWriteMode {
 }
 
 impl Default for DriverWriteMode {
+
+    /// Generates a Default State of Relaxed.
     fn default() -> Self {
         DriverWriteMode::Relaxed
     }
 }
 
+/// Metadata for handling and storing of output for Benchmarks.
 #[derive(Debug, Clone)]
 pub struct DriverOptions {
     pub(crate) output_dir: PathBuf,
@@ -27,6 +31,11 @@ pub struct DriverOptions {
 }
 
 impl Default for DriverOptions {
+
+    /// Generates a DriverOptions type with:
+    /// + output_dir_name: 'output'
+    /// + write_mode: DriverWriteMode::Relaxed
+    /// + on_error_continue: false
     fn default() -> Self {
         DriverOptions::new("output", DriverWriteMode::default(), false)
     }
