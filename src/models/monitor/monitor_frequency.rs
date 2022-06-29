@@ -10,7 +10,7 @@ pub enum MonitorFrequency {
 
 impl MonitorFrequency {
     
-    /// Generates a Duration typefor the Monitors to execute.
+    /// Generates a Duration type for the Monitors to execute.
     pub fn as_duration(&self) -> Duration {
         match self {
             MonitorFrequency::Hertz(hz) => {
