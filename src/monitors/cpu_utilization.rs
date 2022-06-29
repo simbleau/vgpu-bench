@@ -5,6 +5,12 @@ use systemstat::{Platform, System};
 use crate::models::{Measurement, Monitor, MonitorFrequency};
 use crate::Result;
 
+/// Type for CPU relevant metrics such as:
+/// + IDLE/Hang-time
+/// + Interrupt Count
+/// +  Nice(?)
+/// + System-Calls / Execution Time
+/// + User Space Execution Time
 #[derive(Serialize, Debug)]
 struct CpuMeasurement {
     idle: f32,

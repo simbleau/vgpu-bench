@@ -8,7 +8,7 @@ use crate::models::Measurable;
 use crate::util;
 use crate::Result;
 
-/// Vector of Measurable types.
+/// Wrapper for Vector of Measurable types.
 #[derive(Debug)]
 pub struct Measurements<T>
 where

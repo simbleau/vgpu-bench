@@ -1,5 +1,5 @@
 
-/// Struct for storing additional data for Benchmark as a static string.
+/// Type storing descriptive data for a Benchmark instance.
 pub struct BenchmarkMetadata {
     name: &'static str,
 }
