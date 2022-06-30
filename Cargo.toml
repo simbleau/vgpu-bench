@@ -37,7 +37,7 @@ proc_macro_measurable = { package = "proc-macro-measurable", path = "crates/proc
 nvtx = {  version = "0.11", package = "nvtx-rs" }
 crossbeam = "0.8"
 systemstat = "0.1.11"
-clap = "3.2.7"
+clap = "3.2.8"
 lyon = { version ="0.17.10", features = ["extra"] }
 usvg = "0.23.0"
 walkdir = "2"
