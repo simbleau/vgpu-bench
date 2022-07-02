@@ -44,7 +44,7 @@ walkdir = "2"
 csv = "1.1"
 log = "0.4"
 simplelog = { version = "0.12.0" }
-serde = { version = "1.0.137", features = ["derive"] }
+serde = { version = "1.0.138", features = ["derive"] }
 erased-serde = "0.3"
 anyhow = "1.0.58"
 thiserror = "1.0.31"
