@@ -34,7 +34,7 @@ proc_macro_measurable = { package = "proc-macro-measurable", path = "crates/proc
 # svg-tessellation-renderer = { git="https://github.com/kurbos/svg-tessellation-renderer" }
 # svg-generator = { git="https://github.com/kurbos/svg-generator" }
 
-nvtx = {  version = "0.11", package = "nvtx-rs" }
+nvtx = {  version = "1.1", package = "nvtx-rs" }
 crossbeam = "0.8"
 systemstat = "0.1.11"
 clap = "3.2.8"
