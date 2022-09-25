@@ -48,7 +48,7 @@ serde = { version = "1.0.138", features = ["derive"] }
 erased-serde = "0.3"
 anyhow = "1.0.58"
 thiserror = "1.0.31"
-plotters = "0.3.2"
+plotters = "0.3.4"
 
 [dev-dependencies]
 rand = "0.8.5"
