@@ -38,7 +38,7 @@ nvtx = {  version = "0.11", package = "nvtx-rs" }
 crossbeam = "0.8"
 systemstat = "0.1.11"
 clap = "3.2.8"
-lyon = { version ="0.17.10", features = ["extra"] }
+lyon = { version ="1.0.1", features = ["extra"] }
 usvg = "0.23.0"
 walkdir = "2"
 csv = "1.1"
